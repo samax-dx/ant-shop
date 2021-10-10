@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import './index.css';
@@ -8,14 +8,16 @@ import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
-function PageLayout({ render: render_content }) {
+function PageLayout({ render: renderWithState }) {
+    const [menu, setMenu] = useState("HOME");
+
     return <Layout>
         <Header className="header">
             <div className="logo"/>
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["2"]}>
-                <Menu.Item key="1">nav 1</Menu.Item>
-                <Menu.Item key="2">nav 2</Menu.Item>
-                <Menu.Item key="3">nav 3</Menu.Item>
+            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]} onClick={ev => setMenu(ev.key)}>
+                <Menu.Item key="HOME">Home</Menu.Item>
+                <Menu.Item key="PRODUCT">Products</Menu.Item>
+                <Menu.Item key="CATEGORY">Categories</Menu.Item>
             </Menu>
         </Header>
         <Layout>
@@ -52,7 +54,7 @@ function PageLayout({ render: render_content }) {
                     <Breadcrumb.Item>List</Breadcrumb.Item>
                     <Breadcrumb.Item>App</Breadcrumb.Item>
                 </Breadcrumb>
-                { render_content }
+                { renderWithState({ menu: { current: menu } }) }
             </Layout>
         </Layout>
     </Layout>;

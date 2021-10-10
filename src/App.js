@@ -6,7 +6,7 @@ import { CategoryList } from './CategoryList';
 import PageLayout from "./Page";
 const { Header, Footer, Sider, Content } = Layout;
 
-const PageContent = props => {
+const PageContent = ({ menu }) => {console.log(menu);
     return (
         <Content
             className="site-layout-background"
@@ -15,12 +15,16 @@ const PageContent = props => {
                 margin: 0,
                 minHeight: 280,
             }}
-        >Content</Content>
+        >
+            {menu.current === "HOME" && "Home Page"}
+            {menu.current === "PRODUCT" && "Product List"}
+            {menu.current === "CATEGORY" && "Category List"}
+        </Content>
     );
 }
 function App() {
     return (
-        <PageLayout render={<PageContent/>} />
+        <PageLayout render={({ menu }) => <PageContent menu={menu} />} />
     );
 }
 
