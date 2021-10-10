@@ -13,16 +13,10 @@ import './App.less';
 function App() {
     return (
         <PageLayout render={({ menu }) => {
-            switch (menu.current) {
-                case "home":
-                    return <Home />;
-                case "product":
-                    return <Product />;
-                case "category":
-                    return <Category />;
-                default:
-                    return null;
-            }
+            if (menu.current.matches("home")) return <Home />;
+            if (menu.current.matches("product")) return <Product />;
+            if (menu.current.matches("category")) return <Category />;
+            return null;
         }} />
     );
 }

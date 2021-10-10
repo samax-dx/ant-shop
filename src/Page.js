@@ -4,20 +4,23 @@ import 'antd/dist/antd.css';
 import './index.css';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
+import { useMachine } from '@xstate/react';
+import { MenuMachine } from './machines/MenuMachine';
 
 const { SubMenu } = Menu;
 const { Header, Sider } = Layout;
 
 function PageLayout({ render: renderWithState }) {
-    const [menu, setMenu] = useState("home");
+    // const [menu, setMenu] = useState("home");
+    const [menuState, sendMenuEvent] = useMachine(MenuMachine);
 
     return <Layout>
         <Header className="header">
             <div className="logo"/>
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]} onClick={ev => setMenu(ev.key)}>
-                <Menu.Item key="home">Home</Menu.Item>
-                <Menu.Item key="product">Products</Menu.Item>
-                <Menu.Item key="category">Categories</Menu.Item>
+            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["home"]} /*onClick={ev => setMenu(ev.key)}*/>
+                <Menu.Item key="home" onClick={_ => sendMenuEvent({ type: "SHOW_HOME" })}>Home</Menu.Item>
+                <Menu.Item key="product" onClick={_ => sendMenuEvent({ type: "SHOW_PRODUCT" })}>Products</Menu.Item>
+                <Menu.Item key="category" onClick={_ => sendMenuEvent({ type: "SHOW_CATEGORY" })}>Categories</Menu.Item>
             </Menu>
         </Header>
         <Layout>
@@ -54,7 +57,7 @@ function PageLayout({ render: renderWithState }) {
                     <Breadcrumb.Item>List</Breadcrumb.Item>
                     <Breadcrumb.Item>App</Breadcrumb.Item>
                 </Breadcrumb>
-                { renderWithState({ menu: { current: menu } }) }
+                { renderWithState({ menu: { current: menuState } }) }
             </Layout>
         </Layout>
     </Layout>;
