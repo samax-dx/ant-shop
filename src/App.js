@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import { Layout, Breadcrumb } from 'antd';
+import './App.less';
+
+import { CategoryList } from './CategoryList';
+
+const { Header, Content, Footer } = Layout;
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <Layout>
+            <Header></Header>
+            <Layout style={{ margin: "15px auto" }}>
+                <Breadcrumb style={{ margin: '16px 0' }}>
+                    <Breadcrumb.Item><button className="App-home-link">Home</button></Breadcrumb.Item>
+                </Breadcrumb>
+                <Content
+                    style={{
+                        backgroundColor: "#fff",
+                        minWidth: "50vw",
+                        minHeight: "40vh"
+                    }}
+                    children={<CategoryList />}
+                />
+            </Layout>
+            <Footer></Footer>
+        </Layout>
+    );
 }
 
 export default App;
