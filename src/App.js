@@ -1,64 +1,16 @@
+import React from 'react';
 import { Layout, Breadcrumb } from 'antd';
 import './App.less';
-
+import MainMenu from './MainMenu';
 import { CategoryList } from './CategoryList';
-
+import PageLayout from "./Page";
 const { Header, Footer, Sider, Content } = Layout;
 
 
 function App() {
     return (
-        /*<Layout>
-            <Header></Header>
-            <Layout style={{ margin: "15px auto" }}>
-                <Breadcrumb style={{ margin: '16px 0' }}>
-                    <Breadcrumb.Item><button className="App-home-link">Home</button></Breadcrumb.Item>
-                </Breadcrumb>
-                <Content
-                    style={{
-                        backgroundColor: "#fff",
-                        minWidth: "50vw",
-                        minHeight: "40vh"
-                    }}
-                    children={<CategoryList />}
-                />
-            </Layout>
-            <Footer></Footer>
-        </Layout>*/
-        <Layout>
-            <Layout>
-                <Header>Header</Header>
-                <Content>Content</Content>
-                <Footer>Footer</Footer>
-            </Layout>
+        <PageLayout/>
 
-            <Layout>
-                <Header>Header</Header>
-                <Layout>
-                    <Sider>Sider</Sider>
-                    <Content>Content</Content>
-                </Layout>
-                <Footer>Footer</Footer>
-            </Layout>
-
-            <Layout>
-                <Header>Header</Header>
-                <Layout>
-                    <Content>Content</Content>
-                    <Sider>Sider</Sider>
-                </Layout>
-                <Footer>Footer</Footer>
-            </Layout>
-
-            <Layout>
-                <Sider>Sider</Sider>
-                <Layout>
-                    <Header>Header</Header>
-                    <Content>Content</Content>
-                    <Footer>Footer</Footer>
-                </Layout>
-            </Layout>
-        </Layout>
     );
 }
 
