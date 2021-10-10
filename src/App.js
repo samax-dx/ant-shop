@@ -12,12 +12,13 @@ import './App.less';
 
 function App() {
     return (
-        <PageLayout render={({ menu }) => {
-            if (menu.current.matches("home")) return <Home />;
-            if (menu.current.matches("product")) return <Product />;
-            if (menu.current.matches("category")) return <Category />;
-            return null;
-        }} />
+        // <PageLayout render={({ menu }) => {
+        //     if (menu.current.matches("home")) return <Home />;
+        //     if (menu.current.matches("product")) return <Product />;
+        //     if (menu.current.matches("category")) return <Category />;
+        //     return null;
+        // }} />
+        <PageLayout render={[["home", Home], ["product", Product], ["category", Category]]} />
     );
 }
 

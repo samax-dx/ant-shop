@@ -10,7 +10,7 @@ import { MenuMachine } from './machines/MenuMachine';
 const { SubMenu } = Menu;
 const { Header, Sider } = Layout;
 
-function PageLayout({ render: renderWithState }) {
+function PageLayout({ render: /*renderWithState*/renderables }) {
     // const [menu, setMenu] = useState("home");
     const [menuState, sendMenuEvent] = useMachine(MenuMachine);
 
@@ -57,7 +57,8 @@ function PageLayout({ render: renderWithState }) {
                     <Breadcrumb.Item>List</Breadcrumb.Item>
                     <Breadcrumb.Item>App</Breadcrumb.Item>
                 </Breadcrumb>
-                { renderWithState({ menu: { current: menuState } }) }
+                {/* { renderWithState({ menu: { current: menuState } }) } */}
+                { renderables.find(([key]) => menuState.matches(key))[1]() }
             </Layout>
         </Layout>
     </Layout>;
