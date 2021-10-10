@@ -6,18 +6,18 @@ import { Layout, Menu, Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
 
 const { SubMenu } = Menu;
-const { Header, Content, Sider } = Layout;
+const { Header, Sider } = Layout;
 
 function PageLayout({ render: renderWithState }) {
-    const [menu, setMenu] = useState("HOME");
+    const [menu, setMenu] = useState("home");
 
     return <Layout>
         <Header className="header">
             <div className="logo"/>
             <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]} onClick={ev => setMenu(ev.key)}>
-                <Menu.Item key="HOME">Home</Menu.Item>
-                <Menu.Item key="PRODUCT">Products</Menu.Item>
-                <Menu.Item key="CATEGORY">Categories</Menu.Item>
+                <Menu.Item key="home">Home</Menu.Item>
+                <Menu.Item key="product">Products</Menu.Item>
+                <Menu.Item key="category">Categories</Menu.Item>
             </Menu>
         </Header>
         <Layout>
