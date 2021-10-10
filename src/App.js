@@ -11,14 +11,23 @@ import { Category } from './components/Category';
 import './App.less';
 
 function App() {
+    let componentToRender = "home";
+
+    let PageContent = {
+        home: Home,
+        product: Product,
+        category: Category
+    }[componentToRender];
+
     return (
+        <PageLayout render={<PageContent />} />
         // <PageLayout render={({ menu }) => {
         //     if (menu.current.matches("home")) return <Home />;
         //     if (menu.current.matches("product")) return <Product />;
         //     if (menu.current.matches("category")) return <Category />;
         //     return null;
         // }} />
-        <PageLayout render={[["home", Home], ["product", Product], ["category", Category]]} />
+        // <PageLayout render={[["home", Home], ["product", Product], ["category", Category]]} />
     );
 }
 

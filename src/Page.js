@@ -4,23 +4,23 @@ import 'antd/dist/antd.css';
 import './index.css';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
-import { useMachine } from '@xstate/react';
-import { MenuMachine } from './machines/MenuMachine';
+// import { useMachine } from '@xstate/react';
+// import { MenuMachine } from './machines/MenuMachine';
 
 const { SubMenu } = Menu;
 const { Header, Sider } = Layout;
 
-function PageLayout({ render: /*renderWithState*/renderables }) {
-    // const [menu, setMenu] = useState("home");
-    const [menuState, sendMenuEvent] = useMachine(MenuMachine);
+function PageLayout({ render: PageContent/*|renderWithState|renderables*/ }) {
+    const [menu, setMenu] = useState("home");
+    // const [menuState, sendMenuEvent] = useMachine(MenuMachine);
 
     return <Layout>
         <Header className="header">
             <div className="logo"/>
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["home"]} /*onClick={ev => setMenu(ev.key)}*/>
-                <Menu.Item key="home" onClick={_ => sendMenuEvent({ type: "SHOW_HOME" })}>Home</Menu.Item>
-                <Menu.Item key="product" onClick={_ => sendMenuEvent({ type: "SHOW_PRODUCT" })}>Products</Menu.Item>
-                <Menu.Item key="category" onClick={_ => sendMenuEvent({ type: "SHOW_CATEGORY" })}>Categories</Menu.Item>
+            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["home"]} onClick={ev => setMenu(ev.key)}>
+                <Menu.Item key="home" /*onClick={_ => sendMenuEvent({ type: "SHOW_HOME" })}*/>Home</Menu.Item>
+                <Menu.Item key="product" /*onClick={_ => sendMenuEvent({ type: "SHOW_PRODUCT" })}*/>Products</Menu.Item>
+                <Menu.Item key="category" /*onClick={_ => sendMenuEvent({ type: "SHOW_CATEGORY" })}*/>Categories</Menu.Item>
             </Menu>
         </Header>
         <Layout>
@@ -57,8 +57,10 @@ function PageLayout({ render: /*renderWithState*/renderables }) {
                     <Breadcrumb.Item>List</Breadcrumb.Item>
                     <Breadcrumb.Item>App</Breadcrumb.Item>
                 </Breadcrumb>
+                { PageContent }
+                {/* { renderWithState({ menu: { current: menu } }) } */}
                 {/* { renderWithState({ menu: { current: menuState } }) } */}
-                { renderables.find(([key]) => menuState.matches(key))[1]() }
+                {/* { renderables.find(([key]) => menuState.matches(key))[1]() } */}
             </Layout>
         </Layout>
     </Layout>;
