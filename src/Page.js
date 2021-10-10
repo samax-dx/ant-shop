@@ -8,7 +8,7 @@ import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
-function PageLayout() {
+function PageLayout({ render: render_content }) {
     return <Layout>
         <Header className="header">
             <div className="logo"/>
@@ -52,16 +52,7 @@ function PageLayout() {
                     <Breadcrumb.Item>List</Breadcrumb.Item>
                     <Breadcrumb.Item>App</Breadcrumb.Item>
                 </Breadcrumb>
-                <Content
-                    className="site-layout-background"
-                    style={{
-                        padding: 24,
-                        margin: 0,
-                        minHeight: 280,
-                    }}
-                >
-                    Content
-                </Content>
+                { render_content }
             </Layout>
         </Layout>
     </Layout>;
