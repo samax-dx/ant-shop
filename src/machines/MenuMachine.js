@@ -1,4 +1,4 @@
-import { createMachine } from "xstate";
+import { createMachine, interpret } from "xstate";
 
 
 // export const MenuMachine = createMachine({
@@ -20,23 +20,21 @@ import { createMachine } from "xstate";
 //     initial: "home"
 // });
 
-export const MenuMachine = createMachine({
+const MenuMachine = createMachine({
     states: {
         home: {},
         product: {},
         category: {}
     },
     on: {
-        "NAV_HOME": {
-            target: "home",
-
-        },
-        "NAV_PRODUCT":
-            {
-                target: "product",
-                actions:[()=>console.log('entering product...')]
-            },
+        "NAV_HOME": { target: "home" },
+        "NAV_PRODUCT": { target: "product" },
         "NAV_CATEGORY": { target: "category" }
     },
     initial: "home"
 });
+
+const menuMachine = interpret(MenuMachine);
+menuMachine.start();
+
+export { menuMachine };

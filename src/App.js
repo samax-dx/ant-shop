@@ -5,13 +5,13 @@ import { Home } from './components/Home';
 import { Product } from './components/Product';
 import { Category } from './components/Category';
 
-import { useMachine } from '@xstate/react';
-import { MenuMachine } from './machines/MenuMachine';
+import { useActor } from '@xstate/react';
+import { menuMachine } from './machines/menuMachine';
 
 import './App.less';
 
 function App() {
-    const [current, send] = useMachine(MenuMachine);
+    const [current, send] = useActor(menuMachine);
 
     let componentToRender = null;
 

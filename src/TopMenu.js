@@ -1,10 +1,10 @@
 import {Menu} from "antd";
 import React from "react";
-import { useMachine } from '@xstate/react';
-import { MenuMachine } from './machines/MenuMachine';
+import { useActor } from '@xstate/react';
+import { menuMachine } from './machines/menuMachine';
 
 export function TopMenu() {
-    const [current, send] = useMachine(MenuMachine);
+    const [current, send] = useActor(menuMachine);
 
     return <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["home"]}>
         <Menu.Item key="home" onClick={()=>send({ type: 'NAV_HOME' })}>Home</Menu.Item>
