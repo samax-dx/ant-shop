@@ -1,0 +1,7 @@
+[
+    { "id": 1, "name": "Potato", "category": "food" },
+    { "id": 2, "name": "Lock", "category": "Hardware" },
+    { "id": 4, "name": "Papaya", "category": "food" },
+    { "id": 5, "name": "Cattor", "category": "food" },
+    { "id": 6, "name": "Ball", "category": "sports" }
+]
