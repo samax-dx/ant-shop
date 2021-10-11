@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Layout, Menu, Breadcrumb } from 'antd';
-import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
+import React, {useState} from 'react';
+import {Breadcrumb, Layout, Menu} from 'antd';
+import {LaptopOutlined, NotificationOutlined, UserOutlined} from '@ant-design/icons';
 
 import 'antd/dist/antd.css';
 import './index.css';
+import {TopMenu} from "./TopMenu";
 
 const { SubMenu } = Menu;
 const { Header, Sider } = Layout;
@@ -14,11 +15,7 @@ function PageLayout({ render: PageContent }) {
     return <Layout>
         <Header className="header">
             <div className="logo"/>
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["home"]} onClick={ev => setMenu(ev.key)}>
-                <Menu.Item key="home">Home</Menu.Item>
-                <Menu.Item key="product">Products</Menu.Item>
-                <Menu.Item key="category">Categories</Menu.Item>
-            </Menu>
+            <TopMenu onClick={ev => setMenu(ev.key)}/>
         </Header>
         <Layout>
             <Sider width={200} className="site-layout-background">
@@ -54,7 +51,7 @@ function PageLayout({ render: PageContent }) {
                     <Breadcrumb.Item>List</Breadcrumb.Item>
                     <Breadcrumb.Item>App</Breadcrumb.Item>
                 </Breadcrumb>
-                <PageContent />
+                <PageContent/>
             </Layout>
         </Layout>
     </Layout>;

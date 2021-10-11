@@ -27,9 +27,16 @@ export const MenuMachine = createMachine({
         category: {}
     },
     on: {
-        "SHOW_HOME": { target: "home" },
-        "SHOW_PRODUCT": { target: "product" },
-        "SHOW_CATEGORY": { target: "category" }
+        "NAV_HOME": {
+            target: "home",
+
+        },
+        "NAV_PRODUCT":
+            {
+                target: "product",
+                actions:[()=>console.log('entering product...')]
+            },
+        "NAV_CATEGORY": { target: "category" }
     },
     initial: "home"
 });
