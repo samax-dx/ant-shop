@@ -8,26 +8,14 @@ import { Category } from './components/Category';
 import { useActor } from '@xstate/react';
 import { menuMachine } from './machines/menuMachine';
 
+import { capitalize } from "./util"
+
 import './App.less';
 
 function App() {
     const [current, send] = useActor(menuMachine);
 
-    let componentToRender = null;
-
-    switch (current.value) {
-        case "home":
-            componentToRender = Home;
-            break;
-        case "product":
-            componentToRender = Product;
-            break;
-        case "category":
-            componentToRender = Category;
-            break;
-        default:
-            break;
-    }
+    const componentToRender = { Home, Product, Category }[capitalize(current.value)];
 
     return (
         <PageLayout render={componentToRender} />
