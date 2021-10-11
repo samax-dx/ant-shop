@@ -4,18 +4,17 @@ import {LaptopOutlined, NotificationOutlined, UserOutlined} from '@ant-design/ic
 
 import 'antd/dist/antd.css';
 import './index.css';
+
 import {TopMenu} from "./TopMenu";
 
 const { SubMenu } = Menu;
 const { Header, Sider } = Layout;
 
 function PageLayout({ render: PageContent }) {
-    const [menu, setMenu] = useState("home");
-
     return <Layout>
         <Header className="header">
             <div className="logo"/>
-            <TopMenu onClick={ev => setMenu(ev.key)}/>
+            <TopMenu />
         </Header>
         <Layout>
             <Sider width={200} className="site-layout-background">
