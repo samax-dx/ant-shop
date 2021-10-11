@@ -1,6 +1,5 @@
 import { createMachine, interpret } from "xstate";
 
-
 // export const MenuMachine = createMachine({
 //     context: {
 //         data: ""
@@ -35,6 +34,6 @@ const MenuMachine = createMachine({
 });
 
 const menuMachine = interpret(MenuMachine);
-menuMachine.start();
 
+menuMachine.start();
 export { menuMachine };
