@@ -11,28 +11,14 @@ import { Category } from './components/Category';
 import './App.less';
 
 function App() {
-    let componentToRender = menu => {
-        let PageContent = null;
+    let machine = null;
+    const [current, sendEvent] = machine = useMachine(MenuMachine);
+    console.log(machine);
 
-        switch (menu) {
-            case "home":
-                PageContent = Home;
-                break;
-            case "product":
-                PageContent = Product;
-                break;
-            case "category":
-                PageContent = Category;
-                break;
-            default:
-                break;
-        }
-
-        return <PageContent />;
-    };
+    let PageContent = current.matches("home") ? Home : null;
 
     return (
-        <PageLayout render={menu => componentToRender(menu)} />
+        <PageLayout render={<PageContent />} />
         // <PageLayout render={({ menu }) => {
         //     if (menu.current.matches("home")) return <Home />;
         //     if (menu.current.matches("product")) return <Product />;
@@ -41,6 +27,20 @@ function App() {
         // }} />
         // <PageLayout render={[["home", Home], ["product", Product], ["category", Category]]} />
     );
+
+    // switch (componentToRender) {
+    //     case "home":
+    //         PageContent = Home;
+    //         break;
+    //     case "product":
+    //         PageContent = Product;
+    //         break;
+    //     case "category":
+    //         PageContent = Category;
+    //         break;
+    //     default:
+    //         break;
+    // }
 }
 
 // const { Content } = Layout;

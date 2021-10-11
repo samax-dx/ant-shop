@@ -10,7 +10,7 @@ import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/
 const { SubMenu } = Menu;
 const { Header, Sider } = Layout;
 
-function PageLayout({ render: renderContent/*|renderWithState|renderables*/ }) {
+function PageLayout({ render: PageContent/*|renderWithState|renderables*/ }) {
     const [menu, setMenu] = useState("home");
     // const [menuState, sendMenuEvent] = useMachine(MenuMachine);
 
@@ -57,7 +57,7 @@ function PageLayout({ render: renderContent/*|renderWithState|renderables*/ }) {
                     <Breadcrumb.Item>List</Breadcrumb.Item>
                     <Breadcrumb.Item>App</Breadcrumb.Item>
                 </Breadcrumb>
-                { renderContent(menu) }
+                { PageContent }
                 {/* { renderWithState({ menu: { current: menu } }) } */}
                 {/* { renderWithState({ menu: { current: menuState } }) } */}
                 {/* { renderables.find(([key]) => menuState.matches(key))[1]() } */}
