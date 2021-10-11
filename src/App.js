@@ -11,16 +11,28 @@ import { Category } from './components/Category';
 import './App.less';
 
 function App() {
-    let componentToRender = "home";
+    let componentToRender = menu => {
+        let PageContent = null;
 
-    let PageContent = {
-        home: Home,
-        product: Product,
-        category: Category
-    }[componentToRender];
+        switch (menu) {
+            case "home":
+                PageContent = Home;
+                break;
+            case "product":
+                PageContent = Product;
+                break;
+            case "category":
+                PageContent = Category;
+                break;
+            default:
+                break;
+        }
+
+        return <PageContent />;
+    };
 
     return (
-        <PageLayout render={<PageContent />} />
+        <PageLayout render={menu => componentToRender(menu)} />
         // <PageLayout render={({ menu }) => {
         //     if (menu.current.matches("home")) return <Home />;
         //     if (menu.current.matches("product")) return <Product />;
