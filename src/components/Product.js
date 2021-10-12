@@ -19,6 +19,7 @@ export const Product = props => {
             dataSource={products}
             rowKey="id"
             pagination={{ pageSize: 3 }}
+            size="small"
             footer={() => ([
                 <Button type="primary" onClick={addProduct} key="btnAddRow">Add Product</Button>
             ])}

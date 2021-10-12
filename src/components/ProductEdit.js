@@ -5,16 +5,15 @@ import { productEditMachine } from "../machines/productEditMachine";
 
 export const ProductEdit = () => {
     const [editorState, sendToEditor] = useActor(productEditMachine);
-    const formRef = createRef(null);
-
     const { product } = editorState.context;
+    const formRef = createRef(null);
 
     const handleClose = () => sendToEditor({ type: "CLOSE_EDITOR" });
     const saveProduct = () => sendToEditor({ type: "SAVE" });
 
     useEffect(() => {
         formRef.current.setFieldsValue(product);
-    }, [formRef, product]);
+    }, [product, formRef]);
 
     return (
         <Modal
