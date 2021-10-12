@@ -10,7 +10,7 @@ import products from './products.json';
 export const Product = props => {
     const [editorState, sendToEditor] = useActor(productEditMachine);
 
-    const addProduct = () => sendToEditor({ type: "EDIT_PRODUCT" });
+    const addProduct = _ => sendToEditor({ type: "EDIT_PRODUCT", product: {} });
     const editProduct = p => sendToEditor({ type: "EDIT_PRODUCT", product: p });
     const deleteProduct = () => { console.log("delete product") };
 
@@ -32,6 +32,6 @@ export const Product = props => {
                 </>);
             }} />
         </Table>
-        <ProductEdit />
+        {editorState.value === "inactive" || <ProductEdit />}
     </>);
 };

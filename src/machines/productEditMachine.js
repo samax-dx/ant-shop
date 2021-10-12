@@ -1,16 +1,15 @@
-import { createMachine, interpret } from "xstate";
+import { assign, createMachine, interpret } from "xstate";
 
 const ProductEditMachine = createMachine({
     context: {
-        product: {},
-        closeOnSave: false
+        product: {}
     },
     states: {
         inactive: {
             on: {
                 "EDIT_PRODUCT": {
                     target: "editing",
-                    actions: [(ctx, ev) => { ctx.product = ev.product || {}; }]
+                    actions: assign({ product: (ctx, ev) => ev.product })
                 }
             }
         },
@@ -45,7 +44,8 @@ const ProductEditMachine = createMachine({
 }, {
     services: {
         saveProduct: async (ctx, ev) => console.log("saving") || true
-    }
+    },
+    //
 });
 
 const productEditMachine = interpret(ProductEditMachine);
