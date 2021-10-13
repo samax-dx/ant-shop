@@ -8,14 +8,28 @@ const ProductEditMachine = createMachine({
         inactive: {
             on: {
                 "EDIT_PRODUCT": {
-                    target: "editing",
+                    target: "ideal",
                     actions: assign({ product: (ctx, ev) => ev.product })
                 }
             }
         },
+        ideal: {
+            on: {
+                "EDIT_PRODUCT": { target: "editing" },
+                "CLOSE_EDITOR": { target: "inactive" }
+            },
+        },
         editing: {
             on: {
-                "SAVE": { target: "saving" },
+                "SAVE_PRODUCT": { target: "saving" },
+                "CLOSE_EDITOR": { target: "inactive" },
+                "INVALID_INPUT": { target: "editing_invalid" }
+            },
+            exit: ["trackSaveClose"]
+        },
+        editing_invalid: {
+            on: {
+                "EDIT_PRODUCT": { target: "editing" },
                 "CLOSE_EDITOR": { target: "inactive" }
             }
         },
@@ -23,15 +37,17 @@ const ProductEditMachine = createMachine({
             invoke: {
                 src: "saveProduct",
                 onDone: { target: "success" },
-                onError: { target: "error" }
+                onError: { target: "editing" }
             }
         },
         success: {
-            always: { target: "inactive", cond: (ctx, ev) => true },
+            always: { target: "inactive", cond: "shouldClose" },
             on: {
                 "EDIT_PRODUCT": { target: "editing" },
                 "CLOSE_EDITOR": { target: "inactive" }
-            }
+            },
+            exit: ["trackSaveClose"]
+
         },
         error: {
             on: {
@@ -45,7 +61,18 @@ const ProductEditMachine = createMachine({
     services: {
         saveProduct: async (ctx, ev) => console.log("saving") || true
     },
-    //
+    actions: {
+        trackSaveClose: (ctx, ev) => {
+            if (ev.type === "SAVE_PRODUCT") {
+                ctx._shouldCloseOnSaved = ev.shouldClose;
+            } else {
+                delete ctx._shouldCloseOnSaved;
+            }
+        }
+    },
+    guards: {
+        shouldClose: (ctx, ev) => ctx._shouldCloseOnSaved,
+    }
 });
 
 const productEditMachine = interpret(ProductEditMachine);

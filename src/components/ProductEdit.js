@@ -1,36 +1,45 @@
 import { useActor } from "@xstate/react";
 import { Button, Modal, Form, Input } from "antd";
-import { createRef, useEffect } from "react";
+import { createRef } from "react";
 import { productEditMachine } from "../machines/productEditMachine";
 
 export const ProductEdit = () => {
     const [editorState, sendToEditor] = useActor(productEditMachine);
     const { product } = editorState.context;
-    const formRef = createRef(null);
+    const editFormRef = createRef(null);
 
-    const handleClose = () => sendToEditor({ type: "CLOSE_EDITOR" });
-    const saveProduct = () => sendToEditor({ type: "SAVE" });
+    const canSave = () => editorState.value === "editing";
+    const validateForm = () => {
+        editFormRef.current.validateFields()
+            .then(() => {console.log("valid input");
+                //
+            })
+            .catch(() => {console.log("invalid input");
+                //
+            });
+    };
 
-    useEffect(() => {
-        formRef.current.setFieldsValue(product);
-    }, [product, formRef]);
+    const startEdit = () => sendToEditor({ type: "EDIT_PRODUCT", product });
+    const cancelEdit = () => sendToEditor({ type: "CLOSE_EDITOR" });
+    const saveProduct = () => sendToEditor({ type: "SAVE_PRODUCT", shouldClose: !1 });
+    const saveProductAndClose = () => sendToEditor({ type: "SAVE_PRODUCT", shouldClose: !0 });
 
     return (
         <Modal
             title={product.id ? `Edit ${product.name}` : "Enter Product Info"}
             visible={true}
-            onOk={handleClose}
-            onCancel={handleClose}
+            onCancel={cancelEdit}
             footer={[
-                <Button type="primary" onClick={saveProduct} key="btnSave">Save & Close</Button>
+                <Button type="primary" onClick={saveProduct} key="btnSave" disabled={!canSave()}>Save</Button>,
+                <Button type="primary" onClick={saveProductAndClose} key="btnSaveClose" disabled={!canSave()}>Save & Close</Button>
             ]}
         >
-            <Form ref={formRef}>
-                <Form.Item label="Name" name="name">
-                    <Input value={product.name} />
+            <Form onChange={() => startEdit() | validateForm()} ref={editFormRef}>
+                <Form.Item label="Name" name="name" initialValue={product.name} required={true}>
+                    <Input />
                 </Form.Item>
-                <Form.Item label="Category" name="category">
-                    <Input value={product.category} />
+                <Form.Item label="Category" name="category" initialValue={product.category}>
+                    <Input />
                 </Form.Item>
             </Form>
         </Modal>
