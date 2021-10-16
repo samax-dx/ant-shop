@@ -10,8 +10,8 @@ import products from './products.json';
 export const Product = props => {
     const [editorState, sendToEditor] = useActor(productEditMachine);
 
-    const addProduct = _ => sendToEditor({ type: "EDIT_PRODUCT", product: {} });
-    const editProduct = p => sendToEditor({ type: "EDIT_PRODUCT", product: p });
+    const addProduct = _ => sendToEditor({ type: "EDIT_RECORD", product: {} });
+    const editProduct = p => sendToEditor({ type: "EDIT_RECORD", product: p });
     const deleteProduct = () => { console.log("delete product") };
 
     return (<>

@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "name": "food",
+    "label": "Food"
+  },
+  {
+    "id": 2,
+    "name": "hardware",
+    "label": "Hardware"
+  },
+  {
+    "id": 3,
+    "name": "sports",
+    "label": "Sports"
+  },
+  {
+    "id": 4,
+    "name": "electronics",
+    "label": "Electronics"
+  }
+]
