@@ -1,7 +1,12 @@
-import categories from "./Categories.json";
 import { Table } from "antd";
+import useSWR from "swr";
 
 export const Category = props => {
+    const { data: categories, error } = useSWR(
+        "https://localhost:5001/category",
+        (...args) => fetch(...args).then(res => res.json())
+    );
+
     return (<>
         <Table
             size="small"
