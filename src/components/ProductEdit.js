@@ -1,51 +1,21 @@
-import { useActor } from "@xstate/react";
 import { Button, Modal, Form, Input } from "antd";
-import { useState } from "react";
-import { productEditMachine } from "../machines/productEditMachine";
 
-export const ProductEdit = () => {
-    const [editorState, sendToEditor] = useActor(productEditMachine);
-    const [editForm] = Form.useForm();
-    const [formVaildity, setValid] = useState(1);
-    const { product } = editorState.context;
-
-    const canSave = () => editorState.value === "editing" && formVaildity;
-
-    const startEdit = () => sendToEditor({ type: "EDIT_RECORD", product });
-    const cancelEdit = () => sendToEditor({ type: "CLOSE_EDITOR" });
-    const saveProduct = () => sendToEditor({ type: "SAVE_RECORD", shouldClose: !1 });
-    const saveProductAndClose = () => sendToEditor({ type: "SAVE_RECORD", shouldClose: !0 });
-
-    const validateForm = _ => {
-        if (editForm === undefined) setValid(0);
-        const fnSetValid = isValid => () => setValid(isValid);
-        editForm.validateFields().then(fnSetValid(1)).catch(fnSetValid(0));
-    };
-
+export const ProductEdit = ({ product, onClose }) => {
     return (
         <Modal
             title={product.id ? `Edit ${product.name}` : "Enter Product Info"}
             visible={true}
-            onCancel={cancelEdit}
+            onCancel={onClose}
             footer={[
-                <Button type="primary" onClick={saveProduct} key="btnSave" disabled={!canSave()}>Save</Button>,
-                <Button type="primary" onClick={saveProductAndClose} key="btnSaveClose" disabled={!canSave()}>Save & Close</Button>
+                <Button type="primary" color="blue" key="btnSave" onClick={() => console.log("saving")}>Save</Button>,
+                <Button type="primary" color="red" key="btnClose" onClick={onClose}>Close</Button>
             ]}
         >
-            <Form
-                initialValues={product}
-                onValuesChange={() => startEdit() & validateForm()}
-                validateTrigger={""}
-                form={editForm}
-            >
-                <Form.Item label="Name" name="name" rules={[
-                    { required: true }
-                ]}>
+            <Form initialValues={product}>
+                <Form.Item label="Name" name="name">
                     <Input />
                 </Form.Item>
-                <Form.Item label="Category" name="category" rules={[
-                    { required: true, type: "email" }
-                ]}>
+                <Form.Item label="Category" name="category">
                     <Input />
                 </Form.Item>
             </Form>
