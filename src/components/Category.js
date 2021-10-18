@@ -3,7 +3,7 @@ import useSWR from "swr";
 
 export const Category = props => {
     const { data: categories, error } = useSWR(
-        "https://localhost:5001/category",
+        "http://localhost:5000/category",
         (...args) => fetch(...args).then(res => res.json())
     );
 
