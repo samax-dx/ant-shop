@@ -1,0 +1,10 @@
+[
+    { "id": 1, "name": "Novatel Limited (IOS)", "type": "IOS", "accounts": [{ "id": 11, "name": "Internatinoal Incomming", "amount": -18030, "UOM": "USD" }] },
+    { "id": 2, "name": "Mir Telecom Limited (IOS)", "type": "IOS", "accounts": [{ "id": 21, "name": "Internatinoal Incomming", "amount": -26500, "UOM": "USD" }] },
+    { "id": 3, "name": "Unique Infoway Limited (IOS)", "type": "IOS", "accounts": [{ "id": 31, "name": "Internatinoal Incomming", "amount": -16940, "UOM": "USD" }] },
+    { "id": 4, "name": "Bangla Trac Communication Limited (IOS)", "type": "IOS", "accounts": [{ "id": 41, "name": "Internatinoal Incomming", "amount": -27805, "UOM": "USD" }] },
+    { "id": 5, "name": "Global Voice Telecom Limited (IOS)", "type": "IOS", "accounts": [{ "id": 51, "name": "Internatinoal Incomming", "amount": -21040, "UOM": "USD" }] },
+    { "id": 6, "name": "GrameenPhone Ltd", "type": "ANS", "accounts": [{ "id": 61, "name": "Domestic", "amount": -110050, "UOM": "BDT" }, { "id": 62, "name": "Internatinoal Outgoing", "amount": -210050, "UOM": "BDT" }] },
+    { "id": 7, "name": "Airtel", "type": "ANS", "accounts": [{ "id": 71, "name": "Domestic", "amount": -1500050, "UOM": "BDT" }, { "id": 72, "name": "Internatinoal Outgoing", "amount": -125600, "UOM": "BDT" }] },
+    { "id": 8, "name": "ADN Telecom Ltd", "type": "ANS", "accounts": [{ "id": 81, "name": "Domestic", "amount": -1087050, "UOM": "BDT" }, { "id": 82, "name": "Internatinoal Outgoing", "amount": -1300200, "UOM": "BDT" }] }
+]
