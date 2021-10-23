@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { Table, Button } from "antd";
+import { Table, Button, Space } from "antd";
 
 import products from './products.json';
 import { ProductEdit } from "./ProductEdit";
 
 
 export const Product = props => {
-    const [isEditing, setEditing] = useState(false);
-    const [isAdding, setAdding] = useState(false);
+    const [editing, setEditing] = useState(null);
 
     return (<>
         <Table
@@ -15,22 +14,21 @@ export const Product = props => {
             rowKey="id"
             pagination={{ pageSize: 3 }}
             size="small"
-            footer={() => ([
-                <>
-                    <Button onClick={_ => setAdding(true)} type="primary" key="btnAddRow">Add Product</Button>
-                    {isAdding && <ProductEdit product={{}} onClose={() => setAdding(false)} />}
-                </>
-            ])}
         >
-            <Table.Column title="Product" dataIndex="name" />
-            <Table.Column title="Category" dataIndex="category" />
-            <Table.Column title="Actions" render={(_, product, i) => {
+            <Table.Column dataIndex="name" title={() => {
+                return (<Space>
+                    Product 
+                    <Button onClick={_ => setEditing({})} type="link" size="small" style={{ border: "1px dashed", padding: "0 5px", borderRadius: "2px", verticalAlign: "middle" }}>Add</Button>
+                </Space>);
+            }} />
+            <Table.Column dataIndex="category" title={() => "Category"} />
+            <Table.Column dataIndex={undefined} title={() => "Actions"} render={(_, product, i) => {
                 return (<>
-                    <Button onClick={() => setEditing(true)} type="link">Edit</Button>
-                    {isEditing && <ProductEdit product={product} onClose={() => setEditing(false)} />}
+                    <Button onClick={() => setEditing(product)} type="link">Edit</Button>
                     <Button onClick={_ => console.log("delete product")} type="link">Delete</Button>
                 </>);
             }} />
         </Table>
+        {editing && <ProductEdit product={editing} onClose={() => setEditing(null)} />}
     </>);
 };
