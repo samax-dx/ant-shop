@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { Table, Button, Space } from "antd";
 
-import { menuMachine } from "../machines/menuMachine";
-import { ProductEdit } from "./ProductEdit";
-import { useActor } from "@xstate/react";
+import reateplans from './rateplans.json';
+import { RateplanEdit } from "./RateplanEdit";
 
 
-export const Product = props => {
-    const [current, send] = useActor(menuMachine.state.context.actor);
+export const Rateplan = props => {
     const [editing, setEditing] = useState(null);
 
     return (<>
         <Table
-            dataSource={current.context.data || []}
+            dataSource={reateplans}
             rowKey="id"
             pagination={{ pageSize: 3 }}
             size="small"
@@ -31,6 +29,6 @@ export const Product = props => {
                 </>);
             }} />
         </Table>
-        {editing && <ProductEdit product={editing} onClose={() => setEditing(null)} />}
+        {editing && <RateplanEdit rateplan={editing} onClose={() => setEditing(null)} />}
     </>);
 };

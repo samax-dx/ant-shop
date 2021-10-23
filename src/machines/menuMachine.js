@@ -1,4 +1,5 @@
-import { createMachine, interpret } from "xstate";
+import { assign, createMachine, interpret, spawn } from "xstate";
+import { ProductMachine } from "./ProductMachine";
 
 // export const MenuMachine = createMachine({
 //     context: {
@@ -20,6 +21,9 @@ import { createMachine, interpret } from "xstate";
 // });
 
 const MenuMachine = createMachine({
+    context: {
+        actor: null
+    },
     states: {
         home: {},
         product: {},
@@ -28,11 +32,17 @@ const MenuMachine = createMachine({
     },
     on: {
         "NAV_HOME": { target: "home" },
-        "NAV_PRODUCT": { target: "product" },
+        "NAV_PRODUCT": { target: "product", actions: ["assignProductActor"] },
         "NAV_CATEGORY": { target: "category" },
         "NAV_PARTNER": { target: "partner" },
     },
     initial: "home"
+}, {
+    actions: {
+        assignProductActor: assign((ctx, ev) => ({
+            actor: spawn(ProductMachine)
+        }))
+    }
 });
 
 const menuMachine = interpret(MenuMachine);
