@@ -18,7 +18,7 @@ export const Product = props => {
             <Table.Column dataIndex="name" title={() => {
                 return (<Space>
                     Product 
-                    <Button onClick={_ => setEditing({})} type="link" size="small" style={{ border: "1px dashed", padding: "0 5px", borderRadius: "2px", verticalAlign: "middle" }}>Add</Button>
+                    <Button onClick={_ => setEditing({})} type="primary" size="small" style={{ verticalAlign: "middle", border: "none", borderRadius: "3px" }}>Add</Button>
                 </Space>);
             }} />
             <Table.Column dataIndex="category" title={() => "Category"} />
