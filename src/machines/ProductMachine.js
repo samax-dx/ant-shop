@@ -23,31 +23,13 @@ export const ProductMachine = createMachine({
         hasError: {}
     },
     on: {
-        "LOAD": {
-            target: "loading",
-            actions: assign({
-                query: (ctx, ev) => {
-                    const ev_data = typeof ev.data === "object" ? ev.data : {};
-
-                    const restActions = {
-                        idEquals: id => `${id}`,
-                        productNameContains: n => `productNameContains/${n}`,
-                    };
-
-                    const params = Object.keys(ev_data).map(
-                        k => restActions[k] && restActions[k](ev_data[k])
-                    );
-
-                    return params.length ? `/${params.join("/")}` : "";
-                }
-            })
-        }
+        "LOAD": { target: "loading" }
     },
     initial: "noQuery"
 }, {
     services: {
         runQuery: async (ctx, ev) => {
-            return await products;//axios.get(`http://localhost:5000/category${ctx.query}`);
+            return await products;
         }
     },
     actions: {
