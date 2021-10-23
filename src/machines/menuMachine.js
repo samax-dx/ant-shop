@@ -23,12 +23,14 @@ const MenuMachine = createMachine({
     states: {
         home: {},
         product: {},
-        category: {}
+        category: {},
+        partner: {},
     },
     on: {
         "NAV_HOME": { target: "home" },
         "NAV_PRODUCT": { target: "product" },
-        "NAV_CATEGORY": { target: "category" }
+        "NAV_CATEGORY": { target: "category" },
+        "NAV_PARTNER": { target: "partner" },
     },
     initial: "home"
 });

@@ -16,7 +16,7 @@ import './App.less';
 function App() {
     const [current, send] = useActor(menuMachine);
 
-    const componentToRender = { Home, Product: Partner, Category }[capitalize(current.value)];
+    const componentToRender = { Home, Product, Partner, Category }[capitalize(current.value)];
 
     return (
         <PageLayout render={componentToRender} />
