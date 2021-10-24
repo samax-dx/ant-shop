@@ -1,5 +1,5 @@
 import { assign, createMachine, send } from "xstate";
-import products from "../components/products.json";
+import products from "../dummy-ds/products.json";
 
 export const ProductMachine = createMachine({
     id: "smProductMachine",

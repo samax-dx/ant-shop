@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Table, Button, Space } from "antd";
 
-import reateplans from './rateplans.json';
+import reateplans from '../dummy-ds/rateplans.json';
 import { RateplanEdit } from "./RateplanEdit";
 
 

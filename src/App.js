@@ -1,6 +1,6 @@
-import React from 'react';
+import './App.less';
 
-import PageLayout from "./Page";
+import { PageLayout } from "./components/PageLayout";
 import { Home } from './components/Home';
 import { Product } from './components/Product';
 import { Partner } from './components/Partner';
@@ -11,16 +11,13 @@ import { menuMachine } from './machines/menuMachine';
 
 import { capitalize } from "./util"
 
-import './App.less';
 
-function App() {
+const App = () => {
     const [current, send] = useActor(menuMachine);
-
-    const componentToRender = { Home, Product, Partner, Category }[capitalize(current.value)];
+    const component = capitalize(current.value);
 
     return (
-        <PageLayout render={componentToRender} />
+        <PageLayout render={{ Home, Product, Partner, Category }[component]} />
     );
-}
-
+};
 export default App;

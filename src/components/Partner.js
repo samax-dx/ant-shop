@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Table, Button, Select, Input, Space } from "antd";
 
-import partners from './partners.json';
+import partners from '../dummy-ds/partners.json';
 import { PartnerEdit } from "./PartnerEdit";
 
 

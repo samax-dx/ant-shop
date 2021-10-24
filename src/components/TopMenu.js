@@ -1,7 +1,6 @@
 import { Menu } from "antd";
-import React from "react";
 import { useActor } from '@xstate/react';
-import { menuMachine } from './machines/menuMachine';
+import { menuMachine } from '../machines/menuMachine';
 
 export function TopMenu(props) {
     const [current, send] = useActor(menuMachine);
