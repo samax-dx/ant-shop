@@ -9,7 +9,6 @@ import { useActor } from "@xstate/react";
 export const Product = props => {
     const [current, send] = useActor(menuMachine.state.context.actor);
     const [editing, setEditing] = useState(null);
-
     return (<>
         <Table
             dataSource={current.context.data || []}
