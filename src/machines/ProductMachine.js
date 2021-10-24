@@ -29,7 +29,8 @@ export const ProductMachine = createMachine({
 }, {
     services: {
         runQuery: async (ctx, ev) => {
-            return await products;
+            const response = await fetch("http://localhost:5000/product");
+            return await response.json();
         }
     },
     actions: {
