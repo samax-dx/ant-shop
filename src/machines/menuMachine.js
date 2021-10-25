@@ -29,12 +29,14 @@ const MenuMachine = createMachine({
         product: {},
         category: {},
         partner: {},
+        rateplan: {},
     },
     on: {
         "NAV_HOME": { target: "home" },
         "NAV_PRODUCT": { target: "product", actions: ["assignProductActor"] },
         "NAV_CATEGORY": { target: "category" },
         "NAV_PARTNER": { target: "partner" },
+        "NAV_RATEPLAN": { target: "rateplan" },
     },
     initial: "home"
 }, {

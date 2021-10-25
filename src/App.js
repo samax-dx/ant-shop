@@ -1,10 +1,11 @@
 import './App.less';
 
-import { PageLayout } from "./components/PageLayout";
+import { AppLayout } from "./components/AppLayout";
 import { Home } from './components/Home';
 import { Product } from './components/Product';
 import { Partner } from './components/Partner';
 import { Category } from './components/Category';
+import { Rateplan } from './components/Rateplan'
 
 import { useActor } from '@xstate/react';
 import { menuMachine } from './machines/menuMachine';
@@ -17,7 +18,7 @@ const App = () => {
     const component = capitalize(current.value);
 
     return (
-        <PageLayout render={{ Home, Product, Partner, Category }[component]} />
+        <AppLayout render={{ Home, Product, Category, Partner, Rateplan }[component]} />
     );
 };
 export default App;

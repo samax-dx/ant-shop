@@ -41,7 +41,7 @@ export const Partner = props => {
             <Table.Column dataIndex="id" title="Partner ID" />
             <Table.Column dataIndex="name" title="Partner Name" />
             <Table.Column dataIndex="type" title="Partner Type" />
-            <Table.Column dataIndex="account_name" title="Account Name" render={(_, data, __) => data.account_name.map(name => <div>{name}</div>)} />
+            <Table.Column dataIndex="account_name" key="account_name" title="Account Name" render={(_, data, __) => data.account_name.map(name => <div>{name}</div>)} />
             <Table.Column dataIndex="account_amount" title="Amount" render={(_, data, __) => data.account_amount.map(amount => <div>{amount}</div>)} />
             <Table.Column dataIndex="account_uom" title="UOM" render={(_, data, __) => data.account_uom.map(uom => <div>{uom}</div>)} />
             <Table.Column dataIndex={undefined} title={() => "Actions"} render={(_, data, i) => {

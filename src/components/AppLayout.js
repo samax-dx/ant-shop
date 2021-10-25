@@ -7,7 +7,7 @@ import { MainMenu } from './MainMenu';
 const { Header, Sider } = Layout;
 
 
-export const PageLayout = ({ render: PageContent }) => {
+export const AppLayout = ({ render: PageContent }) => {
     return <Layout>
         <Header className="header">
             <Row>
