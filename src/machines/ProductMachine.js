@@ -2,12 +2,7 @@ import { assign, createMachine, send } from "xstate";
 import products from "../dummy-ds/products.json";
 
 export const ProductMachine = createMachine({
-    id: "smProductMachine",
-    context: {
-        data: null,
-        error: null,
-        query: null,
-    },
+    initial: "noQuery",
     states: {
         noQuery: {
             on: {
@@ -28,7 +23,12 @@ export const ProductMachine = createMachine({
         hasResult: {},
         hasError: {}
     },
-    initial: "noQuery"
+    context: {
+        data: null,
+        error: null,
+        query: null,
+    },
+    id: "smProductMachine",
 }, {
     services: {
         runQuery: async (ctx, ev) => {
