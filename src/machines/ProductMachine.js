@@ -6,12 +6,17 @@ export const ProductMachine = createMachine({
     context: {
         data: null,
         error: null,
+        query: null,
     },
     states: {
         noQuery: {
+            on: {
+                "SET_QUERY": { target: "hasQuery", actions: ["assignQuery"] }
+            }
+        },
+        hasQuery: {
             entry: send({ type: "LOAD" })
         },
-        hasQuery: {},
         loading: {
             invoke: {
                 src: "runQuery",
@@ -35,13 +40,14 @@ export const ProductMachine = createMachine({
                     'Content-Type': 'application/json',
                     "Accept": "application/json"
                 },
-                body: JSON.stringify({ id: 2 })
+                body: JSON.stringify(ctx.query)
             });
             const product = await response.json();
             return [product];
         }
     },
     actions: {
+        assignQuery: assign((ctx, ev) => ({ query: { id: +ev.data } })),
         setResult: assign((ctx, ev) => ({ data: ev.data })),
         setError: assign((ctx, ev) => ({ error: ev.data })),
     }

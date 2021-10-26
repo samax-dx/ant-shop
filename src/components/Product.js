@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Table, Button, Space } from "antd";
+import { Table, Button, Space, Input } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 
 import { menuMachine } from "../machines/menuMachine";
 import { ProductEdit } from "./ProductEdit";
@@ -9,7 +10,11 @@ import { useActor } from "@xstate/react";
 export const Product = props => {
     const [current, send] = useActor(menuMachine.state.context.actor);
     const [editing, setEditing] = useState(null);
+
     return (<>
+        <Space>
+            <Input.Search addonBefore="Product ID" onChange={(...args) => console.log(...args)} onSearch={data => send({ type: "SET_QUERY", data })} style={{ margin: "15px 0"}} enterButton />
+        </Space>
         <Table
             dataSource={current.context.data || []}
             rowKey="id"
