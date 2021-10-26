@@ -11,11 +11,12 @@ export const ProductMachine = createMachine({
     states: {
         noQuery: {
             on: {
-                "SET_QUERY": { target: "hasQuery", actions: ["assignQuery"] }
+                "LOAD": { target: "loading", actions: ["assignQuery"] },
+                "SET_QUERY": { target: "hasQuery" }
             }
         },
         hasQuery: {
-            entry: send({ type: "LOAD" })
+            entry: _ => console.log("hasQuery")
         },
         loading: {
             invoke: {
@@ -26,9 +27,6 @@ export const ProductMachine = createMachine({
         },
         hasResult: {},
         hasError: {}
-    },
-    on: {
-        "LOAD": { target: "loading" }
     },
     initial: "noQuery"
 }, {

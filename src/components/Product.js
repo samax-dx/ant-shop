@@ -13,7 +13,7 @@ export const Product = props => {
 
     return (<>
         <Space>
-            <Input.Search addonBefore="Product ID" onChange={(...args) => console.log(...args)} onSearch={data => send({ type: "SET_QUERY", data })} style={{ margin: "15px 0"}} enterButton />
+            <Input.Search addonBefore="Product ID" onSearch={data => send({ type: "LOAD", data })} style={{ margin: "15px 0"}} enterButton />
         </Space>
         <Table
             dataSource={current.context.data || []}
