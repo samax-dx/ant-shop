@@ -1,10 +1,8 @@
-import { createMachine, send } from "xstate";
+import { assign, createMachine } from "xstate";
 
 
 export const EditorModalMachine = createMachine({
-    context: {
-        record: {},
-    },
+    initial: "saved",
     states: {
         hasValidChanges: {
             on: {
@@ -26,47 +24,33 @@ export const EditorModalMachine = createMachine({
             }
         },
         saving: {
-            invoke: {
-                id: "svcSaveRecord",
-                src: (ctx, ev) => (_, onEvent) => {
-                    ctx._exitState = "saved";
-
-                    onEvent(({ type, isValid, targetReceiver: receive }) => {
-                        if (type === "EDIT_RECORD") {
-                            ctx._exitState = isValid ? "valid" : "invalid";
-                            return;
-                        }
-
-                        if (type === "REQUEST_TARGET") {
-                            if (typeof receive === "function") {
-                                receive(ctx._exitState)
-                            }
-                            return;
-                        }
-                    });
-                }
-            },
             on: {
-                "EDIT_RECORD": { actions: "sendToSaveRecord" },
-                "REQUEST_TARGET": { actions: "sendToSaveRecord" },
-                "END_SAVE": [
-                    { target: "saved", cond: (_, ev) => ev.t === "saved" },
-                    { target: "hasValidChanges", cond: (_, ev) => ev.t === "hasValidChanges" },
-                    { target: "hasInvalidChanges", cond: (_, ev) => ev.t === "hasInvalidChanges" },
-                ],
-                // "END_SAVE": [
-                //     "saved", "hasValidChanges", "hasInvalidChanges"
-                // ].map(t => ({ target: t, cond: (_, ev) => ev.nextState === t }))
+                "SAVE_SUCCESS": { target: "doneSaving", actions: ["assignSuccessNext"] },
+                "SAVE_FAILURE": { target: "doneSaving", actions: ["assignFailureNext"] },
+                "EDIT_RECORD": { actions: ["assignChangedNext"] },
             }
+        },
+        doneSaving: {
+            always: [
+                { target: "saved", cond: (ctx, _) => ctx._nextState === "saved" },
+                { target: "hasValidChanges", cond: (ctx, _) => ctx._nextState === "hasValidChanges" },
+                { target: "hasInvalidChanges", cond: (ctx, _) => ctx._nextState === "hasInvalidChanges" },
+            ],
+            exit: assign({ _nextState: null }),
         }
     },
-    initial: "saved"
+    context: {
+        record: {},
+        _nextState: null,
+    },
 }, {
     actions: {
-        sendToSaveRecord: send((_, ev) => ({ ...ev }), { to: "svcSaveRecord" })
+        assignSuccessNext: assign((ctx, _) => ({ _nextState: ctx._nextState || "saved" })),
+        assignFailureNext: assign((ctx, _) => ({ _nextState: ctx._nextState || "hasValidChanges" })),
+        assignChangedNext: assign({ _nextState: (_, ev) => ev.isValid ? "hasValidChanges" : "hasInvalidChanges" }),
     },
     guards: {
         changesAreValid: (ctx, ev) => ev.isValid,
-        changesAreInvalid: (ctx, ev) => !ev.isValid
+        changesAreInvalid: (ctx, ev) => !ev.isValid,
     }
 });

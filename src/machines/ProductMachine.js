@@ -24,7 +24,7 @@ export const ProductMachine = createMachine({
         hasError: {}
     },
     context: {
-        data: null,
+        data: [],
         error: null,
         query: null,
     },
