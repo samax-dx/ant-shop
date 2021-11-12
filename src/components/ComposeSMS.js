@@ -1,45 +1,48 @@
 import { Button, Card, Form, Input, Space, Select, Tag, Tooltip, Checkbox } from "antd";
 import { FileDoneOutlined, FileTextOutlined } from "@ant-design/icons";
 import { countries } from "countries-list";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import sms_api_cred from "../sms_api_cred.json";
 
 export const ComposeSMS = props => {
-    const [smsData, setSmsData] = useState({
-        campaingName: null,
-        senderId: null,
-        contacts: "adfei",
-        autoCountryCode: null,
-        message: "Msg",
-        isUnicode: true,
-        isFlash: false,
-    });
+    const [form] = Form.useForm();
 
-    const sendSMS = () => { };
+    const toRequest = req => {
+        req = Object.assign({
+            senderId: null,
+            isUnicode: true,
+            isFlash: false,
+            schedTime: null,
+            groupId: null,
+            message: null,
+            contacts: null,
+            serviceId: null,
+            coRelator: null,
+            linkId: null,
+            principleEntityId: null,
+            templateId: null,
+            apiKey: sms_api_cred.apiKey,
+            clientId: sms_api_cred.clientId,
+        }, req);
 
-    const toRequest = (req = {
-        senderId: null,
-        isUnicode: true,
-        isFlash: false,
-        schedTime: null,
-        groupId: null,
-        message: null,
-        mobileNumbers: null,
-        serviceId: null,
-        coRelator: null,
-        linkId: null,
-        principleEntityId: null,
-        templateId: null,
-        apiKey: sms_api_cred.apiKey,
-        clientId: sms_api_cred.clientId,
-    }) => {
+        const defaultFilter = v => v;
+        const contactsFilter = v => v && v.trim().replace(/[+\ \r]/gm, "");
+
         [
-            ["isUnicode", "is_Unicode"],
-            ["isFlash", "is_Flash"],
+            ["isUnicode", "Is_Unicode"],
+            ["isFlash", "Is_Flash"],
+            ["contacts", "MobileNumbers", contactsFilter],
+            ["senderId", "SenderId"],
+            ["apiKey", "ApiKey"],
+            ["clientId", "ClientId"]
         ].forEach(item => {
-            req[item[1]] = req[item[0]];
-            delete req[item[0]];
+            const srcKey = item[0];
+            const dstKey = item[1];
+            const valueFilter = item[2] || defaultFilter;
+
+            req[dstKey] = valueFilter(req[srcKey]);
+            delete req[srcKey];
         });
 
         return req;
@@ -48,14 +51,42 @@ export const ComposeSMS = props => {
     const toResponse = (res = {
         errorCode: 0,
         errorDescription: null,
-        data: ""
+        data: null
     }) => res;
+
+    const sendSMS = async () => {
+        const url = "http://sms.brilliant.com.bd:6005/api/v2/SendSMS";
+        const payload = toRequest(form.getFieldsValue());
+console.log(JSON.stringify(payload));
+        const response = await fetch(url, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                'Content-Type': 'application/json',
+                "Accept": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+            },
+            body: JSON.stringify(payload)
+        });
+
+        console.log(toResponse(response));
+    };
 
     return (<>
         <Space><br /></Space>
         <Card style={{ maxWidth: "40vw" }}>
             <Form
-                initialValues={smsData}
+                form={form}
+                initialValues={{
+                    campaingName: null,
+                    senderId: "8809638010035",
+                    contacts: "",
+                    autoCountryCode: null,
+                    message: "",
+                    isUnicode: true,
+                    isFlash: false,
+                }}
                 layout="vertical"
             >
                 <Form.Item
