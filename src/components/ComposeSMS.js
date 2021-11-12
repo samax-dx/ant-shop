@@ -3,18 +3,53 @@ import { FileDoneOutlined, FileTextOutlined } from "@ant-design/icons";
 import { countries } from "countries-list";
 import { useState } from "react";
 
+import sms_api_cred from "../../sms_api_cred.json";
+
 export const ComposeSMS = props => {
     const [smsData, setSmsData] = useState({
-        campaingName: undefined,
-        senderId: undefined,
+        campaingName: null,
+        senderId: null,
         contacts: "adfei",
-        autoCountryCode: undefined,
+        autoCountryCode: null,
         message: "Msg",
         isUnicode: true,
         isFlash: false,
     });
 
     const sendSMS = () => { };
+
+    const toRequest = (req = {
+        senderId = null,
+        isUnicode = true,
+        isFlash = false,
+        schedTime = null,
+        groupId = null,
+        message = null,
+        mobileNumbers = null,
+        serviceId = null,
+        coRelator = null,
+        linkId = null,
+        principleEntityId = null,
+        templateId = null,
+        apiKey = sms_api_cred.apiKey,
+        clientId = sms_api_cred.clientId,
+    }) => {
+        [
+            ["isUnicode", "is_Unicode"],
+            ["isFlash", "is_Flash"],
+        ].forEach(item => {
+            req[item[1]] = req[item[0]];
+            delete req[item[0]];
+        });
+
+        return req;
+    };
+
+    const toResponse = (res = {
+        errorCode = 0,
+        errorDescription = null,
+        data = ""
+    }) => res;
 
     return (<>
         <Space><br /></Space>
@@ -41,7 +76,7 @@ export const ComposeSMS = props => {
                             <Input.TextArea />
                         </Form.Item>
                         <Space style={{ width: "100%", justifyContent: "space-between" }}>
-                            <Form.Item name="autoCountryCode" style={{margin: 0}}>
+                            <Form.Item name="autoCountryCode" style={{ margin: 0 }}>
                                 <Select
                                     showSearch
                                     style={{ width: 200 }}
