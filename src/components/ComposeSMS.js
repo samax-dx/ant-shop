@@ -3,7 +3,7 @@ import { FileDoneOutlined, FileTextOutlined } from "@ant-design/icons";
 import { countries } from "countries-list";
 import { useState } from "react";
 
-import sms_api_cred from "../../sms_api_cred.json";
+import sms_api_cred from "../sms_api_cred.json";
 
 export const ComposeSMS = props => {
     const [smsData, setSmsData] = useState({
@@ -19,20 +19,20 @@ export const ComposeSMS = props => {
     const sendSMS = () => { };
 
     const toRequest = (req = {
-        senderId = null,
-        isUnicode = true,
-        isFlash = false,
-        schedTime = null,
-        groupId = null,
-        message = null,
-        mobileNumbers = null,
-        serviceId = null,
-        coRelator = null,
-        linkId = null,
-        principleEntityId = null,
-        templateId = null,
-        apiKey = sms_api_cred.apiKey,
-        clientId = sms_api_cred.clientId,
+        senderId: null,
+        isUnicode: true,
+        isFlash: false,
+        schedTime: null,
+        groupId: null,
+        message: null,
+        mobileNumbers: null,
+        serviceId: null,
+        coRelator: null,
+        linkId: null,
+        principleEntityId: null,
+        templateId: null,
+        apiKey: sms_api_cred.apiKey,
+        clientId: sms_api_cred.clientId,
     }) => {
         [
             ["isUnicode", "is_Unicode"],
@@ -46,9 +46,9 @@ export const ComposeSMS = props => {
     };
 
     const toResponse = (res = {
-        errorCode = 0,
-        errorDescription = null,
-        data = ""
+        errorCode: 0,
+        errorDescription: null,
+        data: ""
     }) => res;
 
     return (<>
