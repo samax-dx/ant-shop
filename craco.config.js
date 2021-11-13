@@ -10,7 +10,7 @@ module.exports = {
     // },
     // mode: 'development',
     // devServer: {
-    //     proxy: { "/api/**": { target: 'http://sms.brilliant.com.bd:6005', secure: false }  }
+    //     proxy: { "/api": "http://sms.brilliant.com.bd:6005" }
     // },
     plugins: [
         {

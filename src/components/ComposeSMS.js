@@ -1,9 +1,6 @@
 import { Button, Card, Form, Input, Space, Select, Tag, Tooltip, Checkbox } from "antd";
 import { FileDoneOutlined, FileTextOutlined } from "@ant-design/icons";
 import { countries } from "countries-list";
-import { useEffect, useState } from "react";
-
-import sms_api_cred from "../sms_api_cred.json";
 
 export const ComposeSMS = props => {
     const [form] = Form.useForm();
@@ -22,8 +19,6 @@ export const ComposeSMS = props => {
             linkId: null,
             principleEntityId: null,
             templateId: null,
-            apiKey: sms_api_cred.apiKey,
-            clientId: sms_api_cred.clientId,
         }, req);
 
         const defaultFilter = v => v;
@@ -34,8 +29,6 @@ export const ComposeSMS = props => {
             ["isFlash", "Is_Flash"],
             ["contacts", "MobileNumbers", contactsFilter],
             ["senderId", "SenderId"],
-            ["apiKey", "ApiKey"],
-            ["clientId", "ClientId"]
         ].forEach(item => {
             const srcKey = item[0];
             const dstKey = item[1];
@@ -57,20 +50,17 @@ export const ComposeSMS = props => {
     const sendSMS = async () => {
         const url = "http://sms.brilliant.com.bd:6005/api/v2/SendSMS";
         const payload = toRequest(form.getFieldsValue());
-console.log(JSON.stringify(payload));
-        const response = await fetch(url, {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                'Content-Type': 'application/json',
-                "Accept": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-            },
-            body: JSON.stringify(payload)
-        });
+console.log(window.btoa(JSON.stringify(payload)));
+        // const response = await fetch(url, {
+        //     method: "POST",
+        //     mode: "cors",
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     body: JSON.stringify(payload)
+        // });
 
-        console.log(toResponse(response));
+        // console.log(toResponse(response));
     };
 
     return (<>
