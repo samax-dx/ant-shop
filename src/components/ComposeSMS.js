@@ -1,66 +1,26 @@
-import { Button, Card, Form, Input, Space, Select, Tag, Tooltip, Checkbox } from "antd";
+import { Button, Card, Form, Input, Space, Select, Tag, Tooltip, Checkbox, Modal } from "antd";
 import { FileDoneOutlined, FileTextOutlined } from "@ant-design/icons";
 import { countries } from "countries-list";
+
 
 export const ComposeSMS = props => {
     const [form] = Form.useForm();
 
-    const toRequest = req => {
-        req = Object.assign({
-            senderId: null,
-            isUnicode: true,
-            isFlash: false,
-            schedTime: null,
-            groupId: null,
-            message: null,
-            contacts: null,
-            serviceId: null,
-            coRelator: null,
-            linkId: null,
-            principleEntityId: null,
-            templateId: null,
-        }, req);
+    const sendSMS = async () => {
+        const url = "http://localhost:5000/SmsTask/SendSMS";
+        const payload = form.getFieldsValue();
 
-        const defaultFilter = v => v;
-        const contactsFilter = v => v && v.trim().replace(/[+\ \r]/gm, "");
-
-        [
-            ["isUnicode", "Is_Unicode"],
-            ["isFlash", "Is_Flash"],
-            ["contacts", "MobileNumbers", contactsFilter],
-            ["senderId", "SenderId"],
-        ].forEach(item => {
-            const srcKey = item[0];
-            const dstKey = item[1];
-            const valueFilter = item[2] || defaultFilter;
-
-            req[dstKey] = valueFilter(req[srcKey]);
-            delete req[srcKey];
+        const response = await fetch(url, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
         });
 
-        return req;
-    };
-
-    const toResponse = (res = {
-        errorCode: 0,
-        errorDescription: null,
-        data: null
-    }) => res;
-
-    const sendSMS = async () => {
-        const url = "http://sms.brilliant.com.bd:6005/api/v2/SendSMS";
-        const payload = toRequest(form.getFieldsValue());
-console.log(window.btoa(JSON.stringify(payload)));
-        // const response = await fetch(url, {
-        //     method: "POST",
-        //     mode: "cors",
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     },
-        //     body: JSON.stringify(payload)
-        // });
-
-        // console.log(toResponse(response));
+        alert(await response.json());
     };
 
     return (<>
@@ -69,31 +29,31 @@ console.log(window.btoa(JSON.stringify(payload)));
             <Form
                 form={form}
                 initialValues={{
-                    campaingName: null,
-                    senderId: "8809638010035",
-                    contacts: "",
+                    CampaingName: null,
+                    SenderId: "8809638010035",
+                    MobileNumbers: "",
                     autoCountryCode: null,
-                    message: "",
-                    isUnicode: true,
-                    isFlash: false,
+                    Message: "",
+                    Is_Unicode: true,
+                    Is_Flash: false,
                 }}
                 layout="vertical"
             >
                 <Form.Item
                     label="Campaing Name"
-                    name="campaingName"
+                    name="CampaingName"
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
                     label="Sender ID"
-                    name="senderId"
+                    name="SenderId"
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item label="Contacts">
                     <Space direction="vertical" style={{ width: "100%" }}>
-                        <Form.Item name="contacts" style={{ margin: 0 }}>
+                        <Form.Item name="MobileNumbers" style={{ margin: 0 }}>
                             <Input.TextArea />
                         </Form.Item>
                         <Space style={{ width: "100%", justifyContent: "space-between" }}>
@@ -134,15 +94,15 @@ console.log(window.btoa(JSON.stringify(payload)));
                                 <Tooltip title="Import Template"><Button shape="circle" icon={<FileDoneOutlined />} /></Tooltip>
                             </Space>
                             <Space>
-                                <Form.Item name="isUnicode" valuePropName="checked" style={{ margin: 0 }}>
+                                <Form.Item name="Is_Unicode" valuePropName="checked" style={{ margin: 0 }}>
                                     <Checkbox><Tooltip title="using unicode charecters">Unicode</Tooltip></Checkbox>
                                 </Form.Item>
-                                <Form.Item name="isFlash" valuePropName="checked" style={{ margin: 0 }}>
+                                <Form.Item name="Is_Flash" valuePropName="checked" style={{ margin: 0 }}>
                                     <Checkbox><Tooltip title="is a flash sms">Flash</Tooltip></Checkbox>
                                 </Form.Item>
                             </Space>
                         </Space>
-                        <Form.Item name="message" style={{ margin: 0 }}>
+                        <Form.Item name="Message" style={{ margin: 0 }}>
                             <Input.TextArea />
                         </Form.Item>
                         <span>Used: 0 | Left: 1224 | SMS Count: 0</span>
@@ -157,3 +117,59 @@ console.log(window.btoa(JSON.stringify(payload)));
         </Card>
     </>)
 };
+
+// const toSmsFormData = data => {
+//     data["MobileNumbers"] = data["MobileNumbers"].join("\n");
+//     return data;
+// };
+
+// const toSmsPostData = data => {
+//     data["MobileNumbers"] = data["MobileNumbers"].split(/\r?\n/g);
+//     return data;
+// };
+
+// const toRequest = req => {
+//     req = Object.assign({
+//         senderId: null,
+//         isUnicode: true,
+//         isFlash: false,
+//         schedTime: null,
+//         groupId: null,
+//         Message: null,
+//         contacts: null,
+//         serviceId: null,
+//         coRelator: null,
+//         linkId: null,
+//         principleEntityId: null,
+//         templateId: null,
+//     }, req);
+
+//     const defaultFilter = v => v;
+//     const contactsFilter = v => v && v.trim().replace(/[+\ \r]/gm, "");
+
+//     [
+//         ["isUnicode", "Is_Unicode"],
+//         ["isFlash", "Is_Flash"],
+//         ["contacts", "MobileNumbers", contactsFilter],
+//         ["senderId", "SenderId"],
+//     ].forEach(item => {
+//         const srcKey = item[0];
+//         const dstKey = item[1];
+//         const valueFilter = item[2] || defaultFilter;
+
+//         req[dstKey] = valueFilter(req[srcKey]);
+//         delete req[srcKey];
+//     });
+
+//     Object.keys(req).forEach(k => {
+//         if (req[k] === null) delete req[k];
+//     });
+
+//     return req;
+// };
+
+// const toResponse = (res = {
+//     errorCode: 0,
+//     errorDescription: null,
+//     data: null
+// }) => res;
