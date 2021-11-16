@@ -11,7 +11,7 @@ export const AppLayout = ({ render: PageContent }) => {
     return <Layout>
         <Header className="header">
             <Row>
-                <Col xs={10} sm={4} className="logo">SMS Portal</Col>
+                <Col xs={10} sm={4} className="logo">SMS Gateway</Col>
                 <Col xs={14} sm={20}><TopMenu /></Col>
             </Row>
         </Header>
