@@ -30,6 +30,7 @@ const MenuMachine = createMachine({
         category: {},
         partner: {},
         rateplan: {},
+        party: {},
     },
     on: {
         "NAV_HOME": { target: "home" },
@@ -37,6 +38,7 @@ const MenuMachine = createMachine({
         "NAV_CATEGORY": { target: "category" },
         "NAV_PARTNER": { target: "partner" },
         "NAV_RATEPLAN": { target: "rateplan" },
+        "NAV_PARTY": { target: "party" },
     },
     initial: "home"
 }, {
