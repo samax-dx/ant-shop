@@ -1,4 +1,5 @@
-import { Space, Table } from "antd";
+import { Button, Input, Space, Table } from "antd";
+import { useState } from "react";
 import useSWR from "swr";
 
 export const Party = props => {
@@ -12,9 +13,13 @@ export const Party = props => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    method: "performFindParty",
+                    method: "performFind",
                     params: {
-                        firstName: "a"
+                        entityName: "PartyNameView",
+                        inputFields: {
+                            groupName: "a",
+                            groupName_op: "contains"
+                        }
                     }
                 })
             }).then(res => {
@@ -24,21 +29,46 @@ export const Party = props => {
     );
 
     const parties = data && data.result ? (data.result.listIt || []) : [];
+    const [editing, setEditing] = useState(null);
 
     return (<>
         <Space>
-            <br />
+            <Input.Search addonBefore="Party ID" onSearch={data => console.log("send", ({ type: "LOAD", data }))} style={{ margin: "15px 0" }} enterButton />
         </Space>
         <Table
             size="small"
             dataSource={parties}
             pagination={{ pageSize: 3 }}
             rowKey={"partyId"}
-            // locale={{ emptyText: error ? `[${error}]` : undefined }}
+            locale={{ emptyText: error ? `[${error}]` : undefined }}
         >
+            <Table.Column
+                dataIndex={undefined}
+                title={"#"}
+                render={(_, __, i) => i}
+            />
+
             <Table.Column title="Party ID" dataIndex={"partyId"} />
-            <Table.Column title="First Name" dataIndex={"firstName"} />
-            <Table.Column title="Last Name" dataIndex={"lastName"} />
+            <Table.Column title="Group Name" dataIndex={"groupName"} />
+
+            <Table.Column
+                dataIndex={undefined}
+                title={() => (<Space>
+                    <span>Actions: </span>
+                    <Button
+                        onClick={_ => setEditing({})}
+                        type="primary"
+                        size="small"
+                        style={{ verticalAlign: "middle", border: "none", borderRadius: "3px" }}
+                        children={"Add Party"}
+                    />
+                </Space>)}
+                render={(_, party, i) => (<>
+                    <Button onClick={() => setEditing(party)} type="link">Edit</Button>
+                    <Button onClick={_ => console.log("delete party")} type="link">Delete</Button>
+                </>)}
+            />
         </Table>
+        {editing && <Space PartyEdit={""} product={editing} onClose={() => setEditing(null)} />}
     </>);
 };
