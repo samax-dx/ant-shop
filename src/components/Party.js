@@ -33,7 +33,7 @@ export const Party = props => {
 
     return (<>
         <Space>
-            <Input.Search addonBefore="Party ID" onSearch={data => console.log("send", ({ type: "LOAD", data }))} style={{ margin: "15px 0" }} enterButton />
+            <Input.Search addonBefore="Name" onSearch={data => console.log("send", ({ type: "LOAD", data }))} style={{ margin: "15px 0" }} enterButton />
         </Space>
         <Table
             size="small"
@@ -48,8 +48,8 @@ export const Party = props => {
                 render={(_, __, i) => i}
             />
 
-            <Table.Column title="Party ID" dataIndex={"partyId"} />
-            <Table.Column title="Group Name" dataIndex={"groupName"} />
+            <Table.Column title="ID" dataIndex={"partyId"} />
+            <Table.Column title="Name" dataIndex={"groupName"} />
 
             <Table.Column
                 dataIndex={undefined}
