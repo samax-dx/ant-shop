@@ -1,24 +1,6 @@
 import { assign, createMachine, interpret, spawn } from "xstate";
+import { PartyFetchMachine } from "./PartyFetchMachine";
 import { ProductMachine } from "./ProductMachine";
-
-// export const MenuMachine = createMachine({
-//     context: {
-//         data: ""
-//     },
-//     states: {
-//         home: {},
-//         product: {},
-//         category: {}
-//     },
-//     on: {
-//         "ACTIVATE": [
-//             { target: "home", cond: (ctx, ev) => ev.key === "home", actions: ["activateMenu"] },
-//             { target: "product", cond: (ctx, ev) => ev.key === "product", actions: ["activateMenu"] },
-//             { target: "category", cond: (ctx, ev) => ev.key === "category", actions: ["activateMenu"] }
-//         ]
-//     },
-//     initial: "home"
-// });
 
 const MenuMachine = createMachine({
     context: {
@@ -38,13 +20,16 @@ const MenuMachine = createMachine({
         "NAV_CATEGORY": { target: "category" },
         "NAV_PARTNER": { target: "partner" },
         "NAV_RATEPLAN": { target: "rateplan" },
-        "NAV_PARTY": { target: "party" },
+        "NAV_PARTY": { target: "party", actions: ["assignPartyActor"] },
     },
     initial: "home"
 }, {
     actions: {
         assignProductActor: assign((ctx, ev) => ({
             actor: spawn(ProductMachine)
+        })),
+        assignPartyActor: assign((ctx, ev) => ({
+            actor: spawn(PartyFetchMachine)
         }))
     }
 });

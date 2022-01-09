@@ -1,46 +1,25 @@
 import { Button, Input, Space, Table } from "antd";
 import { useState } from "react";
-import useSWR from "swr";
+import { useActor } from "@xstate/react";
+import { menuMachine } from "../machines/menuMachine";
 
 export const Party = props => {
-    const { data, error } = useSWR(
-        "http://localhost:3005/ofbiz",
-        url => {
-            return fetch(url, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    method: "performFind",
-                    params: {
-                        entityName: "PartyNameView",
-                        inputFields: {
-                            groupName: "a",
-                            groupName_op: "contains"
-                        }
-                    }
-                })
-            }).then(res => {
-                return res.ok ? res.json() : Promise.reject(res.status);
-            });
-        }
-    );
-
-    const parties = data && data.result ? (data.result.listIt || []) : [];
+    const [{ context }, send] = useActor(menuMachine.state.context.actor);
     const [editing, setEditing] = useState(null);
+
+    const parties = context.result || [];
+    const error = context.error;
 
     return (<>
         <Space>
-            <Input.Search addonBefore="Name" onSearch={data => console.log("send", ({ type: "LOAD", data }))} style={{ margin: "15px 0" }} enterButton />
+            <Input.Search addonBefore="Name" onSearch={data => send({ type: "LOAD", data })} style={{ margin: "15px 0" }} enterButton />
         </Space>
         <Table
             size="small"
             dataSource={parties}
             pagination={{ pageSize: 3 }}
             rowKey={"partyId"}
-            locale={{ emptyText: error ? `[${error}]` : undefined }}
+            locale={{ emptyText: error && `[ ${error.message} ]` }}
         >
             <Table.Column
                 dataIndex={undefined}
