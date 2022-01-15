@@ -2,9 +2,9 @@ import { assign, createMachine } from "xstate";
 import axios from "axios";
 
 export const FetchMachine = createMachine({
-    initial: "ideal",
+    initial: "idle",
     states: {
-        ideal: {
+        idle: {
             on: {
                 "LOAD": { target: "loading", actions: ["assignPayload"] },
             }
@@ -17,10 +17,10 @@ export const FetchMachine = createMachine({
             }
         },
         hasResult: {
-            always: { target: "ideal" }
+            always: { target: "idle" }
         },
         hasError: {
-            always: { target: "ideal" }
+            always: { target: "idle" }
         }
     },
     context: {
@@ -48,15 +48,17 @@ const doFetch = searchData =>
                     groupName: searchData,
                     groupName_op: "contains"
                 }
-            },
-            mode: 'cors',
+            }
         }),
         {
             headers: { 'Content-Type': 'application/json' }
         }
-    ).then(({ data }) => {
-        return { result: data.result.listIt, error: null };
+    ).then(response => {
+        const { result, error = null } = response.data;
+        return { result: result && result.listIt, error };
     }).catch(error => {
-        return { result: null, error }
+        const response = error.response || { data: { error: error.message } };
+        const { status: code, statusText: text, data } = response;
+        return { result: null, error: { code, message: data.error || text } };
     });
 
