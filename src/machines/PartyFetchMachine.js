@@ -16,9 +16,9 @@ export const PartyFetchMachine = createFetchMachine(async searchData => {
                         groupName: searchData,
                         groupName_op: "contains"
                     }
-                },
-                mode: 'cors',
-            })
+                }
+            }),
+            mode: 'cors',
         });
 
         const { ok: success, status: code, statusText: message } = response;
