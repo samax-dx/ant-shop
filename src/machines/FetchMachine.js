@@ -1,4 +1,5 @@
 import { assign, createMachine } from "xstate";
+import axios from "axios";
 
 export const FetchMachine = createMachine({
     initial: "ideal",
@@ -24,7 +25,7 @@ export const FetchMachine = createMachine({
     },
     context: {
         result: null,
-        error: "Waiting for Party Search",
+        error: { message: "Waiting for Party Search" },
         payload: null,
     },
     id: undefined,
@@ -36,33 +37,26 @@ export const FetchMachine = createMachine({
     }
 });
 
-const doFetch = async searchData => {
-    try {
-        const response = await fetch("http://localhost:3005/ofbiz", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                "Accept": "application/json"
+const doFetch = searchData =>
+    axios.post(
+        "http://localhost:3005/ofbiz",
+        JSON.stringify({
+            method: "performFind",
+            params: {
+                entityName: "PartyNameView",
+                inputFields: {
+                    groupName: searchData,
+                    groupName_op: "contains"
+                }
             },
-            body: JSON.stringify({
-                method: "performFind",
-                params: {
-                    entityName: "PartyNameView",
-                    inputFields: {
-                        groupName: searchData,
-                        groupName_op: "contains"
-                    }
-                },
-                mode: 'cors',
-            })
-        });
+            mode: 'cors',
+        }),
+        {
+            headers: { 'Content-Type': 'application/json' }
+        }
+    ).then(({ data }) => {
+        return { result: data.result.listIt, error: null };
+    }).catch(error => {
+        return { result: null, error }
+    });
 
-        const { ok: success, status: code, statusText: message } = response;
-        const { result } = await (success ? response.json() : {});
-        const error = success ? null : { code, message };
-
-        return { result: result && result.listIt, error };
-    } catch (error) {
-        return { result: null, error };
-    }
-};
