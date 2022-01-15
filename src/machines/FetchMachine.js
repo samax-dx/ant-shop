@@ -40,7 +40,7 @@ export const FetchMachine = createMachine({
 const doFetch = searchData =>
     axios.post(
         "http://localhost:3005/ofbiz",
-        JSON.stringify({
+        {
             method: "performFind",
             params: {
                 entityName: "PartyNameView",
@@ -49,7 +49,7 @@ const doFetch = searchData =>
                     groupName_op: "contains"
                 }
             }
-        }),
+        },
         {
             headers: { 'Content-Type': 'application/json' }
         }
