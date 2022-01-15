@@ -1,5 +1,5 @@
 import { assign, createMachine, interpret, spawn } from "xstate";
-import { PartyFetchMachine } from "./PartyFetchMachine";
+import { FetchMachine } from "./FetchMachine";
 import { ProductMachine } from "./ProductMachine";
 
 const MenuMachine = createMachine({
@@ -29,7 +29,7 @@ const MenuMachine = createMachine({
             actor: spawn(ProductMachine)
         })),
         assignPartyActor: assign((ctx, ev) => ({
-            actor: spawn(PartyFetchMachine)
+            actor: spawn(FetchMachine)
         }))
     }
 });
