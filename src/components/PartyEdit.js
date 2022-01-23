@@ -25,13 +25,16 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
         editState.matches("isSaving") && sendSaver({
             type: "LOAD", data: party
         });
-        saveState.matches("hasResult") && sendEditor({
+    }, [editState]);
+
+    useEffect(() => {
+        saveState.matches("hasResult") && (console.log(saveState.context) || sendEditor({
             type: "SAVE_SUCCESS", data: saveState.context.result
-        });
-        saveState.matches("hasError") && sendEditor({
+        }));
+        saveState.matches("hasError") && (console.log(saveState.context) || sendEditor({
             type: "SAVE_FAILURE", data: saveState.context.error
-        });
-    });
+        }));
+    }, [saveState]);
 
     return (
         <Modal

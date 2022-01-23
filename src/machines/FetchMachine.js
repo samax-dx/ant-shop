@@ -17,10 +17,14 @@ export const FetchMachine = createMachine({
             }
         },
         hasResult: {
-            always: { target: "idle" }
+            on: {
+                "LOAD": { target: "fetching" },
+            }
         },
         hasError: {
-            always: { target: "idle" }
+            on: {
+                "LOAD": { target: "fetching" },
+            }
         }
     },
     context: {

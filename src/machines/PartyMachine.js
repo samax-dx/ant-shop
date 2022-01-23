@@ -135,7 +135,7 @@ const createParty = (ctx, { data: party }) =>
         }
     ).then(response => {
         const { result, error = null } = response.data;
-        return { result: result && result.listIt, error };
+        return { result, error };
     }).catch(error => {
         const response = error.response || { data: { error: error.message } };
         const { status: code, statusText: text, data } = response;
