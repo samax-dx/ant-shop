@@ -1,12 +1,14 @@
-import { assign, createMachine, interpret, spawn } from "xstate";
-import { FetchMachine } from "./FetchMachine";
+import { assign, createMachine, send, spawn } from "xstate";
 import { ProductMachine } from "./ProductMachine";
+import { PartyMachine } from "./PartyMachine";
+import { NullMachine } from "./NullMachine";
 
-const MenuMachine = createMachine({
-    context: {
-        actor: null
-    },
+
+export const AppMachine = createMachine({
     states: {
+        start: {
+            entry: send({ type: "NAV_HOME" })
+        },
         home: {},
         product: {},
         category: {},
@@ -15,26 +17,27 @@ const MenuMachine = createMachine({
         party: {},
     },
     on: {
-        "NAV_HOME": { target: "home" },
+        "NAV_HOME": { target: "home", actions: ["assignHomeActor"] },
         "NAV_PRODUCT": { target: "product", actions: ["assignProductActor"] },
         "NAV_CATEGORY": { target: "category" },
         "NAV_PARTNER": { target: "partner" },
         "NAV_RATEPLAN": { target: "rateplan" },
         "NAV_PARTY": { target: "party", actions: ["assignPartyActor"] },
     },
-    initial: "home"
+    context: {
+        actors: []
+    },
+    initial: "start"
 }, {
     actions: {
+        assignHomeActor: assign((ctx, ev) => ({
+            actor: spawn(NullMachine)
+        })),
         assignProductActor: assign((ctx, ev) => ({
             actor: spawn(ProductMachine)
         })),
         assignPartyActor: assign((ctx, ev) => ({
-            actor: spawn(FetchMachine)
-        }))
+            actor: spawn(PartyMachine)
+        })),
     }
 });
-
-const menuMachine = interpret(MenuMachine);
-
-menuMachine.start();
-export { menuMachine };

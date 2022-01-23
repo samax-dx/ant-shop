@@ -1,17 +1,17 @@
 import { assign, createMachine } from "xstate";
-import axios from "axios";
+
 
 export const FetchMachine = createMachine({
     initial: "idle",
     states: {
         idle: {
             on: {
-                "LOAD": { target: "loading", actions: ["assignPayload"] },
+                "LOAD": { target: "fetching" },
             }
         },
-        loading: {
+        fetching: {
             invoke: {
-                src: (ctx, ev) => doFetch(ctx.payload),
+                src: "doFetch",
                 onDone: { target: "hasResult", actions: ["setResult"] },
                 onError: { target: "hasError", actions: ["setError"] }
             }
@@ -31,34 +31,7 @@ export const FetchMachine = createMachine({
     id: undefined,
 }, {
     actions: {
-        assignPayload: assign((ctx, ev) => ({ payload: ev.data })),
         setResult: assign((ctx, ev) => ({ ...ev.data, payload: ctx.payload })),
         setError: assign((ctx, ev) => ({ error: ev.data, result: null })),
     }
 });
-
-const doFetch = searchData =>
-    axios.post(
-        "http://localhost:3005/ofbiz",
-        {
-            method: "performFind",
-            params: {
-                entityName: "PartyNameView",
-                inputFields: {
-                    groupName: searchData,
-                    groupName_op: "contains"
-                }
-            }
-        },
-        {
-            headers: { 'Content-Type': 'application/json' }
-        }
-    ).then(response => {
-        const { result, error = null } = response.data;
-        return { result: result && result.listIt, error };
-    }).catch(error => {
-        const response = error.response || { data: { error: error.message } };
-        const { status: code, statusText: text, data } = response;
-        return { result: null, error: { code, message: data.error || text } };
-    });
-

@@ -9,7 +9,7 @@ export const EditorMachine = createMachine({
                 "VALIDATE": { target: "isValidating" }
             },
             after: {
-                200: { target: "isValidating" }
+                300: { target: "isValidating" }
             }
         },
         isValidating: {
@@ -51,7 +51,7 @@ export const EditorMachine = createMachine({
         }
     },
     context: {
-        record: {},
+        record: null,
         _nextState: null
     }
 }, {

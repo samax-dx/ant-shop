@@ -1,9 +1,8 @@
+import { useActor } from "@xstate/react";
 import { Menu } from "antd";
-import { useActor } from '@xstate/react';
-import { menuMachine } from '../machines/menuMachine';
 
-export function TopMenu(props) {
-    const [current, send] = useActor(menuMachine);
+export function TopMenu({ actor }) {
+    const [current, send] = useActor(actor);
 
     return <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["home"]} style={{direction: "rtl"}}>
         <Menu.Item key="party" onClick={() => send({ type: 'NAV_PARTY' })}>Party</Menu.Item>

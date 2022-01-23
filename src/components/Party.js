@@ -1,53 +1,16 @@
-import { Button, Input, Space, Table } from "antd";
-import { useState } from "react";
 import { useActor } from "@xstate/react";
-import { menuMachine } from "../machines/menuMachine";
 
-export const Party = props => {
-    const [{ context }, send] = useActor(menuMachine.state.context.actor);
-    const [editing, setEditing] = useState(null);
+import { PartyList } from "./PartyList";
+import { PartyView } from "./PartyView";
+import { PartyEdit } from "./PartyEdit";
 
-    const parties = context.result || [];
-    const error = context.error;
+
+export const Party = ({ actor }) => {
+    const [current, send] = useActor(actor);
 
     return (<>
-        <Space>
-            <Input.Search addonBefore="Name" onSearch={data => send({ type: "LOAD", data })} style={{ margin: "15px 0" }} enterButton />
-        </Space>
-        <Table
-            size="small"
-            dataSource={parties}
-            pagination={{ pageSize: 3 }}
-            rowKey={"partyId"}
-            locale={{ emptyText: error && `[ ${error.message} ]` }}
-        >
-            <Table.Column
-                dataIndex={undefined}
-                title={"#"}
-                render={(_, __, i) => i}
-            />
-
-            <Table.Column title="ID" dataIndex={"partyId"} />
-            <Table.Column title="Name" dataIndex={"groupName"} />
-
-            <Table.Column
-                dataIndex={undefined}
-                title={() => (<Space>
-                    <span>Actions: </span>
-                    <Button
-                        onClick={_ => setEditing({})}
-                        type="primary"
-                        size="small"
-                        style={{ verticalAlign: "middle", border: "none", borderRadius: "3px" }}
-                        children={"Add Party"}
-                    />
-                </Space>)}
-                render={(_, party, i) => (<>
-                    <Button onClick={() => setEditing(party)} type="link">Edit</Button>
-                    <Button onClick={_ => console.log("delete party")} type="link">Delete</Button>
-                </>)}
-            />
-        </Table>
-        {editing && <Space PartyEdit={""} product={editing} onClose={() => setEditing(null)} />}
+        <PartyList actor={current.context.data} />
+        {current.matches("itemView") && <PartyView actor={current.context.actor} />}
+        {["itemEdit", "itemAdd"].includes(current.value) && <PartyEdit actor={current.context.actor} />}
     </>);
 };

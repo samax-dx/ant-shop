@@ -1,14 +1,14 @@
 import { useState } from "react";
+import { useActor } from "@xstate/react";
 import { Table, Button, Space, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
-import { menuMachine } from "../machines/menuMachine";
 import { ProductEdit } from "./ProductEdit";
-import { useActor } from "@xstate/react";
 
 
-export const Product = props => {
-    const [current, send] = useActor(menuMachine.state.context.actor);
+export const Product = ({ actor }) => {
+    const [current, send] = useActor(actor);
+
     const [editing, setEditing] = useState(null);
 
     return (<>
