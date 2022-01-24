@@ -10,8 +10,6 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
     const [saveState, sendSaver] = useActor(saveActor);
     const [parentState, sendParent] = useActor(editActor.parent);
 
-    const { record: party } = editState.context;
-
     useEffect(() => {
         editActor.subscribe(state => {
             state.matches("isValidating") && (
@@ -38,6 +36,8 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
             }));
         });
     }, []);
+
+    const { record: party } = editState.context;
 
     return (
         <Modal
