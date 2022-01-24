@@ -14,31 +14,31 @@ export const EditorMachine = createMachine({
         },
         isValidating: {
             on: {
-                "SET_VALID": { target: "hasValidChanges" },
-                "SET_INVALID": { target: "hasInvalidChanges" }
+                "SET_VALID": { target: "hasValidChanges", actions: ["assignRecord"] },
+                "SET_INVALID": { target: "hasInvalidChanges", actions: ["assignRecord"] }
             }
         },
         hasValidChanges: {
             on: {
                 "SAVE_RECORD": { target: "isSaving" },
-                "EDIT_RECORD": { target: "isEditing", actions: ["assignRecord"] }
+                "EDIT_RECORD": { target: "isEditing" }
             }
         },
         hasInvalidChanges: {
             on: {
-                "EDIT_RECORD": { target: "isEditing", actions: ["assignRecord"] }
+                "EDIT_RECORD": { target: "isEditing" }
             }
         },
         didSave: {
             on: {
-                "EDIT_RECORD": { target: "isEditing", actions: ["assignRecord"] }
+                "EDIT_RECORD": { target: "isEditing" }
             }
         },
         isSaving: {
             on: {
                 "SAVE_SUCCESS": { target: "doneSaving", actions: ["assignSuccessNext"] },
                 "SAVE_FAILURE": { target: "doneSaving", actions: ["assignFailureNext"] },
-                "EDIT_RECORD": { actions: ["assignRecord", "assignChangedNext"] }
+                "EDIT_RECORD": { actions: ["assignChangedNext"] }
             }
         },
         doneSaving: {

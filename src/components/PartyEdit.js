@@ -15,10 +15,14 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
             state.matches("isValidating") && (
                 partyEditForm
                     .validateFields()
-                    .then(party => sendEditor({ type: "SET_VALID" }))
-                    .catch(({ errorFields: fields }) => {
-                        (fields.length) && sendEditor({ type: "SET_INVALID" });
-                    })
+                    .then(party => sendEditor({
+                        type: "SET_VALID",
+                        data: partyEditForm.getFieldsValue() 
+                    }))
+                    .catch(({ errorFields: efl }) => efl.length && sendEditor({
+                        type: "SET_INVALID",
+                        data: partyEditForm.getFieldsValue()
+                    }))
             );
 
             state.matches("isSaving") && (console.log(state.context.record) || sendSaver({
@@ -65,7 +69,7 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
             <Form
                 form={partyEditForm}
                 initialValues={party}
-                onChange={() => sendEditor({ type: "EDIT_RECORD", data: partyEditForm.getFieldsValue() })}
+                onChange={() => setTimeout(() => sendEditor({ type: "EDIT_RECORD" }), 0)}
             >
                 <Form.Item label="ID" name="partyId">
                     <Input />
