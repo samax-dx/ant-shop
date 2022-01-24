@@ -23,8 +23,8 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
                     })
             );
 
-            state.matches("isSaving") && (console.log(party) || sendSaver({
-                type: "LOAD", data: party
+            state.matches("isSaving") && (console.log(state.context.record) || sendSaver({
+                type: "LOAD", data: state.context.record
             }));
         });
 
