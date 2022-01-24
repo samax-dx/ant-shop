@@ -10,6 +10,8 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
     const [saveState, sendSaver] = useActor(saveActor);
     const [parentState, sendParent] = useActor(editActor.parent);
 
+    const { record: party } = editState.context;
+
     useEffect(() => {
         editActor.subscribe(state => {
             state.matches("isValidating") && (
@@ -21,9 +23,9 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
                     })
             );
 
-            state.matches("isSaving") && sendSaver({
+            state.matches("isSaving") && (console.log(party) || sendSaver({
                 type: "LOAD", data: party
-            });
+            }));
         });
 
         saveActor.subscribe(state => {
@@ -36,8 +38,6 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
             }));
         });
     }, []);
-
-    const { record: party } = editState.context;
 
     return (
         <Modal
@@ -65,7 +65,7 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
             <Form
                 form={partyEditForm}
                 initialValues={party}
-                onChange={() => sendEditor({ type: "EDIT_RECORD" })}
+                onChange={() => sendEditor({ type: "EDIT_RECORD", data: partyEditForm.getFieldsValue() })}
             >
                 <Form.Item label="ID" name="partyId">
                     <Input />

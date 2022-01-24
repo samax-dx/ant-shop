@@ -21,24 +21,24 @@ export const EditorMachine = createMachine({
         hasValidChanges: {
             on: {
                 "SAVE_RECORD": { target: "isSaving" },
-                "EDIT_RECORD": { target: "isEditing" }
+                "EDIT_RECORD": { target: "isEditing", actions: ["assignRecord"] }
             }
         },
         hasInvalidChanges: {
             on: {
-                "EDIT_RECORD": { target: "isEditing" }
+                "EDIT_RECORD": { target: "isEditing", actions: ["assignRecord"] }
             }
         },
         didSave: {
             on: {
-                "EDIT_RECORD": { target: "isEditing" }
+                "EDIT_RECORD": { target: "isEditing", actions: ["assignRecord"] }
             }
         },
         isSaving: {
             on: {
                 "SAVE_SUCCESS": { target: "doneSaving", actions: ["assignSuccessNext"] },
                 "SAVE_FAILURE": { target: "doneSaving", actions: ["assignFailureNext"] },
-                "EDIT_RECORD": { actions: ["assignChangedNext"] }
+                "EDIT_RECORD": { actions: ["assignRecord", "assignChangedNext"] }
             }
         },
         doneSaving: {
@@ -56,8 +56,9 @@ export const EditorMachine = createMachine({
     }
 }, {
     actions: {
+        assignRecord: assign((_, ev) => ({ record: ev.data })),
         assignSuccessNext: assign((ctx, _) => ({ _nextState: ctx._nextState || "didSave" })),
         assignFailureNext: assign((ctx, _) => ({ _nextState: ctx._nextState || "hasValidChanges" })),
-        assignChangedNext: assign({ _nextState: "isEditing" })
+        assignChangedNext: assign({ _nextState: "isEditing" }),
     }
 });
