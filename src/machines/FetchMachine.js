@@ -1,6 +1,5 @@
 import { assign, createMachine } from "xstate";
 
-
 export const FetchMachine = createMachine({
     initial: "idle",
     states: {
