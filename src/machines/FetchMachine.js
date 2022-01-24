@@ -13,19 +13,15 @@ export const FetchMachine = createMachine({
             invoke: {
                 src: "doFetch",
                 onDone: { target: "hasResult", actions: ["setResult"] },
-                onError: { target: "hasError", actions: ["setError"] }
+                onError: { target: "hasError", actions: ["setError"] },
             }
         },
         hasResult: {
-            on: {
-                "LOAD": { target: "fetching" },
-            }
+            after: { 0: { target: "idle" } }
         },
         hasError: {
-            on: {
-                "LOAD": { target: "fetching" },
-            }
-        }
+            after: { 0: { target: "idle" } }
+        },
     },
     context: {
         result: null,

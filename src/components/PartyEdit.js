@@ -4,37 +4,40 @@ import { Button, Modal, Form, Input } from "antd";
 
 
 export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
+    const [partyEditForm] = Form.useForm();
+
     const [editState, sendEditor] = useActor(editActor);
     const [saveState, sendSaver] = useActor(saveActor);
-    const [_parent, sendParent] = useActor(editActor.parent);
-
-    const [partyEditForm] = Form.useForm();
-    const { record: party } = editState.context;
+    const [parentState, sendParent] = useActor(editActor.parent);
 
     useEffect(() => {
-        editState.matches("isValidating") && (
-            partyEditForm
-                .validateFields()
-                .then(party => sendEditor({ type: "SET_VALID" }))
-                .catch(errorInfo => {
-                    if (errorInfo.errorFields.length) {
-                        sendEditor({ type: "SET_INVALID" });
-                    }
-                })
-        );
-        editState.matches("isSaving") && sendSaver({
-            type: "LOAD", data: party
+        editActor.subscribe(state => {
+            state.matches("isValidating") && (
+                partyEditForm
+                    .validateFields()
+                    .then(party => sendEditor({ type: "SET_VALID" }))
+                    .catch(({ errorFields: fields }) => {
+                        (fields.length) && sendEditor({ type: "SET_INVALID" });
+                    })
+            );
+
+            state.matches("isSaving") && sendSaver({
+                type: "LOAD", data: party
+            });
         });
-    }, [editState]);
 
-    useEffect(() => {
-        saveState.matches("hasResult") && (console.log(saveState.context) || sendEditor({
-            type: "SAVE_SUCCESS", data: saveState.context.result
-        }));
-        saveState.matches("hasError") && (console.log(saveState.context) || sendEditor({
-            type: "SAVE_FAILURE", data: saveState.context.error
-        }));
-    }, [saveState]);
+        saveActor.subscribe(state => {
+            state.matches("hasResult") && (console.log(state.context) || sendEditor({
+                type: "SAVE_SUCCESS", data: state.context.result
+            }));
+
+            state.matches("hasError") && (console.log(state.context) || sendEditor({
+                type: "SAVE_FAILURE", data: state.context.error
+            }));
+        });
+    }, []);
+
+    const { record: party } = editState.context;
 
     return (
         <Modal

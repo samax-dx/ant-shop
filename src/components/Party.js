@@ -6,11 +6,11 @@ import { PartyEdit } from "./PartyEdit";
 
 
 export const Party = ({ actor }) => {
-    const [current, send] = useActor(actor);
+    const [partyState, sendParty] = useActor(actor);
 
     return (<>
-        <PartyList actor={current.context.data} />
-        {current.matches("itemView") && <PartyView actor={current.context.actor} />}
-        {["itemEdit", "itemAdd"].includes(current.value) && <PartyEdit actor={current.context.actor} />}
+        <PartyList actor={partyState.context.data} />
+        {partyState.matches("itemView") && <PartyView actor={partyState.context.actor} />}
+        {["itemEdit", "itemAdd"].includes(partyState.value) && <PartyEdit actor={partyState.context.actor} />}
     </>);
 };

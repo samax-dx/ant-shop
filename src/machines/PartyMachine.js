@@ -36,11 +36,9 @@ export const PartyMachine = createMachine({
             return { actor, data: actor };
         }),
         assignItemViewActor: assign((ctx, ev) => {
-            const actor = spawn(FetchMachine.withConfig({
-                services: { doFetch: fetchParty }
+            const actor = spawn(NullMachine.withContext({
+                party: ev.data
             }));
-
-            actor.send({ type: "LOAD", data: ev.data.partyId });
 
             return { actor };
         }),
@@ -57,9 +55,14 @@ export const PartyMachine = createMachine({
             return { actor };
         }),
         assignItemAddActor: assign((ctx, ev) => {
-            const actor = spawn(EditorMachine.withContext({
-                record: {}
-            }));
+            const actor = [
+                spawn(EditorMachine.withContext({
+                    record: {}
+                })),
+                spawn(FetchMachine.withConfig({
+                    services: { doFetch: createParty }
+                })),
+            ];
 
             return { actor };
         }),
@@ -85,31 +88,6 @@ const fetchParties = (ctx, { data: searchData }) =>
     ).then(response => {
         const { result, error = null } = response.data;
         return { result: result && result.listIt, error };
-    }).catch(error => {
-        const response = error.response || { data: { error: error.message } };
-        const { status: code, statusText: text, data } = response;
-        return { result: null, error: { code, message: data.error || text } };
-    });
-
-const fetchParty = (ctx, { data: searchData }) =>
-    axios.post(
-        "http://localhost:3005/ofbiz",
-        {
-            method: "performFind",
-            params: {
-                entityName: "Party",
-                inputFields: {
-                    partyId: searchData,
-                    partyId_op: "equals"
-                }
-            }
-        },
-        {
-            headers: { 'Content-Type': 'application/json' }
-        }
-    ).then(response => {
-        const { result, error = null } = response.data;
-        return { result: result && result.listIt[0], error };
     }).catch(error => {
         const response = error.response || { data: { error: error.message } };
         const { status: code, statusText: text, data } = response;
