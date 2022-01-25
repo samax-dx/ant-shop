@@ -71,7 +71,7 @@ export const PartyMachine = createMachine({
 
 const fetchParties = (ctx, { data: searchData }) =>
     axios.post(
-        "http://localhost:3005/ofbiz",
+        "https://localhost:8443/ofbiz-spring/api/runService",
         {
             method: "performFind",
             params: {
@@ -96,7 +96,7 @@ const fetchParties = (ctx, { data: searchData }) =>
 
 const createParty = (ctx, { data: party }) =>
     axios.post(
-        "http://localhost:3005/ofbiz",
+        "https://localhost:8443/ofbiz-spring/api/runService",
         {
             "method": "spCreateParty",
             "params": {
