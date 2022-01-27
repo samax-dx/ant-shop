@@ -38,13 +38,13 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
         });
 
         saveActor.subscribe(state => {
-            state.matches("hasResult") && (console.log(state.context) || sendEditor({
+            state.matches("hasResult") && sendEditor({
                 type: "SAVE_SUCCESS", data: { partyId: state.context.result.partyId }
-            }));
+            });
 
-            state.matches("hasError") && (console.log(state.context) || sendEditor({
+            state.matches("hasError") && sendEditor({
                 type: "SAVE_FAILURE", data: {}
-            }));
+            });
         });
     }, []);
 
@@ -52,7 +52,16 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
 
     return (
         <Modal
-            title={party.partyId ? `Edit Party : ${party.groupName}` : "Enter Party Info"}
+            title={<>
+                <span>{party.partyId ? "Edit Party : " : "Enter Party Info"}</span>
+                <Button
+                    type="link"
+                    onClick={() => {
+                        party.partyId && sendParent({ type: "VIEW_ITEM", data: party });
+                    }}
+                    children={party.partyId && party.groupName}
+                />
+            </>}
             visible={true}
             closable={false}
             keyboard={false}
