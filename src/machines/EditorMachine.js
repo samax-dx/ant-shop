@@ -2,11 +2,11 @@ import { assign, createMachine } from "xstate";
 
 
 export const EditorMachine = createMachine({
-    initial: "didSave",
     states: {
         isEditing: {
             on: {
-                "VALIDATE": { target: "isValidating" }
+                "VALIDATE": { target: "isValidating" },
+                "EDIT_RECORD": { actions: ["updateRecord"] },
             },
             after: {
                 300: { target: "isValidating" }
@@ -14,31 +14,39 @@ export const EditorMachine = createMachine({
         },
         isValidating: {
             on: {
-                "SET_VALID": { target: "hasValidChanges", actions: ["assignRecord"] },
-                "SET_INVALID": { target: "hasInvalidChanges", actions: ["assignRecord"] }
-            }
+                "SET_VALID": [
+                    { target: "hasValidChanges", cond: (ctx, _) => ctx._nextState || true },
+                    { target: "isEditing", cond: (ctx, _) => ctx._nextState === "isEditing" },
+                ],
+                "SET_INVALID": [
+                    { target: "hasInvalidChanges", cond: (ctx, _) => ctx._nextState || true },
+                    { target: "isEditing", cond: (ctx, _) => ctx._nextState === "isEditing" },
+                ],
+                "EDIT_RECORD": { actions: ["assignChangedNext", "updateRecord"] }
+            },
+            exit: assign({ _nextState: null })
         },
         hasValidChanges: {
             on: {
                 "SAVE_RECORD": { target: "isSaving" },
-                "EDIT_RECORD": { target: "isEditing" }
+                "EDIT_RECORD": { target: "isEditing", actions: ["updateRecord"] }
             }
         },
         hasInvalidChanges: {
             on: {
-                "EDIT_RECORD": { target: "isEditing" }
+                "EDIT_RECORD": { target: "isEditing", actions: ["updateRecord"] }
             }
         },
         didSave: {
             on: {
-                "EDIT_RECORD": { target: "isEditing" }
+                "EDIT_RECORD": { target: "isEditing", actions: ["updateRecord"] }
             }
         },
         isSaving: {
             on: {
-                "SAVE_SUCCESS": { target: "doneSaving", actions: ["assignSuccessNext"] },
-                "SAVE_FAILURE": { target: "doneSaving", actions: ["assignFailureNext"] },
-                "EDIT_RECORD": { actions: ["assignChangedNext"] }
+                "SAVE_SUCCESS": { target: "doneSaving", actions: ["assignSuccessNext", "updateRecord"] },
+                "SAVE_FAILURE": { target: "doneSaving", actions: ["assignFailureNext", "updateRecord"] },
+                "EDIT_RECORD": { actions: ["assignChangedNext", "updateRecord"] }
             }
         },
         doneSaving: {
@@ -50,13 +58,11 @@ export const EditorMachine = createMachine({
             exit: assign({ _nextState: null })
         }
     },
-    context: {
-        record: null,
-        _nextState: null
-    }
+    initial: "didSave",
+    context: { record: {}, _nextState: null },
 }, {
     actions: {
-        assignRecord: assign((_, ev) => ({ record: ev.data })),
+        updateRecord: assign((ctx, ev) => ({ record: { ...ctx.record, ...ev.data } })),
         assignSuccessNext: assign((ctx, _) => ({ _nextState: ctx._nextState || "didSave" })),
         assignFailureNext: assign((ctx, _) => ({ _nextState: ctx._nextState || "hasValidChanges" })),
         assignChangedNext: assign({ _nextState: "isEditing" }),

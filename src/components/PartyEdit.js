@@ -17,26 +17,33 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
                     .validateFields()
                     .then(party => sendEditor({
                         type: "SET_VALID",
-                        data: partyEditForm.getFieldsValue() 
+                        data: state.context.record
                     }))
                     .catch(({ errorFields: efl }) => efl.length && sendEditor({
                         type: "SET_INVALID",
-                        data: partyEditForm.getFieldsValue()
+                        data: {
+                            code: "input_validation_error",
+                            message: "\n" + partyEditForm
+                                .getFieldsError()
+                                .filter(v => v.errors.length)
+                                .map(v => `${v.name}: ${v.errors.join(" | ")}`)
+                                .join("\n")
+                        }
                     }))
             );
 
-            state.matches("isSaving") && (console.log(state.context.record) || sendSaver({
+            state.matches("isSaving") && (console.log(state.context) || sendSaver({
                 type: "LOAD", data: state.context.record
             }));
         });
 
         saveActor.subscribe(state => {
             state.matches("hasResult") && (console.log(state.context) || sendEditor({
-                type: "SAVE_SUCCESS", data: state.context.result
+                type: "SAVE_SUCCESS", data: { partyId: state.context.result.partyId }
             }));
 
             state.matches("hasError") && (console.log(state.context) || sendEditor({
-                type: "SAVE_FAILURE", data: state.context.error
+                type: "SAVE_FAILURE", data: {}
             }));
         });
     }, []);
@@ -69,7 +76,7 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
             <Form
                 form={partyEditForm}
                 initialValues={party}
-                onChange={() => setTimeout(() => sendEditor({ type: "EDIT_RECORD" }), 0)}
+                onChange={() => sendEditor({ type: "EDIT_RECORD", data: partyEditForm.getFieldsValue() })}
             >
                 <Form.Item label="ID" name="partyId">
                     <Input />

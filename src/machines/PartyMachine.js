@@ -37,7 +37,7 @@ export const PartyMachine = createMachine({
         }),
         assignItemViewActor: assign((ctx, ev) => {
             const actor = spawn(NullMachine.withContext({
-                party: ev.data
+                ...NullMachine.context, party: ev.data
             }));
 
             return { actor };
@@ -45,7 +45,7 @@ export const PartyMachine = createMachine({
         assignItemEditActor: assign((ctx, ev) => {
             const actor = [
                 spawn(EditorMachine.withContext({
-                    record: ev.data
+                    ...EditorMachine.context, record: ev.data
                 })),
                 spawn(FetchMachine.withConfig({
                     services: { doFetch: createParty }
@@ -57,7 +57,7 @@ export const PartyMachine = createMachine({
         assignItemAddActor: assign((ctx, ev) => {
             const actor = [
                 spawn(EditorMachine.withContext({
-                    record: {}
+                    ...EditorMachine.context, record: {}
                 })),
                 spawn(FetchMachine.withConfig({
                     services: { doFetch: createParty }
@@ -87,11 +87,11 @@ const fetchParties = (ctx, { data: searchData }) =>
         }
     ).then(response => {
         const { result, error = null } = response.data;
-        return { result: result && result.listIt, error };
+        return error ? Promise.reject(error) : result && result.listIt;
     }).catch(error => {
         const response = error.response || { data: { error: error.message } };
         const { status: code, statusText: text, data } = response;
-        return { result: null, error: { code, message: data.error || text } };
+        return Promise.reject({ code, message: data.error || text });
     });
 
 const createParty = (ctx, { data: party }) =>
@@ -113,9 +113,9 @@ const createParty = (ctx, { data: party }) =>
         }
     ).then(response => {
         const { result, error = null } = response.data;
-        return { result, error };
+        return error ? Promise.reject(error) : result;
     }).catch(error => {
         const response = error.response || { data: { error: error.message } };
         const { status: code, statusText: text, data } = response;
-        return { result: null, error: { code, message: data.error || text } };
+        return Promise.reject({ code, message: data.error || text });
     });

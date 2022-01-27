@@ -26,12 +26,11 @@ export const FetchMachine = createMachine({
     context: {
         result: null,
         error: { message: "Waiting for Party Search" },
-        payload: null,
     },
     id: undefined,
 }, {
     actions: {
-        setResult: assign((ctx, ev) => ({ ...ev.data, payload: ctx.payload })),
+        setResult: assign((ctx, ev) => ({ result: ev.data, error: null })),
         setError: assign((ctx, ev) => ({ error: ev.data, result: null })),
     }
 });
