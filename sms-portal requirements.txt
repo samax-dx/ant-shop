@@ -1,0 +1,25 @@
+sms features
+	balance and topup> 
+		ofbiz accounting>add deposit>show balance-> service
+	purchaase package
+		ofbiz product setup (create through ofbiz gui)
+		purchase product through order- service
+		topup sms balance after order shipment/completion-service
+	send sms bulk
+		upload excel file
+		deduct the number of successful sent msg from package > service
+		sms task refinement/validation
+			no of character check
+			format selection
+				unicode/ascii
+				change length for unicode
+			keep bulk task history
+				no of successful and failed records for each bulk
+				date time
+				delivery reports (depends on API)
+	send sms by prefix rating (non-package) (later... v2.0)
+		match prefix for rating
+		integrate with telcobright billing for dynamic rating
+		
+		
+		
