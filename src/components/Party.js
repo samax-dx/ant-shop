@@ -1,4 +1,5 @@
 import { useActor } from "@xstate/react";
+import { useRef } from "react";
 
 import { PartyList } from "./PartyList";
 import { PartyView } from "./PartyView";
@@ -7,10 +8,14 @@ import { PartyEdit } from "./PartyEdit";
 
 export const Party = ({ actor }) => {
     const [partyState, sendParty] = useActor(actor);
+    const { actor: stateActor} = partyState.context;
+
+    const listActorRef = useRef(null);
+    partyState.matches("itemView") && (listActorRef.current = stateActor);
 
     return (<>
-        <PartyList actor={partyState.context.data} />
-        {partyState.matches("itemView") && <PartyView actor={partyState.context.actor} />}
-        {["itemEdit", "itemAdd"].includes(partyState.value) && <PartyEdit actor={partyState.context.actor} />}
+        <PartyList actor={listActorRef.current} />
+        {["itemView"].some(partyState.matches) && <PartyView actor={stateActor} />}
+        {["itemEdit", "itemAdd"].some(partyState.matches) && <PartyEdit actor={stateActor} />}
     </>);
 };

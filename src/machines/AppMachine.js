@@ -25,7 +25,7 @@ export const AppMachine = createMachine({
         "NAV_PARTY": { target: "party", actions: ["assignPartyActor"] },
     },
     context: {
-        actors: []
+        actor: null
     },
     initial: "start"
 }, {

@@ -22,18 +22,17 @@ export const PartyMachine = createMachine({
         "ADD_ITEM": { target: "itemAdd", actions: ["assignItemAddActor"] },
     },
     context: {
-        actor: [],
-        data: null,
+        actor: null,
     },
     initial: "start"
 }, {
     actions: {
         assignListViewActor: assign((ctx, ev) => {
-            const actor = ctx.data || spawn(FetchMachine.withConfig({
+            const actor = ctx._listViewActor || spawn(FetchMachine.withConfig({
                 services: { doFetch: fetchParties }
             }));
 
-            return { actor, data: actor };
+            return { actor, _listViewActor: actor };
         }),
         assignItemViewActor: assign((ctx, ev) => {
             const actor = spawn(NullMachine.withContext({

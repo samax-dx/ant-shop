@@ -7,7 +7,7 @@ export const ComposeSMS = props => {
     const [form] = Form.useForm();
 
     const sendSMS = async () => {
-        const url = "http://localhost:5000/SmsTask/SendSMS";
+        const url = "https://localhost:8443/ofbiz-spring/api/SmsTask/sendSMS";
         const payload = form.getFieldsValue();
 
         const response = await fetch(url, {
@@ -20,7 +20,7 @@ export const ComposeSMS = props => {
             body: JSON.stringify(payload)
         });
 
-        alert(await response.json());
+        alert(JSON.stringify(await response.json()));
     };
 
     return (<>
@@ -29,7 +29,7 @@ export const ComposeSMS = props => {
             <Form
                 form={form}
                 initialValues={{
-                    CampaingName: null,
+                    CampaignName: null,
                     SenderId: "8809638010035",
                     MobileNumbers: "",
                     autoCountryCode: null,
@@ -40,8 +40,8 @@ export const ComposeSMS = props => {
                 layout="vertical"
             >
                 <Form.Item
-                    label="Campaing Name"
-                    name="CampaingName"
+                    label="Campaign Name"
+                    name="CampaignName"
                 >
                     <Input />
                 </Form.Item>
