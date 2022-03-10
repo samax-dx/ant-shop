@@ -2,10 +2,10 @@ import { useActor } from "@xstate/react";
 import { Button, Modal, Table } from "antd";
 
 export const PartyView = ({ actor }) => {
-    const [nmState, send] = useActor(actor);
+    const [vmState, send] = useActor(actor);
     const [parentState, sendParent] = useActor(actor.parent);
 
-    const { party } = nmState.context;
+    const { party } = vmState.context;
     const onClose = () => sendParent({ type: "VIEW_LIST" });
 
     return (

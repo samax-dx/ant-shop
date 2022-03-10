@@ -8,10 +8,10 @@ import { PartyEdit } from "./PartyEdit";
 
 export const Party = ({ actor }) => {
     const [partyState, sendParty] = useActor(actor);
-    const { actor: stateActor} = partyState.context;
+    const { actor: stateActor } = partyState.context;
 
     const listActorRef = useRef(null);
-    partyState.matches("itemView") && (listActorRef.current = stateActor);
+    ["listView", "itemView"].some(partyState.matches) && (listActorRef.current = stateActor);
 
     return (<>
         <PartyList actor={listActorRef.current} />

@@ -75,10 +75,10 @@ const fetchParties = (ctx, { data: searchData }) =>
             method: "performFind",
             params: {
                 entityName: "PartyNameView",
-                inputFields: {
+                inputFields: Object.assign({
                     groupName: searchData,
                     groupName_op: "contains"
-                }
+                }, searchData)
             }
         },
         {
@@ -97,15 +97,15 @@ const createParty = (ctx, { data: party }) =>
     axios.post(
         "https://localhost:8443/ofbiz-spring/api/runService",
         {
-            "method": "spCreateParty",
-            "params": {
-                "name": party.groupName,
+            method: "spCreateParty",
+            params: Object.assign({
+                "name": party.groupName + "",
                 "role.roleTypeId": "CUSTOMER",
                 "contactMech.countryCode": "880",
                 "contactMech.areaCode": "",
                 "contactMech.contactNumber": "1717590703",
                 "contactMech.extension": ""
-            }
+            }, party)
         },
         {
             headers: { 'Content-Type': 'application/json' }

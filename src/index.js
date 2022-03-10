@@ -1,5 +1,5 @@
-import 'antd/dist/antd.css';
-import './index.css';
+import 'antd/dist/antd.less';
+import './index.less';
 
 import React from 'react';
 import ReactDOM from 'react-dom';

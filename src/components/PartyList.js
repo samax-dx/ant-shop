@@ -3,11 +3,11 @@ import { Button, Input, Space, Table, Form } from "antd";
 
 
 export const PartyList = ({ actor }) => {
-    const [current, send] = useActor(actor);
-    const [_parent, sendParent] = useActor(actor.parent);
+    const [lmState, send] = useActor(actor);
+    const [_parentState, sendParent] = useActor(actor.parent);
 
-    const parties = current.context.result || [];
-    const error = current.context.error;
+    const parties = lmState.context.result || [];
+    const error = lmState.context.error;
     return (<>
         <Space>
             <Input.Search addonBefore="Name" onSearch={data => send({ type: "LOAD", data })} style={{ margin: "15px 0" }} enterButton />
