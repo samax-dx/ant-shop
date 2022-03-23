@@ -9,7 +9,8 @@ import { Partner } from './components/Partner';
 import { Category } from './components/Category';
 import { Rateplan } from './components/Rateplan';
 import { Party } from './components/Party';
-import { capitalize } from "./util"
+import { Login } from './components/Login';
+import { capitalize } from "./Util.js"
 
 
 export const App = ({ actor }) => {
@@ -17,6 +18,6 @@ export const App = ({ actor }) => {
     const component = capitalize(current.value);
 
     return (
-        <AppLayout render={{ Home, Product, Category, Partner, Rateplan, Party }[component]} actor={actor} />
+        <AppLayout render={{ Home, Product, Category, Partner, Rateplan, Party, Login }[component]} actor={actor} />
     );
 };

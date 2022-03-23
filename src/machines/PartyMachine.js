@@ -4,7 +4,6 @@ import { EditorMachine } from "./EditorMachine";
 import { FetchMachine } from "./FetchMachine";
 import { NullMachine } from "./NullMachine";
 
-
 export const PartyMachine = createMachine({
     states: {
         start: {
@@ -82,7 +81,10 @@ const fetchParties = (ctx, { data: searchData }) =>
             }
         },
         {
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${"token"}`,
+            }
         }
     ).then(response => {
         const { result, error = null } = response.data;
@@ -108,7 +110,10 @@ const createParty = (ctx, { data: party }) =>
             }, party)
         },
         {
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${"token"}`,
+            }
         }
     ).then(response => {
         const { result, error = null } = response.data;
