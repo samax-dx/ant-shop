@@ -10,7 +10,7 @@ export const MainMenu = ({ actor }) => {
     return (
         <Menu
             mode="inline"
-            defaultOpenKeys={["sub1"]}
+            defaultOpenKeys={[]}
             style={{ height: "100%", borderRight: 0 }}
         >
             <Menu.SubMenu key="sub1" icon={<UserOutlined />} title="Cofiguration">
