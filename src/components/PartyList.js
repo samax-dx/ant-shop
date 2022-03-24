@@ -1,5 +1,5 @@
 import { useActor } from "@xstate/react";
-import { Button, Input, Space, Table, Form } from "antd";
+import { Button, Input, Space, Table } from "antd";
 
 
 export const PartyList = ({ actor }) => {
@@ -16,7 +16,7 @@ export const PartyList = ({ actor }) => {
             size="small"
             dataSource={parties}
             pagination={{ pageSize: 3 }}
-            rowKey={"partyId"}
+            rowKey={"id"}
             locale={{ emptyText: error && `[ ${error.message} ]` }}
         >
             <Table.Column
@@ -25,17 +25,37 @@ export const PartyList = ({ actor }) => {
                 render={(_, __, i) => i}
             />
 
-            <Table.Column
+            {/* <Table.Column
                 title="ID"
                 dataIndex={undefined}
                 render={(_, party, i) => {
                     return (
-                        <Button onClick={() => sendParent({ type: "VIEW_ITEM", data: party })} type="link">{party.partyId}</Button>
+                        <Button onClick={() => sendParent({ type: "VIEW_ITEM", data: party })} type="link">{party.id}</Button>
+                    );
+                }}
+            /> */}
+
+            {/* <Table.Column title="User ID" dataIndex={"username"} /> */}
+
+            <Table.Column
+                title="User ID"
+                dataIndex={undefined}
+                render={(_, party, i) => {
+                    return (
+                        <Button onClick={() => sendParent({ type: "VIEW_ITEM", data: party })} type="link">{party.username}</Button>
                     );
                 }}
             />
 
-            <Table.Column title="Name" dataIndex={"groupName"} />
+            <Table.Column title="Name" dataIndex={"name"} />
+
+            <Table.Column
+                title="Contact Number"
+                dataIndex={undefined}
+                render={(_, party, i) => (<span>
+                    {["contactMech.countryCode", "contactMech.areaCode", "contactMech.contactNumber"].map(x => party[x] || "").join(" ")}
+                </span>)}
+            />
 
             <Table.Column
                 dataIndex={undefined}

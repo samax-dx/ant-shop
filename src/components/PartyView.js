@@ -1,5 +1,6 @@
 import { useActor } from "@xstate/react";
-import { Button, Modal, Table } from "antd";
+import { Button, Form, Input, Modal, Select, Space, Table } from "antd";
+import { countries } from "countries-list";
 
 export const PartyView = ({ actor }) => {
     const [vmState, send] = useActor(actor);
@@ -8,9 +9,30 @@ export const PartyView = ({ actor }) => {
     const { party } = vmState.context;
     const onClose = () => sendParent({ type: "VIEW_LIST" });
 
+    // return (
+    //     <Modal
+    //         title={`Party : ${party.username}`}
+    //         visible={true}
+    //         onCancel={onClose}
+    //         footer={[
+    //             <Button type="primary" key="btnSave" onClick={() => sendParent({ type: "EDIT_ITEM", data: party })}>Edit</Button>,
+    //             <Button type="primary" danger key="btnClose" onClick={onClose}>Close</Button>
+    //         ]}
+    //     >
+    //         <Table
+    //             size="small"
+    //             dataSource={Object.entries(party)}
+    //             rowKey={0}
+    //             pagination={false}
+    //         >
+    //             <Table.Column title={"Field"} dataIndex={0}></Table.Column>
+    //             <Table.Column title={"Value"} dataIndex={1}></Table.Column>
+    //         </Table>
+    //     </Modal>
+    // );
     return (
         <Modal
-            title={`Party : ${party.partyId}`}
+            title={`Party : ${party.username}`}
             visible={true}
             onCancel={onClose}
             footer={[
@@ -18,15 +40,44 @@ export const PartyView = ({ actor }) => {
                 <Button type="primary" danger key="btnClose" onClick={onClose}>Close</Button>
             ]}
         >
-            <Table
-                size="small"
-                dataSource={Object.entries(party)}
-                rowKey={0}
-                pagination={false}
+            <Form
+                initialValues={party}
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 18 }}
             >
-                <Table.Column title={"Field"} dataIndex={0}></Table.Column>
-                <Table.Column title={"Value"} dataIndex={1}></Table.Column>
-            </Table>
+                <Form.Item label="ID" name="id" style={{ display: "none" }}>
+                    <Input readOnly />
+                </Form.Item>
+                <Form.Item label="User ID" name="username">
+                    <Input readOnly />
+                </Form.Item>
+                <Form.Item label="Name" name="name">
+                    <Input readOnly />
+                </Form.Item>
+                <Form.Item label="Contact Number">
+                    <Space direction="horizontal" align="start">
+                        <Form.Item name="contactMech.countryCode" style={{ margin: 0 }}>
+                            <Select disabled>
+                                {
+                                    Object.values(countries).map(({ name, emoji, phone }) => {
+                                        return (
+                                            <Select.Option value={phone} key={emoji}>
+                                                <Button type="link">{emoji}</Button> {name}
+                                            </Select.Option>
+                                        );
+                                    })
+                                }
+                            </Select>
+                        </Form.Item>
+                        <Form.Item name="contactMech.areaCode">
+                            <Input readOnly placeholder="area code" />
+                        </Form.Item>
+                        <Form.Item name="contactMech.contactNumber">
+                            <Input readOnly placeholder="Phone Number" />
+                        </Form.Item>
+                    </Space>
+                </Form.Item>
+            </Form>
         </Modal>
     );
 };

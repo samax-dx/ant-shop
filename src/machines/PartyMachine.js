@@ -1,5 +1,5 @@
-import axios from "axios";
 import { assign, createMachine, send, spawn } from "xstate";
+import { Party } from "../services/Party";
 import { EditorMachine } from "./EditorMachine";
 import { FetchMachine } from "./FetchMachine";
 import { NullMachine } from "./NullMachine";
@@ -27,9 +27,14 @@ export const PartyMachine = createMachine({
 }, {
     actions: {
         assignListViewActor: assign((ctx, ev) => {
-            const actor = ctx._listViewActor || spawn(FetchMachine.withConfig({
-                services: { doFetch: fetchParties }
-            }));
+            const actor = ctx._listViewActor || spawn(FetchMachine.withConfig(
+                {
+                    services: { doFetch: Party.fetchParties }
+                },
+                {
+                    error: { message: "Waiting for Party Search" }
+                }
+            ));
 
             return { actor, _listViewActor: actor };
         }),
@@ -45,9 +50,12 @@ export const PartyMachine = createMachine({
                 spawn(EditorMachine.withContext({
                     ...EditorMachine.context, record: ev.data
                 })),
-                spawn(FetchMachine.withConfig({
-                    services: { doFetch: createParty }
-                })),
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Party.createParty }
+                    },
+                    { error: null }
+                )),
             ];
 
             return { actor };
@@ -57,69 +65,15 @@ export const PartyMachine = createMachine({
                 spawn(EditorMachine.withContext({
                     ...EditorMachine.context, record: {}
                 })),
-                spawn(FetchMachine.withConfig({
-                    services: { doFetch: createParty }
-                })),
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Party.createParty }
+                    },
+                    { error: null }
+                )),
             ];
 
             return { actor };
         }),
     }
 });
-
-const fetchParties = (ctx, { data: searchData }) =>
-    axios.post(
-        "https://localhost:8443/ofbiz-spring/api/runService",
-        {
-            method: "performFind",
-            params: {
-                entityName: "PartyNameView",
-                inputFields: Object.assign({
-                    groupName: searchData,
-                    groupName_op: "contains"
-                }, searchData)
-            }
-        },
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${"token"}`,
-            }
-        }
-    ).then(response => {
-        const { result, error = null } = response.data;
-        return error ? Promise.reject(error) : result && result.listIt;
-    }).catch(error => {
-        const response = error.response || { data: { error: error.message } };
-        const { status: code, statusText: text, data } = response;
-        return Promise.reject({ code, message: data.error || text });
-    });
-
-const createParty = (ctx, { data: party }) =>
-    axios.post(
-        "https://localhost:8443/ofbiz-spring/api/runService",
-        {
-            method: "spCreateParty",
-            params: Object.assign({
-                "name": party.groupName + "",
-                "role.roleTypeId": "CUSTOMER",
-                "contactMech.countryCode": "880",
-                "contactMech.areaCode": "",
-                "contactMech.contactNumber": "1717590703",
-                "contactMech.extension": ""
-            }, party)
-        },
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${"token"}`,
-            }
-        }
-    ).then(response => {
-        const { result, error = null } = response.data;
-        return error ? Promise.reject(error) : result;
-    }).catch(error => {
-        const response = error.response || { data: { error: error.message } };
-        const { status: code, statusText: text, data } = response;
-        return Promise.reject({ code, message: data.error || text });
-    });

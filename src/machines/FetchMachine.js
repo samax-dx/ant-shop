@@ -25,7 +25,7 @@ export const FetchMachine = createMachine({
     },
     context: {
         result: null,
-        error: { message: "Waiting for Party Search" },
+        error: null,
     },
     id: undefined,
 }, {
