@@ -4,10 +4,8 @@ import { Menu } from "antd";
 export function TopMenu({ actor }) {
     const [appState, sendApp] = useActor(actor);
 
-    return <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["home"]} style={{direction: "rtl"}}>
+    return <Menu theme="dark" mode="horizontal" selectedKeys={[appState.value]} style={{direction: "rtl"}}>
         <Menu.Item key="logout" onClick={() => sendApp({ type: 'LOGOUT' })}>Logout</Menu.Item>
-        <Menu.Item key="party" onClick={() => sendApp({ type: 'NAV_PARTY' })}>Party</Menu.Item>
-        <Menu.Item key="partners" onClick={() => sendApp({ type: 'NAV_PARTNER' })}>Partners</Menu.Item>
-        <Menu.Item key="home" onClick={() => sendApp({ type: 'NAV_HOME' })}>Home</Menu.Item>
+        <Menu.Item key="profile" onClick={() => sendApp({ type: 'NAV_PROFILE' })}>Profile</Menu.Item>
     </Menu>;
 }

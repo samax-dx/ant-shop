@@ -15,7 +15,7 @@ export const PartyView = ({ actor }) => {
             visible={true}
             onCancel={onClose}
             footer={[
-                <Button type="primary" key="btnSave" onClick={() => sendParent({ type: "EDIT_ITEM", data: party })}>Edit</Button>,
+                <Button type="primary" key="btnSave" onClick={() => sendParent({ type: "EDIT_ITEM", data: party })} disabled>Edit</Button>,
                 <Button type="primary" danger key="btnClose" onClick={onClose}>Close</Button>
             ]}
         >
@@ -24,7 +24,7 @@ export const PartyView = ({ actor }) => {
                 labelCol={{ span: 6 }}
                 wrapperCol={{ span: 18 }}
             >
-                <Form.Item label="ID" name="id" style={{ display: "none" }}>
+                <Form.Item label="ID" name="partyId" style={{ display: "none" }}>
                     <Input readOnly />
                 </Form.Item>
                 <Form.Item label="User ID" name="username">

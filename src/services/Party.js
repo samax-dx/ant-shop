@@ -1,13 +1,10 @@
 import axios from "axios";
 import { XAuth } from "./XAuth";
 
-const fetchParties = (ctx, { data: searchData }) =>
+const fetchParties = (ctx, ev) =>
     axios.post(
         "https://localhost:8443/ofbiz-spring/api/Party/findParties",
-        {
-            name: searchData,
-            name_op: "contains"
-        },
+        { ...ev.data },
         {
             headers: {
                 'Content-Type': 'application/json',
@@ -16,17 +13,26 @@ const fetchParties = (ctx, { data: searchData }) =>
         }
     ).then(response => {
         const { data } = response;
-        return data ? Promise.resolve(data): Promise.reject("Unkonwn result");
+
+        if (data.parties === null) {
+            data.parties = [];
+        }
+
+        if (data.parties) {
+            return Promise.resolve(data);
+        } else {
+            return Promise.reject({ message: data.errorMessage });
+        }
     }).catch(error => {
         const response = error.response || { data: { error: error.message } };
         const { status: code, statusText: text, data } = response;
         return Promise.reject({ code, message: data.error || text });
     });
 
-const createParty = (ctx, { data: party }) =>
+const createParty = (ctx, ev) =>
     axios.post(
         "https://localhost:8443/ofbiz-spring/api/Party/createParty",
-        { ...party },
+        { ...ev.data },
         {
             headers: {
                 'Content-Type': 'application/json',
@@ -36,7 +42,7 @@ const createParty = (ctx, { data: party }) =>
     ).then(response => {
         const { data } = response;
 
-        if (data.id) {
+        if (data.partyId) {
             return Promise.resolve(data);
         } else {
             return Promise.reject({ message: data.errorMessage });

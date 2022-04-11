@@ -32,6 +32,7 @@ export const PartyMachine = createMachine({
                     services: { doFetch: Party.fetchParties }
                 },
                 {
+                    payload: { data: { page: 1, limit: 10 } },
                     error: { message: "Waiting for Party Search" }
                 }
             ));

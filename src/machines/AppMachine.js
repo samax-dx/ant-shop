@@ -5,8 +5,12 @@ import { NullMachine } from "./NullMachine";
 import { LoginMachine } from "./LoginMachine";
 import { LogoutMachine } from "./LogoutMachine";
 
+import { Accounting } from "../services/Accounting";
+import { FetchMachine } from "./FetchMachine";
+
 
 export const AppMachine = createMachine({
+    id: "app",
     states: {
         start: {
             entry: send({ type: "LOGIN" })
@@ -17,6 +21,7 @@ export const AppMachine = createMachine({
         partner: {},
         rateplan: {},
         party: {},
+        paymentList: {},
         login: {},
         logout: {},
     },
@@ -27,6 +32,7 @@ export const AppMachine = createMachine({
         "NAV_PARTNER": { target: "partner" },
         "NAV_RATEPLAN": { target: "rateplan" },
         "NAV_PARTY": { target: "party", actions: ["assignPartyActor"] },
+        "NAV_PAYMENT_LIST": { target: "paymentList", actions: ["assignPaymentListActor"] },
         "LOGIN": { target: "login", actions: ["assignLoginActor"] },
         "LOGOUT": { target: "logout", actions: ["assignLogoutActor"] },
     },
@@ -45,6 +51,25 @@ export const AppMachine = createMachine({
         assignPartyActor: assign((ctx, ev) => ({
             actor: spawn(PartyMachine)
         })),
+        assignPaymentListActor: assign((ctx, ev) => {
+            const actor = [
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Accounting.fetchBalanceRequests }
+                    },
+                    {
+                        payload: { data: { page: 1, limit: 10 } },
+                        error: { message: "Waiting for Payment Search" }
+                    }
+                )),
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Accounting.handleBalanceRequest }
+                    }
+                ))
+            ];
+            return { actor };
+        }),
         assignLoginActor: assign((ctx, ev) => ({
             actor: spawn(LoginMachine)
         })),

@@ -6,7 +6,7 @@ export const FetchMachine = createMachine({
     states: {
         idle: {
             on: {
-                "LOAD": { target: "fetching" },
+                "LOAD": { target: "fetching", actions: ["assignPayload"] },
             }
         },
         fetching: {
@@ -26,11 +26,13 @@ export const FetchMachine = createMachine({
     context: {
         result: null,
         error: null,
+        payload: null,
     },
     id: undefined,
 }, {
     actions: {
         setResult: assign((ctx, ev) => ({ result: ev.data, error: null })),
         setError: assign((ctx, ev) => ({ error: ev.data, result: null })),
+        assignPayload: assign((ctx, ev) => ({ payload: { ...ev } })),
     }
 });

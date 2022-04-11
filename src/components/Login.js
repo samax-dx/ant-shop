@@ -35,7 +35,7 @@ export const Login = ({ actor }) => {
                             type="primary"
                             htmlType="submit"
                             onClick={() => sendActor({ type: "SUBMIT", data: loginForm.getFieldsValue() })}
-                            children={"Save"}
+                            children={"Submit"}
                         />
                     </Form.Item>
                 </Form>

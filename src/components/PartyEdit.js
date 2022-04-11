@@ -43,7 +43,7 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
 
         saveActor.subscribe(state => {
             state.matches("hasResult") && sendEditor({
-                type: "SAVE_SUCCESS", data: { id: state.context.result.id }
+                type: "SAVE_SUCCESS", data: { partyId: state.context.result.partyId }
             });
 
             state.matches("hasError") && sendEditor({
@@ -57,13 +57,13 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
     return (
         <Modal
             title={<>
-                <span>{party.id ? `Edit Party : ` : "Enter Party Info"}</span>
+                <span>{party.partyId ? `Edit Party : ` : "Enter Party Info"}</span>
                 <Button
                     type="link"
                     onClick={() => {
-                        party.id && sendParent({ type: "VIEW_ITEM", data: party });
+                        party.partyId && sendParent({ type: "VIEW_ITEM", data: party });
                     }}
-                    children={party.id && party.username}
+                    children={party.partyId && party.username}
                 />
             </>}
             visible={true}
@@ -97,7 +97,7 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
                 labelCol={{ span: 6 }}
                 wrapperCol={{ span: 18 }}
             >
-                <Form.Item label="ID" name="id" style={{ display: "none" }}>
+                <Form.Item label="ID" name="partyId" style={{ display: "none" }}>
                     <Input />
                 </Form.Item>
                 <Form.Item label="User ID" name="username" rules={[{ required: true }]}>
@@ -139,7 +139,7 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
                         </Form.Item>
                     </Space>
                 </Form.Item>
-                {party.id && <Form.Item
+                {party.partyId && <Form.Item
                     label="Current Password"
                     name="password_old"
                     rules={[{ required: true }]}
@@ -148,7 +148,7 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
                     <Input.Password />
                 </Form.Item>}
                 <Form.Item
-                    label={party.id ? "New password" : "Password"}
+                    label={party.partyId ? "New password" : "Password"}
                     name="password"
                     rules={[{ required: true }]}
                     hasFeedback
@@ -158,7 +158,7 @@ export const PartyEdit = ({ actor: [editActor, saveActor] }) => {
                 <Form.Item
                     label="Confirm Password"
                     name="passwordConfirm"
-                    dependencies={party.id ? ['password_old', 'password'] : ["password"]}
+                    dependencies={party.partyId ? ['password_old', 'password'] : ["password"]}
                     hasFeedback
                     rules={[
                         { required: true },

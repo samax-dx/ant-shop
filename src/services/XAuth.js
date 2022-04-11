@@ -1,10 +1,10 @@
 import axios from "axios";
 
 export const XAuth = (storage => ({
-    login: params => axios
+    login: (ctx, ev) => axios
         .post(
             "https://localhost:8443/ofbiz-spring/api/Party/login",
-            { ...params },
+            { ...ev.data },
             { headers: { 'Content-Type': 'application/json' } }
         ).then(response => {
             const { data } = response;
