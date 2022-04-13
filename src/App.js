@@ -8,10 +8,11 @@ import { Product } from './components/Product';
 import { Partner } from './components/Partner';
 import { Category } from './components/Category';
 import { Rateplan } from './components/Rateplan';
-import { Party } from './components/Party';
 import { PaymentList } from './components/PaymentList';
 import { Login } from './components/Login';
 import { capitalize } from "./Util.js"
+import { Parties } from './components/Parties';
+import { Payments } from './components/Payments';
 
 
 export const App = ({ actor }) => {
@@ -19,6 +20,6 @@ export const App = ({ actor }) => {
     const component = capitalize(current.value);
 
     return (
-        <AppLayout render={{ Home, Product, Category, Partner, Rateplan, Party, PaymentList, Login }[component]} actor={actor} />
+        <AppLayout render={{ Home, Product, Category, Partner, Rateplan, Parties, Payments, PaymentList, Login }[component]} actor={actor} />
     );
 };

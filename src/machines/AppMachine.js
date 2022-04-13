@@ -1,12 +1,12 @@
 import { assign, createMachine, send, spawn } from "xstate";
 import { ProductMachine } from "./ProductMachine";
-import { PartyMachine } from "./PartyMachine";
 import { NullMachine } from "./NullMachine";
 import { LoginMachine } from "./LoginMachine";
 import { LogoutMachine } from "./LogoutMachine";
 
-import { Accounting } from "../services/Accounting";
 import { FetchMachine } from "./FetchMachine";
+import { Accounting } from "../services/Accounting";
+import { Party } from "../services/Party";
 
 
 export const AppMachine = createMachine({
@@ -20,7 +20,8 @@ export const AppMachine = createMachine({
         category: {},
         partner: {},
         rateplan: {},
-        party: {},
+        parties: {},
+        payments: {},
         paymentList: {},
         login: {},
         logout: {},
@@ -31,7 +32,8 @@ export const AppMachine = createMachine({
         "NAV_CATEGORY": { target: "category" },
         "NAV_PARTNER": { target: "partner" },
         "NAV_RATEPLAN": { target: "rateplan" },
-        "NAV_PARTY": { target: "party", actions: ["assignPartyActor"] },
+        "NAV_PARTIES": { target: "parties", actions: ["assignPartiesActor"] },
+        "NAV_PAYMENTS": { target: "payments", actions: ["assignPaymentsActor"] },
         "NAV_PAYMENT_LIST": { target: "paymentList", actions: ["assignPaymentListActor"] },
         "LOGIN": { target: "login", actions: ["assignLoginActor"] },
         "LOGOUT": { target: "logout", actions: ["assignLogoutActor"] },
@@ -48,9 +50,56 @@ export const AppMachine = createMachine({
         assignProductActor: assign((ctx, ev) => ({
             actor: spawn(ProductMachine)
         })),
-        assignPartyActor: assign((ctx, ev) => ({
-            actor: spawn(PartyMachine)
-        })),
+        assignPartiesActor: assign((ctx, ev) => {
+            const actor = [
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Party.fetchParties }
+                    },
+                    {
+                        payload: { data: { page: 1, limit: 10 } },
+                        result: { parties: [], count: 0 },
+                        error: { message: "Waiting for Party Search" }
+                    }
+                )),
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Party.createParty }
+                    }
+                ))
+            ];
+            return { actor };
+        }),
+        assignPaymentsActor: assign((ctx, ev) => {
+            const actor = [
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Accounting.fetchBalanceRequests }
+                    },
+                    {
+                        payload: { data: { page: 1, limit: 10 } },
+                        result: { payments: [], count: 0 },
+                        error: { message: "Waiting for TopUp / Payment Search" }
+                    }
+                )),
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Accounting.addPartyBalance }
+                    }
+                )),
+                spawn(FetchMachine.withConfig(
+                    {
+                        services: { doFetch: Party.fetchParties }
+                    },
+                    {
+                        payload: { data: { page: 1, limit: 10 } },
+                        result: { parties: [], count: 0 },
+                        error: { message: "Waiting for Party Search" }
+                    }
+                ))
+            ];
+            return { actor };
+        }),
         assignPaymentListActor: assign((ctx, ev) => {
             const actor = [
                 spawn(FetchMachine.withConfig(
