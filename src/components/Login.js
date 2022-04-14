@@ -23,7 +23,7 @@ export const Login = ({ actor }) => {
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
                 >
-                    <Form.Item label="User ID" name="username">
+                    <Form.Item label="User ID" name="loginId">
                         <Input />
                     </Form.Item>
                     <Form.Item label="Password" name="password">

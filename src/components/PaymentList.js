@@ -21,7 +21,7 @@ export const PaymentList = ({ actor: [listActor, taskActor] }) => {
             queryData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
         });
 
-        const data = ["party.username", "party.name", "party.contactNumber", "date_fld0_value", "date_fld1_value", "statusId"].reduce((acc, v) => {
+        const data = ["partyLoginId", "partyName", "date_fld0_value", "date_fld1_value", "statusId"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -95,12 +95,10 @@ export const PaymentList = ({ actor: [listActor, taskActor] }) => {
             wrapperCol={{ span: 7 }}
             labelAlign="left"
         >
-            <Form.Item name="party.username" label="User ID" children={<Input />} />
-            <Form.Item name="party.username_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="party.name" label="Party Name" children={<Input />} />
-            <Form.Item name="party.name_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="party.contactNumber" label="Contact Number" children={<Input />} />
-            <Form.Item name="party.contactNumber_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="partyLoginId" label="User ID" children={<Input />} />
+            <Form.Item name="partyLoginId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="partyName" label="Party Name" children={<Input />} />
+            <Form.Item name="partyName_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="statusId" label="Payment Status" initialValue={""}>
                 <Select onInputKeyDown={e => (e.code === "Enter") && !console.log("Preventing", e.code) && false}>{
                     [
@@ -140,8 +138,8 @@ export const PaymentList = ({ actor: [listActor, taskActor] }) => {
                 render={(_, __, i) => (listPayload.data.page - 1) * listPayload.data.limit + (++i)}
             />
 
-            <Table.Column title="User Id" dataIndex={"party.username"} />
-            <Table.Column title="Party Name" dataIndex={"party.name"} />
+            <Table.Column title="User Id" dataIndex={"partyLoginId"} />
+            <Table.Column title="Party Name" dataIndex={"partyName"} />
             <Table.Column title="Date" dataIndex={"date"} render={value => dayjs(value).format("MMM D, YYYY h:mm A")} />
             <Table.Column title="Amount" dataIndex={"amount"} />
             <Table.Column title="Status" dataIndex={"statusId"} />

@@ -11,7 +11,7 @@ const SearchForm = ({ onSearch }) => {
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        const queryData = ["name", "username"].reduce((acc, v) => {
+        const queryData = ["name", "loginId"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -35,8 +35,8 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 7 }}
             labelAlign="left"
         >
-            <Form.Item name="username" label="User ID" children={<Input />} />
-            <Form.Item name="username_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="loginId" label="User ID" children={<Input />} />
+            <Form.Item name="loginId_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="name" label="Name" children={<Input />} />
             <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item wrapperCol={{ offset: 3 }}>
@@ -62,7 +62,7 @@ const EditForm = ({ form, record: party, onSave }) => {
             labelAlign={"left"}
         >
             <Form.Item name="partyId" label="ID" style={{ display: "none" }} children={<Input />} />
-            <Form.Item name="username" label="User ID" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="loginId" label="User ID" rules={[{ required: true }]} children={<Input />} />
             <Form.Item name="name" label="Name" rules={[{ required: true }]} children={<Input />} />
 
             <Form.Item label="Contact Number" required>
@@ -174,7 +174,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
                 dataIndex={undefined}
                 render={(_, party, i) => {
                     return (
-                        <Button onClick={() => onView(party)} type="link">{party.username}</Button>
+                        <Button onClick={() => onView(party)} type="link">{party.loginId}</Button>
                     );
                 }}
             />
@@ -244,7 +244,7 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
 
                 notification.success({
                     message: "Task Complete",
-                    description: <>Party created: {saveContext.payload.data.username}</>,
+                    description: <>Party created: {saveContext.payload.data.loginId}</>,
                     duration: 5
                 });
 

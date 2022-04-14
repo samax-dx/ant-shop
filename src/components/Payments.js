@@ -18,7 +18,7 @@ const SearchForm = ({ onSearch }) => {
             formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
         });
 
-        const queryData = ["party.username", "party.name", "party.contactNumber", "date_fld0_value", "date_fld1_value"].reduce((acc, v) => {
+        const queryData = ["partyLoginId", "partyName", "date_fld0_value", "date_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -42,12 +42,10 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 8 }}
             labelAlign="left"
         >
-            <Form.Item name="party.username" label="User ID" children={<Input />} />
-            <Form.Item name="party.username_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="party.name" label="Party Name" children={<Input />} />
-            <Form.Item name="party.name_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="party.contactNumber" label="Contact Number" children={<Input />} />
-            <Form.Item name="party.contactNumber_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="partyLoginId" label="User ID" children={<Input />} />
+            <Form.Item name="partyLoginId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="partyName" label="Party Name" children={<Input />} />
+            <Form.Item name="partyName_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="date_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
             <Form.Item name="date_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
@@ -129,8 +127,8 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
                 }}
             />
 
-            <Table.Column title="User Id" dataIndex={"party.username"} />
-            <Table.Column title="Party Name" dataIndex={"party.name"} />
+            <Table.Column title="User Id" dataIndex={"partyLoginId"} />
+            <Table.Column title="Party Name" dataIndex={"partyName"} />
             <Table.Column title="Date" dataIndex={"date"} render={value => dayjs(value).format("MMM D, YYYY h:mm A")} />
             <Table.Column title="Amount" dataIndex={"amount"} />
         </Table>
