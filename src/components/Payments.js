@@ -162,7 +162,10 @@ export const Payments = ({ actor: [lookupActor, saveActor, partyActor] }) => {
     };
 
     const sendPagedQuery = queryData => (page, limit) => {
+        page === undefined && (page = queryData.page)
+        limit === undefined && (limit = queryData.limit)
         console.log(queryData, page, limit);
+
         const query = { data: { ...queryData, page, limit }, type: "LOAD" };
         return sendLookup(query);
     };
@@ -172,7 +175,7 @@ export const Payments = ({ actor: [lookupActor, saveActor, partyActor] }) => {
         return sendSave({ data, type: "LOAD" });
     };
 
-    useEffect(() => sendPagedQuery({})(1, 10), []);
+    useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
 
     useEffect(() => {
         saveActor.subscribe(state => {
@@ -180,7 +183,7 @@ export const Payments = ({ actor: [lookupActor, saveActor, partyActor] }) => {
             const saveContext = saveActor.getSnapshot().context;
 
             if (state.matches("hasResult")) {
-                sendPagedQuery({ orderBy: "date DESC" })(1, lookupContext.payload.data.limit);
+                sendPagedQuery({ ...lookupContext.payload.data, orderBy: "date DESC" })();
 
                 notification.success({
                     message: "Task Complete",

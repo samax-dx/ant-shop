@@ -4,9 +4,13 @@ import { NullMachine } from "./NullMachine";
 import { LoginMachine } from "./LoginMachine";
 import { LogoutMachine } from "./LogoutMachine";
 
-import { FetchMachine } from "./FetchMachine";
+import { FetchMachine, spawnFetcher } from "./FetchMachine";
 import { Accounting } from "../services/Accounting";
 import { Party } from "../services/Party";
+import { Prefix } from "../services/Prefix";
+import { DialPlan } from "../services/DialPlan";
+import { Route } from "../services/Route";
+import { Package } from "../services/Package";
 
 
 export const AppMachine = createMachine({
@@ -23,6 +27,10 @@ export const AppMachine = createMachine({
         parties: {},
         payments: {},
         paymentList: {},
+        prefix: {},
+        route: {},
+        dialPlan: {},
+        package: {},
         login: {},
         logout: {},
     },
@@ -35,6 +43,10 @@ export const AppMachine = createMachine({
         "NAV_PARTIES": { target: "parties", actions: ["assignPartiesActor"] },
         "NAV_PAYMENTS": { target: "payments", actions: ["assignPaymentsActor"] },
         "NAV_PAYMENT_LIST": { target: "paymentList", actions: ["assignPaymentListActor"] },
+        "NAV_PREFIX": { target: "prefix", actions: ["assignPrefixActor"] },
+        "NAV_ROUTE": { target: "route", actions: ["assignRouteActor"] },
+        "NAV_DIAL_PLAN": { target: "dialPlan", actions: ["assignDialPlanActor"] },
+        "NAV_PACKAGE": { target: "package", actions: ["assignPackageActor"] },
         "LOGIN": { target: "login", actions: ["assignLoginActor"] },
         "LOGOUT": { target: "logout", actions: ["assignLogoutActor"] },
     },
@@ -50,75 +62,124 @@ export const AppMachine = createMachine({
         assignProductActor: assign((ctx, ev) => ({
             actor: spawn(ProductMachine)
         })),
-        assignPartiesActor: assign((ctx, ev) => {
-            const actor = [
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Party.fetchParties }
-                    },
-                    {
-                        payload: { data: { page: 1, limit: 10 } },
-                        result: { parties: [], count: 0 },
-                        error: { message: "Waiting for Party Search" }
-                    }
-                )),
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Party.createParty }
-                    }
-                ))
-            ];
-            return { actor };
-        }),
-        assignPaymentsActor: assign((ctx, ev) => {
-            const actor = [
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Accounting.fetchBalanceRequests }
-                    },
-                    {
-                        payload: { data: { page: 1, limit: 10 } },
-                        result: { payments: [], count: 0 },
-                        error: { message: "Waiting for TopUp / Payment Search" }
-                    }
-                )),
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Accounting.addPartyBalance }
-                    }
-                )),
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Party.fetchParties }
-                    },
-                    {
-                        payload: { data: { page: 1, limit: 10 } },
-                        result: { parties: [], count: 0 },
-                        error: { message: "Waiting for Party Search" }
-                    }
-                ))
-            ];
-            return { actor };
-        }),
-        assignPaymentListActor: assign((ctx, ev) => {
-            const actor = [
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Accounting.fetchBalanceRequests }
-                    },
-                    {
-                        payload: { data: { page: 1, limit: 10 } },
-                        error: { message: "Waiting for Payment Search" }
-                    }
-                )),
-                spawn(FetchMachine.withConfig(
-                    {
-                        services: { doFetch: Accounting.handleBalanceRequest }
-                    }
-                ))
-            ];
-            return { actor };
-        }),
+        assignPartiesActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Party.fetchParties,
+                    { data: { page: 1, limit: 10 } },
+                    { parties: [], count: 0 },
+                    { message: "Waiting for Party Search" }
+                ),
+                spawnFetcher(
+                    Party.createParty,
+                    { data: {} },
+                    { partyId: null },
+                    { message: "Waiting for Registration Request" }
+                )
+            ]
+        })),
+        assignPaymentsActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Accounting.fetchBalanceRequests,
+                    { data: { page: 1, limit: 10 } },
+                    { payments: [], count: 0 },
+                    { message: "Waiting for TopUp / Payment Search" }
+                ),
+                spawnFetcher(
+                    Accounting.handleBalanceRequest,
+                    { data: {} },
+                    { paymentId: null },
+                    { message: "Waiting for Payment Request" }
+                ),
+                spawnFetcher(
+                    Party.fetchParties,
+                    { data: { page: 1, limit: 10 } },
+                    { parties: [], count: 0 },
+                    { message: "Waiting for Party Search" }
+                )
+            ]
+        })),
+        assignPaymentListActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Accounting.fetchBalanceRequests,
+                    { data: { page: 1, limit: 10 } },
+                    { payments: [], count: 0 },
+                    { message: "Waiting for TopUp / Payment Search" }
+                ),
+                spawnFetcher(
+                    Accounting.handleBalanceRequest,
+                    { data: {} },
+                    { paymentId: null },
+                    { message: "Waiting for Payment Request" }
+                )
+            ]
+        })),
+        assignPrefixActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Prefix.fetchRecords,
+                    { data: { page: 1, limit: 10 } },
+                    { prefixes: [], count: 0 },
+                    { message: "Waiting for Prefix Search" }
+                ),
+                spawnFetcher(
+                    Prefix.saveRecord,
+                    { data: {} },
+                    { prefixId: null },
+                    { message: "Waiting for Prefix Save" }
+                )
+            ]
+        })),
+        assignRouteActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Route.fetchRecords,
+                    { data: { page: 1, limit: 10 } },
+                    { routes: [], count: 0 },
+                    { message: "Waiting for Route Search" }
+                ),
+                spawnFetcher(
+                    Route.saveRecord,
+                    { data: {} },
+                    { routeId: null },
+                    { message: "Waiting for Route Save" }
+                )
+            ]
+        })),
+        assignDialPlanActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    DialPlan.fetchRecords,
+                    { data: { page: 1, limit: 10 } },
+                    { dialPlans: [], count: 0 },
+                    { message: "Waiting for DialPlan Search" }
+                ),
+                spawnFetcher(
+                    DialPlan.saveRecord,
+                    { data: {} },
+                    { dialPlanId: null },
+                    { message: "Waiting for DialPlan Save" }
+                )
+            ]
+        })),
+        assignPackageActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Package.fetchRecords,
+                    { data: { page: 1, limit: 10 } },
+                    { packages: [], count: 0 },
+                    { message: "Waiting for PackagePrefix Search" }
+                ),
+                spawnFetcher(
+                    Package.saveRecord,
+                    { data: {} },
+                    { packageId: null },
+                    { message: "Waiting for PackagePrefix Save" }
+                )
+            ]
+        })),
         assignLoginActor: assign((ctx, ev) => ({
             actor: spawn(LoginMachine)
         })),

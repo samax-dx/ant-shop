@@ -222,7 +222,10 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
     const [editForm] = Form.useForm();
 
     const sendPagedQuery = queryData => (page, limit) => {
+        page === undefined && (page = queryData.page)
+        limit === undefined && (limit = queryData.limit)
         console.log(queryData, page, limit);
+
         const query = { data: { ...queryData, page, limit }, type: "LOAD" };
         return sendLookup(query);
     };
@@ -232,7 +235,7 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
         return sendSave({ data, type: "LOAD" });
     };
 
-    useEffect(() => sendPagedQuery({})(1, 10), []);
+    useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
 
     useEffect(() => {
         saveActor.subscribe(state => {
@@ -240,7 +243,7 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
             const saveContext = saveActor.getSnapshot().context;
 
             if (state.matches("hasResult")) {
-                sendPagedQuery({ orderBy: "partyId DESC" })(1, lookupContext.payload.data.limit);
+                sendPagedQuery({ ...lookupContext.payload.data, orderBy: "partyId DESC" })();
 
                 notification.success({
                     message: "Task Complete",
@@ -303,12 +306,15 @@ export const PartyPicker = ({ actor: lookupActor, onPicked }) => {
     const [lookupState, sendLookup] = useActor(lookupActor);
 
     const sendPagedQuery = queryData => (page, limit) => {
+        page === undefined && (page = queryData.page)
+        limit === undefined && (limit = queryData.limit)
         console.log(queryData, page, limit);
+
         const query = { data: { ...queryData, page, limit }, type: "LOAD" };
         return sendLookup(query);
     };
 
-    useEffect(() => sendPagedQuery({})(1, 10), []);
+    useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
 
     const onClickView = data => console.log("view", data) || onPicked(data);
     const onClickEdit = data => console.log("edit", data);

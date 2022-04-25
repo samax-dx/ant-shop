@@ -1,19 +1,10 @@
 import axios from "axios";
 import { XAuth } from "./XAuth";
 
-const balanceActionHandler = action => {
-    const endpoint = {
-        confirm: "addPartyBalanceConfirm",
-        cancel: "addPartyBalanceCancel"
-    }[action];
-
-    return endpoint ? endpoint : "__404__";
-}
-
-export const Accounting = ({
-    fetchBalanceRequests: (ctx, ev) => axios
+export const Package = {
+    fetchRecords: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Accounting/listBalanceRequests",
+            "https://localhost:8443/ofbiz-spring/api/Prefix/listPackages",
             { ...ev.data },
             {
                 headers: {
@@ -24,7 +15,7 @@ export const Accounting = ({
         ).then(response => {
             const { data } = response;
 
-            if (data.payments) {
+            if (data.packages) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });
@@ -34,32 +25,9 @@ export const Accounting = ({
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
         }),
-    handleBalanceRequest: (ctx, ev) => axios
+    saveRecord: (ctx, ev) => axios
         .post(
-            `https://localhost:8443/ofbiz-spring/api/Accounting/${balanceActionHandler(ev.action)}`,
-            { paymentId: ev.data.paymentId },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${XAuth.token()}`,
-                }
-            }
-        ).then(response => {
-            const { data } = response;
-
-            if (data.paymentId) {
-                return Promise.resolve(data);
-            } else {
-                return Promise.reject({ message: data.errorMessage });
-            }
-        }).catch(error => {
-            const response = error.response || { data: { error: error.message } };
-            const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
-        }),
-    addPartyBalance: (ctx, ev) => axios
-        .post(
-            "https://localhost:8443/ofbiz-spring/api/Accounting/addPartyBalance",
+            "https://localhost:8443/ofbiz-spring/api/Prefix/savePackage",
             { ...ev.data },
             {
                 headers: {
@@ -70,7 +38,7 @@ export const Accounting = ({
         ).then(response => {
             const { data } = response;
 
-            if (data.paymentId) {
+            if (data.packageId) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });
@@ -79,5 +47,5 @@ export const Accounting = ({
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
-        })
-});
+        }),
+};
