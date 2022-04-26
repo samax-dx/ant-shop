@@ -87,7 +87,7 @@ export const AppMachine = createMachine({
                     { message: "Waiting for TopUp / Payment Search" }
                 ),
                 spawnFetcher(
-                    Accounting.handleBalanceRequest,
+                    Accounting.addPartyBalance,
                     { data: {} },
                     { paymentId: null },
                     { message: "Waiting for Payment Request" }
