@@ -1,10 +1,11 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Route = {
     fetchRecords: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Prefix/listRoutes",
+            `${SERVER_URL}/Prefix/listRoutes`,
             { ...ev.data },
             {
                 headers: {
@@ -27,7 +28,7 @@ export const Route = {
         }),
     saveRecord: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Prefix/saveRoute",
+            `${SERVER_URL}/Prefix/saveRoute`,
             { ...ev.data },
             {
                 headers: {

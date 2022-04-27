@@ -1,4 +1,5 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 const balanceActionHandler = action => {
@@ -13,7 +14,7 @@ const balanceActionHandler = action => {
 export const Accounting = ({
     fetchBalanceRequests: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Accounting/listBalanceRequests",
+            `${SERVER_URL}/Accounting/listBalanceRequests`,
             { ...ev.data },
             {
                 headers: {
@@ -59,7 +60,7 @@ export const Accounting = ({
         }),
     addPartyBalance: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Accounting/addPartyBalance",
+            `${SERVER_URL}/Accounting/addPartyBalance`,
             { ...ev.data },
             {
                 headers: {

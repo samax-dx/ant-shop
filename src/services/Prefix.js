@@ -1,10 +1,11 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Prefix = {
     fetchRecords: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Prefix/listPrefixes",
+            `${SERVER_URL}/Prefix/listPrefixes`,
             { ...ev.data },
             {
                 headers: {
@@ -27,7 +28,7 @@ export const Prefix = {
         }),
     saveRecord: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Prefix/savePrefix",
+            `${SERVER_URL}/Prefix/savePrefix`,
             { ...ev.data },
             {
                 headers: {

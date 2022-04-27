@@ -1,10 +1,11 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const DialPlan = {
     fetchRecords: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Prefix/listDialPlans",
+            `${SERVER_URL}/Prefix/listDialPlans`,
             { ...ev.data },
             {
                 headers: {
@@ -27,7 +28,7 @@ export const DialPlan = {
         }),
     saveRecord: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Prefix/saveDialPlan",
+            `${SERVER_URL}/Prefix/saveDialPlan`,
             { ...ev.data },
             {
                 headers: {

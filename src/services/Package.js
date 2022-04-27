@@ -1,10 +1,11 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const Package = {
     fetchRecords: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Prefix/listPackages",
+            `${SERVER_URL}/Prefix/listPackages`,
             { ...ev.data },
             {
                 headers: {
@@ -27,7 +28,7 @@ export const Package = {
         }),
     saveRecord: (ctx, ev) => axios
         .post(
-            "https://localhost:8443/ofbiz-spring/api/Prefix/savePackage",
+            `${SERVER_URL}/Prefix/savePackage`,
             { ...ev.data },
             {
                 headers: {

@@ -1,9 +1,10 @@
 import axios from "axios";
+import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 const fetchParties = (ctx, ev) =>
     axios.post(
-        "https://localhost:8443/ofbiz-spring/api/Party/findParties",
+        `${SERVER_URL}/Party/findParties`,
         { ...ev.data },
         {
             headers: {
@@ -31,7 +32,7 @@ const fetchParties = (ctx, ev) =>
 
 const createParty = (ctx, ev) =>
     axios.post(
-        "https://localhost:8443/ofbiz-spring/api/Party/createParty",
+        `${SERVER_URL}/Party/createParty`,
         { ...ev.data },
         {
             headers: {
