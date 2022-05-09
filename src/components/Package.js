@@ -34,12 +34,12 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 8 }}
             labelAlign="left"
         >
-            <Form.Item name="packageId" label="Package ID" children={<Input />} />
+            <Form.Item name="packageId" label="Package" children={<Input />} />
             <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="prefix" label="Prefix" children={<Input />} />
-            <Form.Item name="prefix_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="dialPlanId" label="DialPlan ID" children={<Input />} />
+            <Form.Item name="dialPlanId" label="DialPlan Prefix" children={<Input />} />
             <Form.Item name="dialPlanId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="prefix" label="Client Prefix" children={<Input />} />
+            <Form.Item name="prefix_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item wrapperCol={{ offset: 5 }}>
                 <Button
                     type="primary"
@@ -63,11 +63,11 @@ const EditForm = ({ form, record, onSave }) => {
             labelAlign={"left"}
             initialValues={record}
         >
-            <Form.Item name="packageId" label="Package ID" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="packageId" label="Package" rules={[{ required: true }]} children={<Input />} />
 
-            <Form.Item name="dialPlanId" label="DialPlan ID" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="dialPlanId" label="DialPlan Prefix" rules={[{ required: true }]} children={<Input />} />
 
-            <Form.Item name="prefix" label="Prefix" children={<Input />} />
+            <Form.Item name="prefix" label="Client Prefix" children={<Input />} />
 
             <Form.Item wrapperCol={{ offset: 8 }}>
                 <Button
@@ -113,8 +113,8 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
                 }}
             />
 
-            <Table.Column title="DialPlan ID" dataIndex={"dialPlanId"} />
-            <Table.Column title="Prefix" dataIndex={"prefix"} />
+            <Table.Column title="DialPlan Prefix" dataIndex={"dialPlanId"} />
+            <Table.Column title="Client Prefix" dataIndex={"prefix"} />
 
             <Table.Column
                 title="Actions"
@@ -184,6 +184,7 @@ export const Package = ({ actor: [listLoader, recordSaver] }) => {
                 sendPagedQuery({ ...loaderContext.payload.data, orderBy: "lastUpdatedStamp DESC" })();
 
                 notification.success({
+                    key: `spkg_${Date.now()}`,
                     message: "Task Complete",
                     description: <>Package-Prefix saved: {saverContext.result.packageId}</>,
                     duration: 5
@@ -194,6 +195,7 @@ export const Package = ({ actor: [listLoader, recordSaver] }) => {
 
             if (state.matches("hasError")) {
                 notification.error({
+                    key: `spkg_${Date.now()}`,
                     message: "Task Failed",
                     description: <>Error creating campaign.<br />{state.context.error.message}</>,
                     duration: 5

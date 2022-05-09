@@ -34,9 +34,9 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 8 }}
             labelAlign="left"
         >
-            <Form.Item name="dialPlanId" label="DialPlan ID" children={<Input />} />
+            <Form.Item name="dialPlanId" label="Prefix" children={<Input />} />
             <Form.Item name="dialPlanId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="routeId" label="Route ID" children={<Input />} />
+            <Form.Item name="routeId" label="Route" children={<Input />} />
             <Form.Item name="routeId_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="egressPrefix" label="Egress Prefix" children={<Input />} />
             <Form.Item name="egressPrefix_op" initialValue={"contains"} hidden children={<Input />} />
@@ -65,9 +65,9 @@ const EditForm = ({ form, record, onSave }) => {
             labelAlign={"left"}
             initialValues={record}
         >
-            <Form.Item name="dialPlanId" label="DialPlan" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="dialPlanId" label="Prefix" rules={[{ required: true }]} children={<Input />} />
 
-            <Form.Item name="routeId" label="Route ID" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="routeId" label="Route" rules={[{ required: true }]} children={<Input />} />
 
             <Form.Item name="priority" label="Priority" rules={[{ required: true }]} children={<Input />} />
 
@@ -110,7 +110,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             />
 
             <Table.Column
-                title="DialPlan ID"
+                title="Prefix"
                 dataIndex={undefined}
                 render={(_, dialPlan, i) => {
                     return (
@@ -119,7 +119,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
                 }}
             />
 
-            <Table.Column title="Route ID" dataIndex={"routeId"} />
+            <Table.Column title="Route" dataIndex={"routeId"} />
             <Table.Column title="Priority" dataIndex={"priority"} />
             <Table.Column title="Egress Prefix" dataIndex={"egressPrefix"} />
             <Table.Column title="Digit Cut" dataIndex={"digitCut"} />
@@ -192,6 +192,7 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
                 sendPagedQuery({ ...loaderContext.payload.data, orderBy: "lastUpdatedStamp DESC" })();
 
                 notification.success({
+                    key: `sdial_${Date.now()}`,
                     message: "Task Complete",
                     description: <>DialPlan saved: {saverContext.result.dialPlanId}</>,
                     duration: 5
@@ -202,6 +203,7 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
 
             if (state.matches("hasError")) {
                 notification.error({
+                    key: `sdial_${Date.now()}`,
                     message: "Task Failed",
                     description: <>Error creating DialPlan.<br />{state.context.error.message}</>,
                     duration: 5

@@ -39,7 +39,7 @@ export const Package = {
         ).then(response => {
             const { data } = response;
 
-            if (data.packageId) {
+            if (data.package) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });

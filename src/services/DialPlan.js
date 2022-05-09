@@ -39,7 +39,7 @@ export const DialPlan = {
         ).then(response => {
             const { data } = response;
 
-            if (data.dialPlanId) {
+            if (data.dialPlan) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });

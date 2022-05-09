@@ -78,21 +78,20 @@ const EditForm = ({ form, record, onSave }) => {
 
             <Form.Item
                 name="countryCode"
-                label="Country"
+                label="Country Code"
                 children={(
                     <Select
                         showSearch
                         style={{ width: 200 }}
-                        placeholder="Country Code"
                         onChange={_ => console.log("changed")}
                         optionFilterProp="children"
                         filterOption={true}
                         allowClear={true}
                     >
                         {
-                            Object.entries(countries).map(([code, { name, emoji }]) => {
+                            Object.entries(countries).map(([code, { name, emoji, phone }]) => {
                                 return (
-                                    <Select.Option value={code.toLowerCase()} key={code}>
+                                    <Select.Option value={phone} key={phone}>
                                         {emoji}&nbsp;&nbsp;{name}
                                     </Select.Option>
                                 );
@@ -148,7 +147,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
                 }}
             />
 
-            <Table.Column title="Country" dataIndex={"countryCode"} />
+            <Table.Column title="Country Code" dataIndex={"countryCode"} />
             <Table.Column title="Description" dataIndex={"description"} />
 
             <Table.Column
@@ -219,8 +218,9 @@ export const Prefix = ({ actor: [listLoader, recordSaver] }) => {
                 sendPagedQuery({ ...loaderContext.payload.data, orderBy: "lastUpdatedStamp DESC" })();
 
                 notification.success({
+                    key: `sprefix_${Date.now()}`,
                     message: "Task Complete",
-                    description: <>Prefix saved: {saverContext.result.prefixId}</>,
+                    description: <>Prefix saved: {saverContext.result.prefix.prefixId}</>,
                     duration: 5
                 });
 
@@ -229,6 +229,7 @@ export const Prefix = ({ actor: [listLoader, recordSaver] }) => {
 
             if (state.matches("hasError")) {
                 notification.error({
+                    key: `sprefix_${Date.now()}`,
                     message: "Task Failed",
                     description: <>Error creating campaign.<br />{state.context.error.message}</>,
                     duration: 5

@@ -48,6 +48,7 @@ export const PaymentList = ({ actor: [listActor, taskActor] }) => {
 
                 setTimeout(() => {
                     notification.success({
+                        key: `cpmnt_${Date.now()}`,
                         message: "Success",
                         description: <Text type="success" strong>
                             Task completed: "{taskState.context.payload.action} payment".
@@ -60,6 +61,7 @@ export const PaymentList = ({ actor: [listActor, taskActor] }) => {
             if (taskState.matches("hasError")) {
                 setTimeout(() => {
                     notification.error({
+                        key: `cpmnt_${Date.now()}`,
                         message: "Error",
                         description: <>
                             <Text type="danger" strong>

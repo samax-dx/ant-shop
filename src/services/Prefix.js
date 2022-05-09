@@ -39,7 +39,7 @@ export const Prefix = {
         ).then(response => {
             const { data } = response;
 
-            if (data.prefixId) {
+            if (data.prefix) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });

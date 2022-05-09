@@ -2,7 +2,7 @@ import React from 'react';
 import { useActor } from '@xstate/react';
 import { Menu } from 'antd';
 
-import { UserOutlined, SettingOutlined, ProfileOutlined, BankOutlined } from '@ant-design/icons';
+import { UserOutlined, SettingOutlined, ProfileOutlined, BankOutlined, WalletTwoTone, IdcardTwoTone, InteractionTwoTone } from '@ant-design/icons';
 
 export const MainMenu = ({ actor }) => {
     const [appState, sendApp] = useActor(actor);
@@ -15,17 +15,17 @@ export const MainMenu = ({ actor }) => {
             selectedKeys={[appState.value]}
         >
             <Menu.SubMenu key="accounting" icon={<BankOutlined />} title="Accounting">
-                <Menu.Item key="payments" onClick={() => sendApp({ type: "NAV_PAYMENTS" })}>TopUp / Payments</Menu.Item>
+                <Menu.Item key="payments" icon={<WalletTwoTone />} onClick={() => sendApp({ type: "NAV_PAYMENTS" })}>TopUp / Payments</Menu.Item>
                 {/* <Menu.Item key="paymentList" onClick={() => sendApp({ type: "NAV_PAYMENT_LIST" })}>Payment Applications</Menu.Item> */}
             </Menu.SubMenu>
             <Menu.SubMenu key="partymenu" icon={<ProfileOutlined />} title="Party Management">
-                <Menu.Item key="parties" onClick={() => sendApp({ type: 'NAV_PARTIES' })}>Parties</Menu.Item>
+                <Menu.Item key="parties" icon={<IdcardTwoTone />} onClick={() => sendApp({ type: 'NAV_PARTIES' })}>Parties</Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
-                <Menu.Item key="prefix" onClick={() => sendApp({ type: 'NAV_PREFIX' })}>Prefix</Menu.Item>
-                <Menu.Item key="route" onClick={() => sendApp({ type: 'NAV_ROUTE' })}>Route</Menu.Item>
-                <Menu.Item key="dialPlan" onClick={() => sendApp({ type: 'NAV_DIAL_PLAN' })}>Dial Plan</Menu.Item>
-                <Menu.Item key="package" onClick={() => sendApp({ type: 'NAV_PACKAGE' })}>Package Prefix</Menu.Item>
+                <Menu.Item key="prefix" icon={<InteractionTwoTone />} onClick={() => sendApp({ type: 'NAV_PREFIX' })}>Prefix</Menu.Item>
+                <Menu.Item key="route" icon={<InteractionTwoTone />} onClick={() => sendApp({ type: 'NAV_ROUTE' })}>Route</Menu.Item>
+                <Menu.Item key="dialPlan" icon={<InteractionTwoTone />} onClick={() => sendApp({ type: 'NAV_DIAL_PLAN' })}>Dial Plan</Menu.Item>
+                <Menu.Item key="package" icon={<InteractionTwoTone />} onClick={() => sendApp({ type: 'NAV_PACKAGE' })}>Package Prefix</Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="sub5" icon={<UserOutlined />} title="..." disabled>
                 <Menu.Item key="partners">Partners</Menu.Item>

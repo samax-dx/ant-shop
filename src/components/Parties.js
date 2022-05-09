@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useActor } from "@xstate/react";
-import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification } from "antd";
+import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin } from "antd";
 import { Br } from "./Br";
 import { countries } from "countries-list";
 
@@ -221,6 +221,8 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
     const [saveState, sendSave] = useActor(saveActor);
     const [editForm] = Form.useForm();
 
+    const [saving, setSaving] = useState(false);
+
     const sendPagedQuery = queryData => (page, limit) => {
         page === undefined && (page = queryData.page)
         limit === undefined && (limit = queryData.limit)
@@ -246,20 +248,24 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
                 sendPagedQuery({ ...lookupContext.payload.data, orderBy: "partyId DESC" })();
 
                 notification.success({
+                    key: `cparty_${Date.now()}`,
                     message: "Task Complete",
                     description: <>Party created: {saveContext.payload.data.loginId}</>,
                     duration: 5
                 });
 
                 editForm.resetFields();
+                setSaving(false);
             }
 
             if (state.matches("hasError")) {
                 notification.error({
+                    key: `cparty_${Date.now()}`,
                     message: "Task Failed",
                     description: <>Error creating party.<br />{state.context.error.message}</>,
                     duration: 5
                 });
+                setSaving(false);
             }
         });
     }, [editForm]);
@@ -285,20 +291,25 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
     return (<>
         <Row>
             <Col md={10}>
-                <Typography.Text strong>Find Parties</Typography.Text>
-                <Br />
-                <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
+                <Card title="Find Parties">
+                    <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
+                </Card>
             </Col>
-            <Col md={14} pull={2}>
-                <Typography.Text strong>Create Party</Typography.Text>
-                <Br />
-                <EditForm form={editForm} record={{}} onSave={saveRecord} />
-                <Br />
+            <Col md={11} push={1}>
+                <Collapse>
+                    <Collapse.Panel header="Create Party" key="recordEditor">
+                        <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} />
+                    </Collapse.Panel>
+                </Collapse>
             </Col>
         </Row>
+        <Br />
         <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
         <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
+        <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
+            <Spin tip="Sending Request" />
+        </Modal>
     </>);
 };
 

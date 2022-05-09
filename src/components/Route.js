@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification, Collapse, Card, Select, Row, Col } from "antd";
+import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification, Collapse, Card, Select, Row, Col, Checkbox } from "antd";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
 
@@ -53,17 +53,24 @@ const SearchForm = ({ onSearch }) => {
 const EditForm = ({ form, record, onSave }) => {
     const [editForm] = Form.useForm(form);
 
+    var rec = { ...record };
+    if (rec.disabled !== "Y") {
+        console.log("fefg");
+        rec.disabled = null;
+    }
+
     return (<>
         <Form
             form={editForm}
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             labelAlign={"left"}
-            initialValues={record}
+            initialValues={rec}
         >
             <Form.Item name="routeId" label="Route ID" rules={[{ required: true }]} children={<Input />} />
 
             <Form.Item name="description" label="Description" children={<Input />} />
+            <Form.Item name="disabled" label="Disabled" valuePropName="checked" children={<Checkbox />} />
 
             <Form.Item wrapperCol={{ offset: 8 }}>
                 <Button
@@ -110,6 +117,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             />
 
             <Table.Column title="Description" dataIndex={"description"} />
+            <Table.Column title="Disabled" dataIndex={"disabled"} render={disabled => disabled === "Y" ? "Yes" : "No" } />
 
             <Table.Column
                 title="Actions"
@@ -179,6 +187,7 @@ export const Route = ({ actor: [listLoader, recordSaver] }) => {
                 sendPagedQuery({ ...loaderContext.payload.data, orderBy: "lastUpdatedStamp DESC" })();
 
                 notification.success({
+                    key: `sroute_${Date.now()}`,
                     message: "Task Complete",
                     description: <>Route saved: {saverContext.result.routeId}</>,
                     duration: 5
@@ -189,6 +198,7 @@ export const Route = ({ actor: [listLoader, recordSaver] }) => {
 
             if (state.matches("hasError")) {
                 notification.error({
+                    key: `sroute_${Date.now()}`,
                     message: "Task Failed",
                     description: <>Error creating campaign.<br />{state.context.error.message}</>,
                     duration: 5
@@ -212,7 +222,7 @@ export const Route = ({ actor: [listLoader, recordSaver] }) => {
 
     // Component Current Properties
     const onClickView = data => console.log("view", data);
-    const onClickEdit = data => console.log("edit", data) || setEditorCollapsed(false) || editForm.setFieldsValue(data);
+    const onClickEdit = data => console.log("edit", data) || setEditorCollapsed(false) || editForm.setFieldsValue({ ...data, disabled: data.disabled === "Y" });
     const onClickDelete = data => console.log("delete", data);
 
     const editFormTitle = () => editForm.formHooked && editForm.getFieldValue("routeId") ? "Edit Route" : "Create Route";

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useActor } from "@xstate/react";
-import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, DatePicker, InputNumber, Modal } from "antd";
+import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, DatePicker, InputNumber, Modal, Spin, Card, Collapse } from "antd";
 import { Br } from "./Br";
 import dayjs from "dayjs";
 import { SearchOutlined } from "@ant-design/icons";
@@ -129,7 +129,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
             <Table.Column title="User Id" dataIndex={"partyLoginId"} />
             <Table.Column title="Party Name" dataIndex={"partyName"} />
-            <Table.Column title="Date" dataIndex={"date"} render={value => dayjs(value).format("MMM D, YYYY h:mm A")} />
+            <Table.Column title="Date" dataIndex={"date"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />
             <Table.Column title="Amount" dataIndex={"amount"} />
         </Table>
     </>);
@@ -155,6 +155,8 @@ export const Payments = ({ actor: [lookupActor, saveActor, partyActor] }) => {
     const [saveState, sendSave] = useActor(saveActor);
     const [editForm] = Form.useForm();
     const [choosingParty, setChoosingParty] = useState(false);
+
+    const [saving, setSaving] = useState(false);
 
     const sendLookup = payload => {
         Object.assign(payload.data, { statusId: "PMNT_CONFIRMED" });
@@ -186,20 +188,24 @@ export const Payments = ({ actor: [lookupActor, saveActor, partyActor] }) => {
                 sendPagedQuery({ ...lookupContext.payload.data, orderBy: "date DESC" })();
 
                 notification.success({
+                    key: `cpmnt_${Date.now()}`,
                     message: "Task Complete",
                     description: <>Account credited. Payment ID: {saveContext.result.paymentId}</>,
                     duration: 5
                 });
 
                 editForm.resetFields();
+                setSaving(false);
             }
 
             if (state.matches("hasError")) {
                 notification.error({
+                    key: `cpmnt_${Date.now()}`,
                     message: "Task Failed",
                     description: <>Payment failed.<br />{state.context.error.message}</>,
                     duration: 5
                 });
+                setSaving(false);
             }
         });
     }, [editForm]);
@@ -224,7 +230,7 @@ export const Payments = ({ actor: [lookupActor, saveActor, partyActor] }) => {
 
     return (<>
         <Row>
-            <Col md={14}>
+            {/* <Col md={14}>
                 <Typography.Text strong>Find TopUp / Payments</Typography.Text>
                 <Br />
                 <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
@@ -232,15 +238,31 @@ export const Payments = ({ actor: [lookupActor, saveActor, partyActor] }) => {
             <Col md={10} pull={2}>
                 <Typography.Text strong>TopUp / Make Payment</Typography.Text>
                 <Br />
-                <EditForm form={editForm} record={{}} onSave={saveRecord} onFindParty={() => setChoosingParty(true)} />
+                <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} onFindParty={() => setChoosingParty(true)} />
                 <Br />
+            </Col> */}
+            <Col md={10}>
+                <Card title="Find TopUp / Payments">
+                    <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
+                </Card>
+            </Col>
+            <Col md={11} push={1}>
+                <Collapse>
+                    <Collapse.Panel header="TopUp / Make Payment" key="recordEditor">
+                        <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} onFindParty={() => setChoosingParty(true)} />
+                    </Collapse.Panel>
+                </Collapse>
             </Col>
         </Row>
+        <Br />
         <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
         <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
         <Modal visible={choosingParty} footer={null} onCancel={() => setChoosingParty(false)} width={"90vw"}>
             <PartyPicker actor={partyActor} onPicked={({ partyId }) => setChoosingParty(false) || editForm.setFieldsValue({ partyId })} />
+        </Modal>
+        <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
+            <Spin tip="Sending Request" />
         </Modal>
     </>);
 };
