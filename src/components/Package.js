@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { Form, Input, Button, Table, Space, Pagination, notification, Collapse, Card, Row, Col } from "antd";
+import { Form, Input, Button, Table, Space, Pagination, notification, Collapse, Card, Row, Col, Select } from "antd";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
+
+import { Product as ProductSvc } from "../services/Product";
+import { DialPlan as DialPlanSvc } from "../services/DialPlan";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -52,7 +55,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const EditForm = ({ form, record, onSave }) => {
+const EditForm = ({ form, record, onSave, dialPlans, lineups }) => {
     const [editForm] = Form.useForm(form);
 
     return (<>
@@ -63,9 +66,17 @@ const EditForm = ({ form, record, onSave }) => {
             labelAlign={"left"}
             initialValues={record}
         >
-            <Form.Item name="packageId" label="Package" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="packageId" label="Package" rules={[{ required: true }]}>
+                <Select showSearch allowClear style={{ minWidth: 150 }}>
+                    {lineups.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName} ({v.productId})</Select.Option>)}
+                </Select>
+            </Form.Item>
 
-            <Form.Item name="dialPlanId" label="DialPlan Prefix" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="dialPlanId" label="DialPlan Prefix" rules={[{ required: true }]}>
+                <Select showSearch allowClear style={{ minWidth: 150 }}>
+                    {dialPlans.map((v, i) => <Select.Option value={v.dialPlanId} key={i}>{v.dialPlanId}</Select.Option>)}
+                </Select>
+            </Form.Item>
 
             <Form.Item name="prefix" label="Client Prefix" children={<Input />} />
 
@@ -152,6 +163,8 @@ export const Package = ({ actor: [listLoader, recordSaver] }) => {
     // Component States
     const [editorCollapsed, setEditorCollapsed] = useState(true);
     const [{ context: listLoaderContext }] = useActor(listLoader);
+    const [lineups, setLineups] = useState([]);
+    const [dialPlans, setDialPlans] = useState([]);
 
 
     // Dependent Helper Functions
@@ -171,7 +184,19 @@ export const Package = ({ actor: [listLoader, recordSaver] }) => {
 
 
     // Initializers
-    useEffect(() => sendPagedQuery(listLoaderContext.payload.data)(), []);
+    useEffect(() => {
+        sendPagedQuery(listLoaderContext.payload.data)();
+        ProductSvc
+            .fetchProductLineups({}, { data: {} })
+            .then(data => console.log("fetched lineups", data) || data)
+            .then(data => setLineups(data.lineups || []))
+            .catch(error => console.log("error fetching dialPlans", error));
+        DialPlanSvc
+            .fetchRecords({}, { data: {} })
+            .then(data => console.log("fetched lineups", data) || data)
+            .then(data => setDialPlans(data.dialPlans || []))
+            .catch(error => console.log("error fetching dialPlans", error));
+    }, []);
 
 
     // Listeners
@@ -237,7 +262,7 @@ export const Package = ({ actor: [listLoader, recordSaver] }) => {
             <Col md={11} push={1}>
                 <Collapse activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)} style={{ width: "500px" }}>
                     <Collapse.Panel header={editFormTitle()} key="recordEditor">
-                        <EditForm form={editForm} record={{}} onSave={saveRecord} />
+                        <EditForm form={editForm} record={{}} onSave={saveRecord} {...{ lineups, dialPlans }} />
                     </Collapse.Panel>
                 </Collapse>
             </Col>

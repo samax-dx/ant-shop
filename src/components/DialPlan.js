@@ -3,6 +3,9 @@ import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
 
+import { Prefix as PrefixSvc } from "../services/Prefix";
+import { Route as RouteSvc } from "../services/Route";
+
 
 const SearchForm = ({ onSearch }) => {
     const [searchForm] = Form.useForm();
@@ -54,7 +57,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const EditForm = ({ form, record, onSave }) => {
+const EditForm = ({ form, record, onSave, prefixes, routes }) => {
     const [editForm] = Form.useForm(form);
 
     return (<>
@@ -65,9 +68,17 @@ const EditForm = ({ form, record, onSave }) => {
             labelAlign={"left"}
             initialValues={record}
         >
-            <Form.Item name="dialPlanId" label="Prefix" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="dialPlanId" label="Prefix" rules={[{ required: true }]}>
+                <Select showSearch allowClear style={{ minWidth: 150 }}>
+                    {prefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
+                </Select>
+            </Form.Item>
 
-            <Form.Item name="routeId" label="Route" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="routeId" label="Route" rules={[{ required: true }]}>
+                <Select showSearch allowClear style={{ minWidth: 150 }}>
+                    {routes.map((v, i) => <Select.Option value={v.routeId} key={i}>{v.routeId}</Select.Option>)}
+                </Select>
+            </Form.Item>
 
             <Form.Item name="priority" label="Priority" rules={[{ required: true }]} children={<Input />} />
 
@@ -160,6 +171,8 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
     // Component States
     const [editorCollapsed, setEditorCollapsed] = useState(true);
     const [{ context: listLoaderContext }] = useActor(listLoader);
+    const [prefixes, setPrefixs] = useState([]);
+    const [routes, setRoutes] = useState([]);
 
 
     // Dependent Helper Functions
@@ -179,7 +192,19 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
 
 
     // Initializers
-    useEffect(() => sendPagedQuery(listLoaderContext.payload.data)(), []);
+    useEffect(() => {
+        sendPagedQuery(listLoaderContext.payload.data)();
+        PrefixSvc
+            .fetchRecords({}, { data: {} })
+            .then(data => console.log("fetched prefixs", data) || data)
+            .then(data => setPrefixs(data.prefixes || []))
+            .catch(error => console.log("error fetching prefixs", error));
+        RouteSvc
+            .fetchRecords({}, { data: {} })
+            .then(data => console.log("fetched routes", data) || data)
+            .then(data => setRoutes(data.routes || []))
+            .catch(error => console.log("error fetching routes", error));
+    }, []);
 
 
     // Listeners
@@ -245,7 +270,7 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
             <Col md={11} push={1}>
                 <Collapse activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)} style={{ width: "500px" }}>
                     <Collapse.Panel header={editFormTitle()} key="recordEditor">
-                        <EditForm form={editForm} record={{}} onSave={saveRecord} />
+                        <EditForm form={editForm} record={{}} onSave={saveRecord} {...{ prefixes, routes }} />
                     </Collapse.Panel>
                 </Collapse>
             </Col>
