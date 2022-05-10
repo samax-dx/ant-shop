@@ -13,7 +13,8 @@ export const Package = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        ).then(response => {
+        )
+        .then(response => {
             const { data } = response;
 
             if (data.packages) {
@@ -21,7 +22,8 @@ export const Package = {
             } else {
                 return Promise.reject({ message: data.errorMessage });
             }
-        }).catch(error => {
+        })
+        .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
@@ -36,7 +38,8 @@ export const Package = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        ).then(response => {
+        )
+        .then(response => {
             const { data } = response;
 
             if (data.package) {
@@ -44,9 +47,10 @@ export const Package = {
             } else {
                 return Promise.reject({ message: data.errorMessage });
             }
-        }).catch(error => {
+        })
+        .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
-        }),
+        })
 };
