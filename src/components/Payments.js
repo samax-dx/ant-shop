@@ -130,7 +130,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             <Table.Column title="User Id" dataIndex={"partyLoginId"} />
             <Table.Column title="Party Name" dataIndex={"partyName"} />
             <Table.Column title="Date" dataIndex={"date"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />
-            <Table.Column title="Amount" dataIndex={"amount"} />
+            <Table.Column title="Amount" dataIndex={"amount"} render={v => v.toFixed(2)} />
         </Table>
     </>);
 };
