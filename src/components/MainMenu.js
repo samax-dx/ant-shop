@@ -5,7 +5,7 @@ import { Menu } from 'antd';
 import { UserOutlined, SettingOutlined, ProfileOutlined, BankOutlined, WalletTwoTone, IdcardTwoTone, InteractionTwoTone } from '@ant-design/icons';
 
 export const MainMenu = ({ actor }) => {
-    const [appState, sendApp] = useActor(actor);
+    const [appState, sendApp] = [actor.getSnapshot(), actor.send];
 
     return (
         <Menu
