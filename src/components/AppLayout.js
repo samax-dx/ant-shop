@@ -17,7 +17,7 @@ export const AppLayout = ({ render: PageContent, actor }) => {
                 <Col xs={10} sm={4} className="logo" onClick={() => actor.send("NAV_HOME")}>
                     <img src={"/logo.sym.png"} style={{ marginBottom: "4px" }} />
                     &nbsp;
-                    <span>SMS-Portal Server</span>
+                    <span>SMS-Portal Admin</span>
                 </Col>
                 <Col xs={14} sm={20} className="menu"><TopMenu actor={actor} /></Col>
             </Row>
