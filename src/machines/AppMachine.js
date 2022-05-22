@@ -5,6 +5,7 @@ import { LoginMachine } from "./LoginMachine";
 import { LogoutMachine } from "./LogoutMachine";
 
 import { FetchMachine, spawnFetcher } from "./FetchMachine";
+import { XAuth } from "../services/XAuth";
 import { Accounting } from "../services/Accounting";
 import { Party } from "../services/Party";
 import { Prefix } from "../services/Prefix";
@@ -17,7 +18,10 @@ export const AppMachine = createMachine({
     id: "app",
     states: {
         start: {
-            entry: send({ type: "LOGIN" })
+            entry: [
+                "assignStartAction",
+                send((ctx, ev) => ({ type: ctx.__start_action }))
+            ],
         },
         home: {},
         product: {},
@@ -51,11 +55,15 @@ export const AppMachine = createMachine({
         "LOGOUT": { target: "logout", actions: ["assignLogoutActor"] },
     },
     context: {
+        __start_action: null,
         actor: null
     },
     initial: "start"
 }, {
     actions: {
+        assignStartAction: assign((ctx, ev) => ({
+            __start_action: XAuth.token() ? "NAV_HOME" : "LOGIN"
+        })),
         assignHomeActor: assign((ctx, ev) => ({
             actor: spawn(NullMachine)
         })),
