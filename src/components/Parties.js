@@ -31,15 +31,14 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 3 }}
-            wrapperCol={{ span: 7 }}
-            labelAlign="left"
+            wrapperCol={{ span: 17}}
+            layout={"inline"}
         >
-            <Form.Item name="loginId" label="User ID" children={<Input />} />
+            <Form.Item style={{ width: "40%", height: 30, marginBottom: 0, marginRight: 3}}  name="loginId" label="User ID" children={<Input />} />
             <Form.Item name="loginId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="name" label="Name" children={<Input />} />
+            <Form.Item style={{ width: "40%", height: 30, marginBottom: 0, marginRight: 2 }} name="name" label="Name" children={<Input />} />
             <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item wrapperCol={{ offset: 3 }}>
+            <Form.Item style={{ width: "19%", height: 30, marginBottom: 0, marginRight: 0 }}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -57,8 +56,8 @@ const EditForm = ({ form, record: party, onSave }) => {
     return (<>
         <Form
             form={editForm}
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 18 }}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
             labelAlign={"left"}
         >
             <Form.Item name="partyId" label="ID" style={{ display: "none" }} children={<Input />} />
@@ -70,7 +69,7 @@ const EditForm = ({ form, record: party, onSave }) => {
                     <Form.Item
                         name="contactMech.countryCode"
                         rules={[{ required: true }]}
-                        style={{ minWidth: "160px", margin: 0 }}
+                        style={{ minWidth: "150px", margin: 0 }}
                     >
                         <Select
                             showSearch
@@ -135,7 +134,7 @@ const EditForm = ({ form, record: party, onSave }) => {
                 <Input.Password />
             </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 6 }}>
+            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -290,12 +289,12 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
 
     return (<>
         <Row>
-            <Col md={10}>
+            <Col md={13}>
                 <Card title="Find Parties">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            <Col md={11} push={1}>
+            <Col md={10} push={1}>
                 <Collapse>
                     <Collapse.Panel header="Create Party" key="recordEditor">
                         <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} />
