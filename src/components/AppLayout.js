@@ -1,11 +1,9 @@
 import React from 'react';
 import { useActor } from '@xstate/react';
-import { Col, Row, Layout, Breadcrumb, Space, Button } from 'antd';
+import { Col, Row, Layout, Breadcrumb, Space, Button,Avatar } from 'antd';
 import { TopMenu } from "./TopMenu";
 import { MainMenu } from './MainMenu';
-import images from '../img/imgIndex';
-
-
+import getAllConfig from '../config/main';
 
 const { Header, Sider } = Layout;
 
@@ -18,7 +16,7 @@ export const AppLayout = ({ render: PageContent, actor }) => {
         {appState.matches("login") || <Header className="header">
             <Row>
                 <Col xs={10} sm={4} className="logo" onClick={() => actor.send("NAV_HOME")}>
-                    <img src={images["4.jpeg"]} style={{ marginBottom: "4px" }} />
+                    <img height={45} width={45} src={getAllConfig.logo} style={{ marginBottom: "4px"}} />
                     &nbsp;
                     <span>SMS-Portal Admin</span>
                 </Col>

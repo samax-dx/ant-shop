@@ -5,7 +5,7 @@ import { Br } from "./Br";
 import dayjs from "dayjs";
 import { SearchOutlined } from "@ant-design/icons";
 import { PartyPicker } from "./Parties";
-import MyModal from "../MyModal";
+
 
 
 const SearchForm = ({ onSearch }) => {
