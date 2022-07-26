@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification, Collapse, Card, Select, Row, Col } from "antd";
+import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification, Collapse, Card, Select, Row, Col,Modal } from "antd";
 import { countries } from "countries-list";
 import dayjs from "dayjs";
 import { useActor } from "@xstate/react";
@@ -37,21 +37,21 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 8 }}
+            labelCol={{ span: 12}}
+            wrapperCol={{ sm: 23}}
             labelAlign="left"
         >
-            <Form.Item name="prefixId" label="Prefix" children={<Input />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="prefixId" label="Prefix" children={<Input />} />
             <Form.Item name="prefixId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="countryCode" label="Country Code" children={<Input />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="countryCode" label="Country Code" children={<Input />} />
             <Form.Item name="countryCode_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="description" label="Description" children={<Input />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="description" label="Description" children={<Input />} />
             <Form.Item name="description_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="date_fld0_value" label="From Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
             <Form.Item name="date_fld1_value" label="To Date" hidden children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
-            <Form.Item wrapperCol={{ offset: 5 }}>
+            <Form.Item colon={false} wrapperCol={{ offset: 0}} style={{display:'inline-block',marginBottom:'0px'}} label=' '>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -73,10 +73,13 @@ const EditForm = ({ form, record, onSave }) => {
             wrapperCol={{ span: 16 }}
             labelAlign={"left"}
             initialValues={record}
+            style={{
+                padding:'15px'
+            }}
         >
-            <Form.Item name="prefixId" label="Prefix" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item style={{marginBottom:'5px'}} name="prefixId" label="Prefix" rules={[{ required: true }]} children={<Input />} />
 
-            <Form.Item
+            <Form.Item style={{marginBottom:'5px'}}
                 name="countryCode"
                 label="Country Code"
                 children={(
@@ -101,7 +104,7 @@ const EditForm = ({ form, record, onSave }) => {
                 )}
             />
 
-            <Form.Item name="description" label="Description" children={<Input />} />
+            <Form.Item style={{marginBottom:'5px'}} name="description" label="Description" children={<Input />} />
 
             <Form.Item wrapperCol={{ offset: 8 }}>
                 <Button
@@ -261,19 +264,33 @@ export const Prefix = ({ actor: [listLoader, recordSaver] }) => {
     const viewPage = listLoaderContext.payload.data.page;
     const viewLimit = listLoaderContext.payload.data.limit;
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
     return (<>
-        <Row>
-            <Col md={10}>
-                <Card title="Find Prefix">
+        <Row style={{padding:'0px'}}>
+            <Col md={18}>
+                <Card title="Find Prefix" style={{height:130}} size='small'>
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            <Col md={11} push={1}>
-                <Collapse activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)} style={{ width: "500px" }}>
-                    <Collapse.Panel header={editFormTitle()} key="recordEditor">
+            <Col md={5} push={1}>
+                <Button type="default" onClick={showModal}>
+                    Create Prefix
+                </Button>
+                <Modal header={editFormTitle()} key="recordEditor" activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)}
+                       visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                         <EditForm form={editForm} record={{}} onSave={saveRecord} />
-                    </Collapse.Panel>
-                </Collapse>
+                </Modal>
             </Col>
         </Row>
         <Br />

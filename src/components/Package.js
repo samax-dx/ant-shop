@@ -1,5 +1,19 @@
 import { useEffect, useState } from "react";
-import { Form, Input, Button, Table, Space, Pagination, notification, Collapse, Card, Row, Col, Select } from "antd";
+import {
+    Form,
+    Input,
+    Button,
+    Table,
+    Space,
+    Pagination,
+    notification,
+    Collapse,
+    Card,
+    Row,
+    Col,
+    Select,
+    Modal
+} from "antd";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
 
@@ -33,17 +47,17 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 8 }}
+            labelCol={{ span: 18}}
+            wrapperCol={{ span: 23}}
             labelAlign="left"
         >
-            <Form.Item name="packageId" label="Package" children={<Input />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="packageId" label="Package" children={<Input />} />
             <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="dialPlanId" label="DialPlan Prefix" children={<Input />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="dialPlanId" label="DialPlan Prefix" children={<Input />} />
             <Form.Item name="dialPlanId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="prefix" label="Client Prefix" children={<Input />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="prefix" label="Client Prefix" children={<Input />} />
             <Form.Item name="prefix_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item wrapperCol={{ offset: 5 }}>
+            <Form.Item wrapperCol={{ offset: 0 }} style={{display:'inline-block',marginBottom:'0px'}} label=" " colon={false}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -65,6 +79,9 @@ const EditForm = ({ form, record, onSave, dialPlans, lineups }) => {
             wrapperCol={{ span: 16 }}
             labelAlign={"left"}
             initialValues={record}
+            style={{
+                padding:'15px'
+            }}
         >
             <Form.Item name="packageId" label="Package" rules={[{ required: true }]}>
                 <Select showSearch allowClear style={{ minWidth: 150 }}>
@@ -252,19 +269,34 @@ export const Package = ({ actor: [listLoader, recordSaver] }) => {
     const viewPage = listLoaderContext.payload.data.page;
     const viewLimit = listLoaderContext.payload.data.limit;
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
+
     return (<>
         <Row>
-            <Col md={10}>
-                <Card title="Find Package">
+            <Col md={18}>
+                <Card title="Find Package" style={{height:130}} size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            <Col md={11} push={1}>
-                <Collapse activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)} style={{ width: "500px" }}>
-                    <Collapse.Panel header={editFormTitle()} key="recordEditor">
-                        <EditForm form={editForm} record={{}} onSave={saveRecord} {...{ lineups, dialPlans }} />
-                    </Collapse.Panel>
-                </Collapse>
+            <Col md={5} push={1}>
+                <Button type="default" onClick={showModal}>
+                    Create Route
+                </Button>
+                <Modal header={editFormTitle()} key="recordEditor" activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)}
+                          visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                    <EditForm form={editForm} record={{}} onSave={saveRecord} {...{ lineups, dialPlans }} />
+                </Modal>
             </Col>
         </Row>
         <Br />

@@ -31,14 +31,30 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            wrapperCol={{ span: 17}}
-            layout={"inline"}
+            labelCol={{ span: 10}}
+            wrapperCol={{ span: 23}}
+            labelAlign="left"
         >
-            <Form.Item style={{ width: "40%", height: 30, marginBottom: 0, marginRight: 3}}  name="loginId" label="User ID" children={<Input />} />
-            <Form.Item name="loginId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{ width: "40%", height: 30, marginBottom: 0, marginRight: 2 }} name="name" label="Name" children={<Input />} />
-            <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{ width: "19%", height: 30, marginBottom: 0, marginRight: 0 }}>
+            <Space>
+                <Form.Item style={{display:'inline-block'}}  name="loginId" label="User ID" children={<Input />} />
+                <Form.Item name="loginId_op" initialValue={"contains"} hidden children={<Input />} />
+                <Form.Item style={{display:'inline-block'}} name="name" label="Name" children={<Input />} />
+                <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
+
+                <Form.Item colon={false} style={{display:'inline-block'}} label=' '
+                           children={
+                               <Button
+                                   type="primary"
+                                   htmlType="submit"
+                                   onClick={performSearch}
+                                   children={"Search"}
+                               />
+                           }
+                />
+
+            </Space>
+{/*
+            <Form.Item style={{display:'inline-block', width: "30%"}} label="">
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -46,6 +62,7 @@ const SearchForm = ({ onSearch }) => {
                     children={"Search"}
                 />
             </Form.Item>
+*/}
         </Form>
     </>);
 };
@@ -57,8 +74,11 @@ const EditForm = ({ form, record: party, onSave }) => {
         <Form
             form={editForm}
             labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+            wrapperCol={{ span: 20 }}
             labelAlign={"left"}
+            style={{
+                padding:'15px'
+            }}
         >
             <Form.Item name="partyId" label="ID" style={{ display: "none" }} children={<Input />} />
             <Form.Item name="loginId" label="User ID" rules={[{ required: true }]} children={<Input />} />
@@ -287,19 +307,32 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
     const viewPage = viewContext.payload.data.page;
     const viewLimit = viewContext.payload.data.limit;
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
     return (<>
         <Row>
-            <Col md={13}>
-                <Card title="Find Parties">
+            <Col md={12}>
+                 <Card title="Find Parties" style={{height:130}} size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
-                </Card>
+                 </Card>
             </Col>
-            <Col md={10} push={1}>
-                <Collapse>
-                    <Collapse.Panel header="Create Party" key="recordEditor">
-                        <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} />
-                    </Collapse.Panel>
-                </Collapse>
+            <Col md={11} push={1}>
+                <Button type="default" onClick={showModal}>
+                    Create Party
+                </Button>
+                <Modal header="Create Party" key="recordEditor" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                    <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)}/>
+                </Modal>
             </Col>
         </Row>
         <Br />

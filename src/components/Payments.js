@@ -5,6 +5,7 @@ import { Br } from "./Br";
 import dayjs from "dayjs";
 import { SearchOutlined } from "@ant-design/icons";
 import { PartyPicker } from "./Parties";
+import MyModal from "../MyModal";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -38,19 +39,19 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 8 }}
+            labelCol={{ span: 25 }}
+            wrapperCol={{ sm: 23}}
             labelAlign="left"
         >
-            <Form.Item name="partyLoginId" label="User ID" children={<Input />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="partyLoginId" label="User ID" children={<Input />} />
             <Form.Item name="partyLoginId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="partyName" label="Party Name" children={<Input />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}}  name="partyName" label="Party Name" children={<Input />} />
             <Form.Item name="partyName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="date_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="date_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item name="date_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}}  name="date_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"} />} />
             <Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
-            <Form.Item wrapperCol={{ offset: 4 }}>
+            <Form.Item colon={false} wrapperCol={{ offset: 0}} style={{display:'inline-block',marginBottom:'0px'}} label=" ">
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -110,6 +111,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
             rowKey={"paymentId"}
             locale={{ emptyText: viewError && `[ ${viewError.message} ]` }}
             pagination={false}
+
         >
             <Table.Column
                 dataIndex={undefined}
@@ -228,8 +230,22 @@ export const Payments = ({ actor: [lookupActor, saveActor, partyActor] }) => {
     const viewPage = viewContext.payload.data.page;
     const viewLimit = viewContext.payload.data.limit;
 
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
+
     return (<>
-        <Row>
+        <Row style={{padding:'0px', margin:'0px'}}>
             {/* <Col md={14}>
                 <Typography.Text strong>Find TopUp / Payments</Typography.Text>
                 <Br />
@@ -241,17 +257,19 @@ export const Payments = ({ actor: [lookupActor, saveActor, partyActor] }) => {
                 <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} onFindParty={() => setChoosingParty(true)} />
                 <Br />
             </Col> */}
-            <Col md={10}>
-                <Card title="Find TopUp / Payments">
+            <Col md={29}>
+                <Card title="Find TopUp / Payments" style={{height:130}} size='small'>
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            <Col md={11} push={1}>
-                <Collapse>
-                    <Collapse.Panel header="TopUp / Make Payment" key="recordEditor">
+            <Col md={2} push={1}>
+                    <Button type="default" onClick={showModal}>
+                        TopUp/Make Payment
+                    </Button>
+                    <Modal header="TopUp / Make Payment" key="recordEditor" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                         <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} onFindParty={() => setChoosingParty(true)} />
-                    </Collapse.Panel>
-                </Collapse>
+                    </Modal>
+
             </Col>
         </Row>
         <Br />

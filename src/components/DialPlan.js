@@ -1,5 +1,20 @@
 import { useEffect, useState } from "react";
-import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification, Collapse, Card, Select, Row, Col } from "antd";
+import {
+    Form,
+    Input,
+    Button,
+    Table,
+    Space,
+    Pagination,
+    DatePicker,
+    notification,
+    Collapse,
+    Card,
+    Select,
+    Row,
+    Col,
+    Modal
+} from "antd";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
 
@@ -33,19 +48,21 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 8 }}
+            labelCol={{span: 18}}
+            wrapperCol={{ span: 23}}
             labelAlign="left"
+            //layout={"horizontal"}
+
         >
-            <Form.Item name="dialPlanId" label="Prefix" children={<Input />} />
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="dialPlanId" label="Prefix" children={<Input />} />
             <Form.Item name="dialPlanId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="routeId" label="Route" children={<Input />} />
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="routeId" label="Route" children={<Input />} />
             <Form.Item name="routeId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="egressPrefix" label="Egress Prefix" children={<Input />} />
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="egressPrefix" label="Egress Prefix" children={<Input />} />
             <Form.Item name="egressPrefix_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="digitCut" label="Digit Cut" children={<Input />} />
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="digitCut" label="Digit Cut" children={<Input />} />
             <Form.Item name="digitCut_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item wrapperCol={{ offset: 5 }}>
+            <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -67,6 +84,9 @@ const EditForm = ({ form, record, onSave, prefixes, routes }) => {
             wrapperCol={{ span: 16 }}
             labelAlign={"left"}
             initialValues={record}
+            style={{
+                padding:'15px'
+            }}
         >
             <Form.Item name="dialPlanId" label="Prefix" rules={[{ required: true }]}>
                 <Select showSearch allowClear style={{ minWidth: 150 }}>
@@ -260,19 +280,33 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
     const viewPage = listLoaderContext.payload.data.page;
     const viewLimit = listLoaderContext.payload.data.limit;
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
     return (<>
         <Row>
-            <Col md={10}>
-                <Card title="Find DialPlan">
+            <Col md={15}>
+                <Card title="Find DialPlan" style={{height:190}} size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            <Col md={11} push={1}>
-                <Collapse activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)} style={{ width: "500px" }}>
-                    <Collapse.Panel header={editFormTitle()} key="recordEditor">
-                        <EditForm form={editForm} record={{}} onSave={saveRecord} {...{ prefixes, routes }} />
-                    </Collapse.Panel>
-                </Collapse>
+            <Col md={8} push={1}>
+                <Button type="default" onClick={showModal}>
+                    Create DailPlan
+                </Button>
+                <Modal header={editFormTitle()} key="recordEditor" activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)}
+                       visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                    <EditForm form={editForm} record={{}} onSave={saveRecord} {...{ prefixes, routes }} />
+                </Modal>
             </Col>
         </Row>
         <Br />

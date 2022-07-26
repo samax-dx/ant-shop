@@ -1,5 +1,21 @@
 import { useEffect, useState } from "react";
-import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification, Collapse, Card, Select, Row, Col, Checkbox } from "antd";
+import {
+    Form,
+    Input,
+    Button,
+    Table,
+    Space,
+    Pagination,
+    DatePicker,
+    notification,
+    Collapse,
+    Card,
+    Select,
+    Row,
+    Col,
+    Checkbox,
+    Modal
+} from "antd";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
 
@@ -30,15 +46,15 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 8 }}
+            labelCol={{ span: 8}}
+            wrapperCol={{ span: 23}}
             labelAlign="left"
         >
-            <Form.Item name="routeId" label="Route ID" children={<Input />} />
+            <Form.Item style={{ display: 'inline-block',marginBottom:'0px'}} name="routeId" label="Route ID" children={<Input />} />
             <Form.Item name="routeId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="description" label="Description" children={<Input />} />
+            <Form.Item style={{display: 'inline-block',marginBottom:'0px'}} name="description" label="Description" children={<Input />} />
             <Form.Item name="description_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item wrapperCol={{ offset: 5 }}>
+            <Form.Item wrapperCol={{ offset: 0}} style={{display:"inline-block",marginBottom:'0px'}} label=" " colon={false}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -66,6 +82,9 @@ const EditForm = ({ form, record, onSave }) => {
             wrapperCol={{ span: 16 }}
             labelAlign={"left"}
             initialValues={rec}
+            style={{
+                padding:'15px'
+            }}
         >
             <Form.Item name="routeId" label="Route ID" rules={[{ required: true }]} children={<Input />} />
 
@@ -230,19 +249,33 @@ export const Route = ({ actor: [listLoader, recordSaver] }) => {
     const viewPage = listLoaderContext.payload.data.page;
     const viewLimit = listLoaderContext.payload.data.limit;
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
     return (<>
         <Row>
-            <Col md={10}>
-                <Card title="Find Route">
+            <Col md={13}>
+                <Card title="Find Route" style={{height:130}} size='small'>
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            <Col md={11} push={1}>
-                <Collapse activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)} style={{ width: "500px" }}>
-                    <Collapse.Panel header={editFormTitle()} key="recordEditor">
-                        <EditForm form={editForm} record={{}} onSave={saveRecord} />
-                    </Collapse.Panel>
-                </Collapse>
+            <Col md={10} push={1}>
+                <Button type="default" onClick={showModal}>
+                    Create Route
+                </Button>
+                <Modal header={editFormTitle()} key="recordEditor" activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)}
+                       visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                    <EditForm form={editForm} record={{}} onSave={saveRecord} />
+                </Modal>
             </Col>
         </Row>
         <Br />
