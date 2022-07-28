@@ -18,6 +18,7 @@ export const Login = ({ actor }) => {
     return (
         <Row type="flex" justify="center" align="middle" style={{ minHeight: '100vh' }}>
             <Card style={{width: "300px"}}>
+                <Divider style={{margin: 0, fontSize:25}}>SMS Admin Portal</Divider>
                 <img height={120} src={getAllConfig.logo} style={{display: "block",margin: "0 auto"}}/>
                 <Divider style={{marginTop: 0}}>Admin Login</Divider>
                 <Form form={loginForm} size="large">
