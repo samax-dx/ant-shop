@@ -12,13 +12,15 @@ import {
     Row,
     Col,
     Select,
-    Modal
+    Modal,
+    Typography
 } from "antd";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
 
 import { Product as ProductSvc } from "../services/Product";
 import { DialPlan as DialPlanSvc } from "../services/DialPlan";
+import {PlusCircleFilled} from "@ant-design/icons";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -119,6 +121,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
+            style={{marginLeft:5}}
             size="small"
             dataSource={viewResult.packages}
             rowKey={pkg => pkg.packageId + pkg.dialPlanId}
@@ -281,25 +284,30 @@ export const Package = ({ actor: [listLoader, recordSaver] }) => {
         setIsModalVisible(false);
     };
 
-
+    const { Title } = Typography;
     return (<>
-        <Row>
-            <Col md={18}>
-                <Card title="Find Package" style={{margin:0}} size="small">
+        <Row style={{marginBottom:5,marginLeft:5}}>
+            <Col md={24}>
+                <Card title={<Title level={4}>Package</Title>}
+                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
+                      extra={
+                          <Button type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}} icon={<PlusCircleFilled />} onClick={showModal}>
+                              Create Package
+                          </Button>}
+                      style={{margin:0}} size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            <Col md={5} push={1}>
-                <Button type="default" onClick={showModal}>
-                    Create Route
-                </Button>
+            {/*<Col md={5} push={1}>*/}
+            {/*    <Button type="default" onClick={showModal}>*/}
+            {/*        Create Package*/}
+            {/*    </Button>*/}
                 <Modal header={editFormTitle()} key="recordEditor" activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)}
                           visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                     <EditForm form={editForm} record={{}} onSave={saveRecord} {...{ lineups, dialPlans }} />
                 </Modal>
-            </Col>
+            {/*</Col>*/}
         </Row>
-        <Br />
         <DataView context={listLoaderContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
         <DataPager totalPagingItems={listLoaderContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(listLoaderContext.payload.data)} />

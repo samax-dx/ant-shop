@@ -3,6 +3,7 @@ import { useActor } from "@xstate/react";
 import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin } from "antd";
 import { Br } from "./Br";
 import { countries } from "countries-list";
+import {PlusCircleFilled} from "@ant-design/icons";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -176,6 +177,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
+            style={{marginLeft:5}}
             size="small"
             dataSource={viewResult.parties}
             rowKey={"partyId"}
@@ -318,24 +320,30 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
-
+    const { Title } = Typography;
     return (<>
-        <Row>
-            <Col md={15}>
-                 <Card title="Find Parties" style={{height:130}} size="small">
-                    <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
+        <Row style={{marginBottom:5,marginLeft:5}}>
+            <Col md={24}>
+                 <Card title={<Title level={4}>Parties</Title>}
+                       headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
+                       extra={
+                       <Button type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}} icon={<PlusCircleFilled />} onClick={showModal}>
+                       Create Party
+                       </Button>}
+                       style={{height:135}} size="small">
+                       <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                  </Card>
             </Col>
-            <Col md={8} push={1}>
-                <Button type="default" onClick={showModal}>
+            {/*<Col md={8} push={1}>*/}
+               {/* <Button type="default" onClick={showModal}>
                     Create Party
-                </Button>
+                </Button>*/}
                 <Modal width={800} header="Create Party" key="recordEditor" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                     <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)}/>
                 </Modal>
-            </Col>
+            {/*</Col>*/}
         </Row>
-        <Br />
+        {/*<Br />*/}
         <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
         <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />

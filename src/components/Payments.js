@@ -3,7 +3,7 @@ import { useActor } from "@xstate/react";
 import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, DatePicker, InputNumber, Modal, Spin, Card, Collapse } from "antd";
 import { Br } from "./Br";
 import dayjs from "dayjs";
-import { SearchOutlined } from "@ant-design/icons";
+import {PlusCircleFilled, SearchOutlined} from "@ant-design/icons";
 import { PartyPicker } from "./Parties";
 
 
@@ -106,6 +106,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
+            style={{marginLeft:5}}
             size="small"
             dataSource={viewResult.payments}
             rowKey={"paymentId"}
@@ -242,10 +243,10 @@ export const Payments = ({ actor: [lookupActor, saveActor, partyActor] }) => {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
-
+    const { Title } = Typography;
 
     return (<>
-        <Row style={{padding:'0px', margin:'0px'}}>
+        <Row style={{marginBottom:5,marginLeft:5}}>
             {/* <Col md={14}>
                 <Typography.Text strong>Find TopUp / Payments</Typography.Text>
                 <Br />
@@ -257,22 +258,28 @@ export const Payments = ({ actor: [lookupActor, saveActor, partyActor] }) => {
                 <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} onFindParty={() => setChoosingParty(true)} />
                 <Br />
             </Col> */}
-            <Col md={29}>
-                <Card title="Find TopUp / Payments" style={{height:130}} size='small'>
+            <Col md={24}>
+                <Card title={<Title level={4}>TopUp/Payment</Title>}
+                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
+                      extra={
+                          <Button type="primary" style={{ background:"#1890ff", borderColor:"#1890ff",}} icon={<PlusCircleFilled />} onClick={showModal}>
+                              TopUp/Make Payment
+                          </Button>}
+                      style={{margin:0}} size='small'>
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            <Col md={2} push={1}>
-                    <Button type="default" onClick={showModal}>
+            {/*<Col md={2} push={1}>*/}
+                    {/*<Button type="default" onClick={showModal}>
                         TopUp/Make Payment
-                    </Button>
+                    </Button>*/}
                     <Modal header="TopUp / Make Payment" key="recordEditor" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                         <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} onFindParty={() => setChoosingParty(true)} />
                     </Modal>
 
-            </Col>
+            {/*</Col>*/}
         </Row>
-        <Br />
+        {/*<Br />*/}
         <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
         <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />

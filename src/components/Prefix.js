@@ -1,9 +1,26 @@
 import { useEffect, useState } from "react";
-import { Form, Input, Button, Table, Space, Pagination, DatePicker, notification, Collapse, Card, Select, Row, Col,Modal } from "antd";
+import {
+    Form,
+    Input,
+    Button,
+    Table,
+    Space,
+    Pagination,
+    DatePicker,
+    notification,
+    Collapse,
+    Card,
+    Select,
+    Row,
+    Col,
+    Modal,
+    Typography
+} from "antd";
 import { countries } from "countries-list";
 import dayjs from "dayjs";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
+import {PlusCircleFilled} from "@ant-design/icons";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -128,6 +145,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
+            style={{marginLeft:5}}
             size="small"
             dataSource={viewResult.prefixes}
             rowKey={"prefixId"}
@@ -275,25 +293,31 @@ export const Prefix = ({ actor: [listLoader, recordSaver] }) => {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
-
+    const { Title } = Typography;
     return (<>
-        <Row style={{padding:'0px'}}>
-            <Col md={18}>
-                <Card title="Find Prefix" style={{height:130}} size='small'>
+        <Row style={{marginBottom:5,marginLeft:5}}>
+            <Col md={24}>
+                <Card title={<Title level={4}>Prefix</Title>}
+                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
+                      extra={
+                          <Button type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}} icon={<PlusCircleFilled />} onClick={showModal}>
+                              Create Prefix
+                          </Button>}
+                      style={{margin:0}} size='small'>
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            <Col md={5} push={1}>
+            {/*<Col md={5} push={1}>
                 <Button type="default" onClick={showModal}>
                     Create Prefix
-                </Button>
+                </Button>*/}
                 <Modal header={editFormTitle()} key="recordEditor" activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)}
                        visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                         <EditForm form={editForm} record={{}} onSave={saveRecord} />
                 </Modal>
-            </Col>
+            {/*</Col>*/}
         </Row>
-        <Br />
+        {/*<Br />*/}
         <DataView context={listLoaderContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
         <DataPager totalPagingItems={listLoaderContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(listLoaderContext.payload.data)} />

@@ -13,13 +13,14 @@ import {
     Select,
     Row,
     Col,
-    Modal
+    Modal, Typography
 } from "antd";
 import { useActor } from "@xstate/react";
 import { Br } from "./Br";
 
 import { Prefix as PrefixSvc } from "../services/Prefix";
 import { Route as RouteSvc } from "../services/Route";
+import {PlusCircleFilled} from "@ant-design/icons";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -128,6 +129,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
+            style={{marginLeft:5}}
             size="small"
             dataSource={viewResult.dialPlans}
             rowKey={dialPlan => dialPlan.dialPlanId + dialPlan.routeId}
@@ -291,25 +293,32 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
+    const { Title } = Typography;
 
     return (<>
-        <Row>
-            <Col md={21}>
-                <Card title="Find DialPlan" style={{margin:0}} size="small">
+        <Row style={{marginBottom:5,marginLeft:5}}>
+            <Col md={24}>
+                <Card title={<Title level={4}>DialPlan</Title>}
+                      headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
+                      extra={
+                          <Button type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}} icon={<PlusCircleFilled />} onClick={showModal}>
+                              Create DailPlan
+                          </Button>}
+                      style={{margin:0}} size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            <Col md={2} push={0} style={{marginLeft:5}}>
-                <Button type="default" onClick={showModal}>
-                    Create DailPlan
-                </Button>
+            {/*<Col md={2} push={0} style={{marginLeft:5}}>*/}
+            {/*    <Button type="default" onClick={showModal}>*/}
+            {/*        Create DailPlan*/}
+            {/*    </Button>*/}
                 <Modal header={editFormTitle()} key="recordEditor" activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)}
                        visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                     <EditForm form={editForm} record={{}} onSave={saveRecord} {...{ prefixes, routes }} />
                 </Modal>
-            </Col>
+            {/*</Col>*/}
         </Row>
-        <Br />
+       {/* <Br />*/}
         <DataView context={listLoaderContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
         <DataPager totalPagingItems={listLoaderContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(listLoaderContext.payload.data)} />
