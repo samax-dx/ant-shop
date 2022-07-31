@@ -294,12 +294,12 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
 
     return (<>
         <Row>
-            <Col md={15}>
-                <Card title="Find DialPlan" style={{height:190}} size="small">
+            <Col md={21}>
+                <Card title="Find DialPlan" style={{margin:0}} size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            <Col md={8} push={1}>
+            <Col md={2} push={0} style={{marginLeft:5}}>
                 <Button type="default" onClick={showModal}>
                     Create DailPlan
                 </Button>

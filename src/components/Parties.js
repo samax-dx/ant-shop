@@ -321,16 +321,16 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
 
     return (<>
         <Row>
-            <Col md={12}>
+            <Col md={15}>
                  <Card title="Find Parties" style={{height:130}} size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                  </Card>
             </Col>
-            <Col md={11} push={1}>
+            <Col md={8} push={1}>
                 <Button type="default" onClick={showModal}>
                     Create Party
                 </Button>
-                <Modal header="Create Party" key="recordEditor" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                <Modal width={800} header="Create Party" key="recordEditor" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                     <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)}/>
                 </Modal>
             </Col>

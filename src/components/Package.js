@@ -285,7 +285,7 @@ export const Package = ({ actor: [listLoader, recordSaver] }) => {
     return (<>
         <Row>
             <Col md={18}>
-                <Card title="Find Package" style={{height:130}} size="small">
+                <Card title="Find Package" style={{margin:0}} size="small">
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>

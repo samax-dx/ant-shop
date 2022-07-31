@@ -264,7 +264,7 @@ export const Route = ({ actor: [listLoader, recordSaver] }) => {
     return (<>
         <Row>
             <Col md={13}>
-                <Card title="Find Route" style={{height:130}} size='small'>
+                <Card title="Find Route" style={{margin:0}} size='small'>
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
