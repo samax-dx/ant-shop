@@ -4,69 +4,9 @@ import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Di
 import { Br } from "./Br";
 import { countries } from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
+import {PartySearchForm} from "./PartyWidgets";
 
 
-const SearchForm = ({ onSearch }) => {
-    const [searchForm] = Form.useForm();
-
-    const performSearch = () => {
-        const formData = searchForm.getFieldsValue();
-
-        const queryData = ["name", "loginId"].reduce((acc, v) => {
-            const field = v;
-            const fieldOp = `${field.replace("_value", "")}_op`;
-            const fieldValue = (acc[field] || "").trim();
-
-            if (fieldValue === "") {
-                delete acc[field];
-                delete acc[fieldOp];
-            } else {
-                acc[field] = fieldValue;
-            }
-
-            return acc;
-        }, formData);
-        onSearch(queryData);
-    };
-
-    return (<>
-        <Form
-            form={searchForm}
-            labelCol={{ span: 10}}
-            wrapperCol={{ span: 23}}
-            labelAlign="left"
-        >
-            <Space>
-                <Form.Item style={{display:'inline-block'}}  name="loginId" label="User ID" children={<Input />} />
-                <Form.Item name="loginId_op" initialValue={"contains"} hidden children={<Input />} />
-                <Form.Item style={{display:'inline-block'}} name="name" label="Name" children={<Input />} />
-                <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
-
-                <Form.Item colon={false} style={{display:'inline-block'}} label=' '
-                           children={
-                               <Button
-                                   type="primary"
-                                   htmlType="submit"
-                                   onClick={performSearch}
-                                   children={"Search"}
-                               />
-                           }
-                />
-
-            </Space>
-{/*
-            <Form.Item style={{display:'inline-block', width: "30%"}} label="">
-                <Button
-                    type="primary"
-                    htmlType="submit"
-                    onClick={performSearch}
-                    children={"Search"}
-                />
-            </Form.Item>
-*/}
-        </Form>
-    </>);
-};
 
 const EditForm = ({ form, record: party, onSave }) => {
     const [editForm] = Form.useForm(form);
@@ -331,7 +271,7 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
                        Create Party
                        </Button>}
                        style={{height:135}} size="small">
-                       <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
+                       <PartySearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                  </Card>
             </Col>
             {/*<Col md={8} push={1}>*/}
@@ -381,7 +321,7 @@ export const PartyPicker = ({ actor: lookupActor, onPicked }) => {
             <Col md={10}>
                 <Typography.Text strong>Find Parties</Typography.Text>
                 <Br />
-                <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
+                <PartySearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
             </Col>
         </Row>
         <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
@@ -389,3 +329,42 @@ export const PartyPicker = ({ actor: lookupActor, onPicked }) => {
         <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
     </>);
 };
+
+export const PartyPickerForSearchModal = ({ actor: lookupActor, onPicked}) =>{
+    const [lookupState, sendLookup] = useActor(lookupActor);
+
+    const sendPagedQuery = queryData => (page, limit) => {
+        page === undefined && (page = queryData.page)
+        limit === undefined && (limit = queryData.limit)
+        console.log(queryData, page, limit);
+
+        const query = { data: { ...queryData, page, limit }, type: "LOAD" };
+        return sendLookup(query);
+    };
+
+    useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
+
+    const onClickView = data => console.log("view", data) || onPicked(data);
+    const onClickEdit = data => console.log("edit", data);
+    const onClickDelete = data => console.log("delete", data);
+
+    const viewContext = lookupState.context;
+
+    const viewPage = viewContext.payload.data.page;
+    const viewLimit = viewContext.payload.data.limit;
+
+    return (<>
+        <Row>
+            <Col md={10}>
+                <Typography.Text strong>Find Parties</Typography.Text>
+                <Br />
+                <PartySearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
+            </Col>
+        </Row>
+        <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
+        <Br />
+        <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
+    </>);
+};
+
+
