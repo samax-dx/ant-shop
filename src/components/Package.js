@@ -19,7 +19,7 @@ import { useActor } from "@xstate/react";
 import { Br } from "./Br";
 
 import { Product as ProductSvc } from "../services/Product";
-import { DialPlan as DialPlanSvc } from "../services/DialPlan";
+import { Prefix as PrefixSvc } from "../services/Prefix";
 import {PlusCircleFilled} from "@ant-design/icons";
 
 
@@ -71,7 +71,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const EditForm = ({ form, record, onSave, dialPlans, lineups }) => {
+const EditForm = ({ form, record, onSave, pkgPrefixes, lineups }) => {
     const [editForm] = Form.useForm(form);
 
     return (<>
@@ -93,7 +93,7 @@ const EditForm = ({ form, record, onSave, dialPlans, lineups }) => {
 
             <Form.Item name="dialPlanId" label="DialPlan Prefix" rules={[{ required: true }]}>
                 <Select showSearch allowClear style={{ minWidth: 150 }}>
-                    {dialPlans.map((v, i) => <Select.Option value={v.dialPlanId} key={i}>{v.dialPlanId}</Select.Option>)}
+                    {pkgPrefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
                 </Select>
             </Form.Item>
 
@@ -184,7 +184,7 @@ export const Package = ({ actor: [listLoader, recordSaver] }) => {
     const [editorCollapsed, setEditorCollapsed] = useState(true);
     const [{ context: listLoaderContext }] = useActor(listLoader);
     const [lineups, setLineups] = useState([]);
-    const [dialPlans, setDialPlans] = useState([]);
+    const [pkgPrefixes, setPkgPrefixes] = useState([]);
 
 
     // Dependent Helper Functions
@@ -207,15 +207,15 @@ export const Package = ({ actor: [listLoader, recordSaver] }) => {
     useEffect(() => {
         sendPagedQuery(listLoaderContext.payload.data)();
         ProductSvc
-            .fetchProductLineups({}, { data: {} })
+            .fetchProductLineups({}, { data: { limit: 10000 } })
             .then(data => console.log("fetched lineups", data) || data)
             .then(data => setLineups(data.lineups || []))
             .catch(error => console.log("error fetching dialPlans", error));
-        DialPlanSvc
-            .fetchRecords({}, { data: {} })
-            .then(data => console.log("fetched lineups", data) || data)
-            .then(data => setDialPlans(data.dialPlans || []))
-            .catch(error => console.log("error fetching dialPlans", error));
+        PrefixSvc
+            .fetchRecords({}, { data: { limit: 10000 } })
+            .then(data => console.log("fetched prefixs", data) || data)
+            .then(data => setPkgPrefixes(data.prefixes || []))
+            .catch(error => console.log("error fetching prefixs", error));
     }, []);
 
 

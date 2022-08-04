@@ -193,7 +193,7 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
     // Component States
     const [editorCollapsed, setEditorCollapsed] = useState(true);
     const [{ context: listLoaderContext }] = useActor(listLoader);
-    const [prefixes, setPrefixs] = useState([]);
+    const [prefixes, setPrefixes] = useState([]);
     const [routes, setRoutes] = useState([]);
 
 
@@ -217,12 +217,12 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
     useEffect(() => {
         sendPagedQuery(listLoaderContext.payload.data)();
         PrefixSvc
-            .fetchRecords({}, { data: {} })
+            .fetchRecords({}, { data: { limit: 10000 } })
             .then(data => console.log("fetched prefixs", data) || data)
-            .then(data => setPrefixs(data.prefixes || []))
+            .then(data => setPrefixes(data.prefixes || []))
             .catch(error => console.log("error fetching prefixs", error));
         RouteSvc
-            .fetchRecords({}, { data: {} })
+            .fetchRecords({}, { data: { limit: 10000 } })
             .then(data => console.log("fetched routes", data) || data)
             .then(data => setRoutes(data.routes || []))
             .catch(error => console.log("error fetching routes", error));
