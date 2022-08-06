@@ -304,7 +304,7 @@ export const Package = ({ actor: [listLoader, recordSaver] }) => {
             {/*    </Button>*/}
                 <Modal header={editFormTitle()} key="recordEditor" activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)}
                           visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-                    <EditForm form={editForm} record={{}} onSave={saveRecord} {...{ lineups, dialPlans }} />
+                    <EditForm form={editForm} record={{}} onSave={saveRecord} {...{ lineups,pkgPrefixes }} />
                 </Modal>
             {/*</Col>*/}
         </Row>

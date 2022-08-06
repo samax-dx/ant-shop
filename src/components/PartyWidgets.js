@@ -80,7 +80,7 @@ export const PartyDataView = ({ context, viewPage, viewLimit, onView, onEdit, on
                 dataIndex={undefined}
                 render={(_, party, i) => {
                     return (
-                        <Button onClick={() => onView(party)} type="link">{party.loginId}</Button>
+                        <span>{party.loginId}</span>
                     );
                 }}
             />
@@ -99,8 +99,8 @@ export const PartyDataView = ({ context, viewPage, viewLimit, onView, onEdit, on
                 dataIndex={undefined}
                 title={"Pay Amount"}
                 render={(_, party, i) => (<>
-                    <Input style={{display:"inline-block"}} ref={inputRef} onChange={e => setAmount(e.target.value)} placeholder="Write amount"/>
-                    <Button style={{display:"inline-block"}} type="link" onClick={() => onView({partyId: party.partyId, amount: isNaN(amount) ? 0 : +amount }) || (inputRef.current.value="")}>Add Payment</Button>
+                    <Input  ref={inputRef} onChange={e => setAmount(e.target.value)} placeholder="Write amount"/>
+                    <Button type="link" onClick={() => onView({partyId: party.partyId, amount: isNaN(amount) ? 0 : +amount }) || (inputRef.current.value="")}>Add Payment</Button>
                 </>)}
             />
         </Table>
