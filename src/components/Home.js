@@ -1,6 +1,7 @@
 
 export const Home = props => {
     return (<>
-        <div />
+        <div>conflict</div>
+        <div> hello conflit</div>
     </>);
 };
