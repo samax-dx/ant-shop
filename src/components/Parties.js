@@ -239,8 +239,12 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
             }
         }
     }, [lookupState]);
+    const [modalDataOrder, setModalDataOrder] = useState(null);
+    const showModalOrder = data => setModalDataOrder(data);
+    const handleOkOrder = () => setModalDataOrder(null);
+    const handleCancelOrder = () => setModalDataOrder(null);
 
-    const onClickView = data => console.log("view", data);
+    const onClickView = data => console.log("view", data) || showModalOrder(data);
     const onClickEdit = data => console.log("edit", data);
     const onClickDelete = data => console.log("delete", data);
 
@@ -286,6 +290,9 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
         {/*<Br />*/}
         <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
+        <Modal title="Basic Modal" visible={!!modalDataOrder} onOk={handleOkOrder} onCancel={handleCancelOrder}>
+            {JSON.stringify(modalDataOrder)}
+        </Modal>
         <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
         <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
             <Spin tip="Sending Request" />
