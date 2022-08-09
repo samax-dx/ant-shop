@@ -183,7 +183,7 @@ const DataView = ({context, viewPage, viewLimit, onView, onEdit, onDelete}) => {
 
     return (<>
         <Table
-            style={{marginLeft: 5}}
+            style={{marginLeft: 6}}
             size="small"
             dataSource={viewResult.payments}
             rowKey={"paymentId"}
@@ -385,9 +385,9 @@ export const Payments = ({actor: [lookupActor, saveActor, partyActor]}) => {
     const {Title} = Typography;
 
     return (<>
-        <Row style={{marginBottom: 5, marginLeft: 5}}>
+        <Row style={{marginLeft: 5}}>
             <Col md={24}>
-                <Card title={<Title level={4}>TopUp/Payment</Title>}
+                <Card title={<Title level={5}>TopUp/Payment</Title>}
                       headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}}
                       extra={
                           <Button type="primary" style={{background: "#1890ff", borderColor: "#1890ff",}}

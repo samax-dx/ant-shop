@@ -13,7 +13,7 @@ export const AppLayout = ({ render: PageContent, actor }) => {
 
 
     return <Layout>
-        {appState.matches("login") || <Header className="header">
+        {appState.matches("login") || <Header className="header" style={{paddingLeft:'5px', paddingRight:'5px'}}>
             <Row>
                 <Col xs={10} sm={4} className="logo" onClick={() => actor.send("NAV_HOME")}>
                     <img height={45} width={45} src={getAllConfig.logo} style={{ marginBottom: "4px"}} />

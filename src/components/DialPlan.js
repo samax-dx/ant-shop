@@ -129,7 +129,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
-            style={{marginLeft:5}}
+            style={{marginLeft:6}}
             size="small"
             dataSource={viewResult.dialPlans}
             rowKey={dialPlan => dialPlan.dialPlanId + dialPlan.routeId}
@@ -296,9 +296,9 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
     const { Title } = Typography;
 
     return (<>
-        <Row style={{marginBottom:5,marginLeft:5}}>
+        <Row style={{marginLeft:5}}>
             <Col md={24}>
-                <Card title={<Title level={4}>DialPlan</Title>}
+                <Card title={<Title level={5}>DialPlan</Title>}
                       headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
                       extra={
                           <Button type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}} icon={<PlusCircleFilled />} onClick={showModal}>
@@ -308,17 +308,11 @@ export const DialPlan = ({ actor: [listLoader, recordSaver] }) => {
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            {/*<Col md={2} push={0} style={{marginLeft:5}}>*/}
-            {/*    <Button type="default" onClick={showModal}>*/}
-            {/*        Create DailPlan*/}
-            {/*    </Button>*/}
                 <Modal header={editFormTitle()} key="recordEditor" activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)}
                        visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                     <EditForm form={editForm} record={{}} onSave={saveRecord} {...{ prefixes, routes }} />
                 </Modal>
-            {/*</Col>*/}
         </Row>
-       {/* <Br />*/}
         <DataView context={listLoaderContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
         <DataPager totalPagingItems={listLoaderContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(listLoaderContext.payload.data)} />

@@ -114,7 +114,7 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
 
     return (<>
         <Table
-            style={{marginLeft:5}}
+            style={{marginLeft:6}}
             size="small"
             dataSource={viewResult.routes}
             rowKey={"routeId"}
@@ -264,9 +264,9 @@ export const Route = ({ actor: [listLoader, recordSaver] }) => {
     };
     const { Title } = Typography;
     return (<>
-        <Row style={{marginBottom:5,marginLeft:5}}>
+        <Row style={{marginLeft:5}}>
             <Col md={24}>
-                <Card title={<Title level={4}>Route</Title>}
+                <Card title={<Title level={5}>Route</Title>}
                       headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
                       extra={
                           <Button type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}} icon={<PlusCircleFilled />} onClick={showModal}>
@@ -276,17 +276,11 @@ export const Route = ({ actor: [listLoader, recordSaver] }) => {
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
                 </Card>
             </Col>
-            {/*<Col md={10} push={1}>*/}
-            {/*    <Button type="default" onClick={showModal}>*/}
-            {/*        Create Route*/}
-            {/*    </Button>*/}
                 <Modal header={editFormTitle()} key="recordEditor" activeKey={editorCollapsed || ["recordEditor"]} onChange={state => setEditorCollapsed(state)}
                        visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                     <EditForm form={editForm} record={{}} onSave={saveRecord} />
                 </Modal>
-            {/*</Col>*/}
         </Row>
-        {/*<Br />*/}
         <DataView context={listLoaderContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
         <DataPager totalPagingItems={listLoaderContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(listLoaderContext.payload.data)} />
