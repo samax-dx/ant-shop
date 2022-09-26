@@ -57,5 +57,29 @@ export const Party = {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
+        }),
+    /*createUser: (data) => axios
+        .post(
+            `${SERVER_URL}/Party/createUser`,
+            { ...data },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
+        )
+        .then(response => {
+
+            if (response.userId) {
+                return Promise.resolve(response);
+            } else {
+                return Promise.reject({ message: response});
+            }
         })
+        .catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            return Promise.reject({ code, message: data.error || text });
+        })*/
 };

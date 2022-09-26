@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useActor } from "@xstate/react";
-import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin } from "antd";
+import { Col, Row, Form, Input, Button, Table, Space,Descriptions, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin } from "antd";
 import { Br } from "./Br";
 import { countries } from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
 import {PartySearchForm} from "./PartyWidgets";
+import {UserManagement} from "./UserManagement";
 
 
 
@@ -102,6 +103,38 @@ const EditForm = ({ form, record: party, onSave }) => {
                     onClick={() => editForm
                         .validateFields()
                         .then(_ => onSave(editForm.getFieldsValue()))
+                        .catch(_ => { })
+                    }
+                    children={"Submit"}
+                />
+            </Form.Item>
+        </Form>
+    </>);
+};
+
+const ShowPartyForm = ({form,details,onSave}) => {
+    const [ShowPartyForm] = Form.useForm(form);
+
+    return (<>
+        <Form
+            key={details.partyId}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 20 }}
+            labelAlign={"left"}
+            style={{
+                padding:'15px'
+            }}
+        >
+            <Form.Item name="partyId" label="User ID" children={<Input defaultValue={details.loginId} preventDefault></Input>}></Form.Item>
+            <Form.Item name="partyName" label="Name" children={<Input defaultValue={details.name}></Input>}></Form.Item>
+            <Form.Item name="contactNumber" label="Contact Number" children={<Input defaultValue={details.contactNumber}></Input>}></Form.Item>
+            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={() => PartySearchForm
+                        .validateFields()
+                        .then(_ => onSave(PartySearchForm.getFieldsValue()))
                         .catch(_ => { })
                     }
                     children={"Submit"}
@@ -281,17 +314,18 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
                 <Modal width={800} header="Create Party" key="recordEditor" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                     <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)}/>
                 </Modal>
-            {/*</Col>*/}
         </Row>
         <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
         <Br />
-        <Modal title="Basic Modal" visible={!!modalDataOrder} onOk={handleOkOrder} onCancel={handleCancelOrder}>
-            {JSON.stringify(modalDataOrder)}
+        <Modal width={800} title="Party Details" visible={!!modalDataOrder} onCancel={handleCancelOrder} footer={[<Button style={{backgroundColor:'#1DA57A'}} onClick={handleOkOrder}>Ok</Button>]}>
+            {/*{JSON.stringify(modalDataOrder)}*/}
+            <ShowPartyForm form={ShowPartyForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} details={modalDataOrder}/>
         </Modal>
         <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
         <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
             <Spin tip="Sending Request" />
         </Modal>
+        {/*<UserManagement/>*/}
     </>);
 };
 
