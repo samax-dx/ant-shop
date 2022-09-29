@@ -1,16 +1,83 @@
 import { useEffect, useState } from "react";
 import { useActor } from "@xstate/react";
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import { Col, Row, Form, Input, Button, Table, Space,Descriptions, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin } from "antd";
+=======
+import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin, Upload } from "antd";
+>>>>>>> Stashed changes
+=======
+import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin, Upload } from "antd";
+>>>>>>> Stashed changes
+=======
+import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin, Upload } from "antd";
+>>>>>>> Stashed changes
 import { Br } from "./Br";
 import { countries } from "countries-list";
-import {PlusCircleFilled} from "@ant-design/icons";
+import {FormOutlined, PlusCircleFilled, UploadOutlined,  PlusOutlined } from "@ant-design/icons";
 import {PartySearchForm} from "./PartyWidgets";
 import {UserManagement} from "./UserManagement";
 
+// For upload Photo
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
 
+    reader.onload = () => resolve(reader.result);
+
+    reader.onerror = (error) => reject(error);
+  });
 
 const EditForm = ({ form, record: party, onSave }) => {
     const [editForm] = Form.useForm(form);
+
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+    const [previewTitle, setPreviewTitle] = useState('');
+    const [fileList, setFileList] = useState([
+    {
+      uid: '-1',
+      name: 'image.png',
+      status: 'done',
+      url: 'https://prod-media-eng.dhakatribune.com/uploads/2018/07/web-national-id-edited-26-11-2017-1532158137905.jpg',
+    },
+    {
+      uid: '-2',
+      name: 'image.png',
+      status: 'done',
+      url: 'https://prod-media-eng.dhakatribune.com/uploads/2018/07/web-national-id-edited-26-11-2017-1532158137905.jpg',
+    }
+  ]);
+
+  const handleCancel = () => setPreviewOpen(false);
+
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+    setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+  };
+
+  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload
+      </div>
+    </div>
+  );
+    
 
     return (<>
         <Form
@@ -94,6 +161,30 @@ const EditForm = ({ form, record: party, onSave }) => {
                 ]}
             >
                 <Input.Password />
+            </Form.Item>
+            <Form.Item
+                name="uploadYourPhoto"
+                label="Upload Your National Identity Card"
+                rules={[{ required: true }]}
+            >
+                <Upload
+                action="http://localhost:3000/"
+                listType="picture-card"
+                fileList={fileList}
+                onPreview={handlePreview}
+                onChange={handleChange}
+                >
+                {fileList.length >= 2 ? null : uploadButton}
+            </Upload>
+                <Modal visible={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+                    <img
+                    alt=""
+                    style={{
+                        width: '100%',
+                    }}
+                    src={previewImage}
+                    />
+                </Modal>
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
