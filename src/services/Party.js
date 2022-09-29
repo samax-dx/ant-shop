@@ -58,8 +58,8 @@ export const Party = {
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
         }),
-    /*createUser: (data) => axios
-        .post(
+    createUser: (data) => (console
+    .log(
             `${SERVER_URL}/Party/createUser`,
             { ...data },
             {
@@ -68,18 +68,18 @@ export const Party = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        )
-        .then(response => {
-
-            if (response.userId) {
-                return Promise.resolve(response);
-            } else {
-                return Promise.reject({ message: response});
+        )|| Promise.resolve({userId:'1001',username:data.username,roles:data.roles})||Promise.reject({message:'user roles not found', code:"invalid_parameter"}))
+        .then(user => {
+            const {data} = user;
+            if(data.userId) {
+                return Promise.resolve(data.userId);
+            }else{
+                return Promise.reject({message:'user not valid'})
             }
+            // return user
         })
         .catch(error => {
-            const response = error.response || { data: { error: error.message } };
-            const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
-        })*/
+            return Promise.reject({message:error})
+           // return error
+        })
 };

@@ -17,6 +17,10 @@ import { Prefix } from './components/Prefix';
 import { DialPlan } from './components/DialPlan';
 import { Route } from './components/Route';
 import { Package } from './components/Package';
+import {SendSMS} from "./components/SendSMS";
+import {Campaign} from "./components/Campaign";
+import {UserManagement} from "./components/UserManagement";
+import {CampaignTaskReport} from "./components/CampaignTaskReport";
 
 
 export const App = ({ actor }) => {
@@ -24,6 +28,6 @@ export const App = ({ actor }) => {
     const component = capitalize(current.value);
 
     return (
-        <AppLayout render={{ Home, Product, Category, Partner, Rateplan, Parties, Payments, PaymentList, Prefix, Route, DialPlan, Package, Login }[component]} actor={actor} />
+        <AppLayout render={{ Home, SendSMS, Campaign, UserManagement, CampaignTaskReport, Product, Category, Partner, Rateplan, Parties, Payments, PaymentList, Prefix, Route, DialPlan, Package, Login }[component]} actor={actor} />
     );
 };

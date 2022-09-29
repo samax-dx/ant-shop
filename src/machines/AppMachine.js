@@ -12,6 +12,8 @@ import { Prefix } from "../services/Prefix";
 import { DialPlan } from "../services/DialPlan";
 import { Route } from "../services/Route";
 import { Package } from "../services/Package";
+import {EditorMachineLite} from "./EditorMachineLite";
+import {Campaign} from "../services/Campaign";
 
 
 export const AppMachine = createMachine({
@@ -24,6 +26,7 @@ export const AppMachine = createMachine({
             ],
         },
         home: {},
+        sendSMS: {},
         product: {},
         category: {},
         partner: {},
@@ -37,14 +40,19 @@ export const AppMachine = createMachine({
         package: {},
         login: {},
         logout: {},
+        campaign: {},
+        campaignTaskReport: {},
+        users:{},
     },
     on: {
         "NAV_HOME": { target: "home", actions: ["assignHomeActor"] },
+        "NAV_SEND_SMS": { target: "sendSMS", actions: ["assignSendSmsActor"] },
         "NAV_PRODUCT": { target: "product", actions: ["assignProductActor"] },
         "NAV_CATEGORY": { target: "category" },
         "NAV_PARTNER": { target: "partner" },
         "NAV_RATEPLAN": { target: "rateplan" },
         "NAV_PARTIES": { target: "parties", actions: ["assignPartiesActor"] },
+        "NAV_USERS": { target: "users", actions: ["assignUsersActor"] },
         "NAV_PAYMENTS": { target: "payments", actions: ["assignPaymentsActor"] },
         "NAV_PAYMENT_LIST": { target: "paymentList", actions: ["assignPaymentListActor"] },
         "NAV_PREFIX": { target: "prefix", actions: ["assignPrefixActor"] },
@@ -53,6 +61,8 @@ export const AppMachine = createMachine({
         "NAV_PACKAGE": { target: "package", actions: ["assignPackageActor"] },
         "LOGIN": { target: "login", actions: ["assignLoginActor"] },
         "LOGOUT": { target: "logout", actions: ["assignLogoutActor"] },
+        "NAV_CAMPAIGN": { target: "campaign", actions: ["assignCampaignActor"] },
+        "NAV_CAMPAIGN_TASK_REPORT": { target: "campaignTaskReport", actions: ["assignCampaignTaskReportActor"] },
     },
     context: {
         __start_action: null,
@@ -64,13 +74,64 @@ export const AppMachine = createMachine({
         assignStartAction: assign((ctx, ev) => ({
             __start_action: XAuth.token() ? "NAV_HOME" : "LOGIN"
         })),
+        assignSendSmsActor: assign((ctx, ev) => ({
+            actor: spawn(EditorMachineLite)
+        })),
         assignHomeActor: assign((ctx, ev) => ({
             actor: spawn(NullMachine)
         })),
         assignProductActor: assign((ctx, ev) => ({
             actor: spawn(ProductMachine)
         })),
+        assignCampaignActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Campaign.fetchCampigns,
+                    { data: { page: 1, limit: 10 } },
+                    { campaigns: [], count: 0 },
+                    { message: "Waiting for Campaign Search" }
+                ),
+                spawnFetcher(
+                    Campaign.saveCampaign,
+                    { data: {} },
+                    { campaignId: null },
+                    { message: "Waiting for Campaign Save" }
+                ),
+                spawnFetcher(
+                    Campaign.fetchCampaignTasks,
+                    { data: { page: 1, limit: 10 } },
+                    { campaign: {}, tasks: [], count: 0 },
+                    { message: "Waiting for Campaign-Task Search" }
+                )
+            ]
+        })),
+        assignCampaignTaskReportActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Campaign.fetchCampaignTaskReports,
+                    { data: { page: 1, limit: 10 } },
+                    { campaigns: [], count: 0 },
+                    { message: "Waiting for Campaign-Task Search" }
+                )
+            ]
+        })),
         assignPartiesActor: assign((ctx, ev) => ({
+            actor: [
+                spawnFetcher(
+                    Party.fetchParties,
+                    { data: { page: 1, limit: 10 } },
+                    { parties: [], count: 0 },
+                    { message: "Waiting for Party Search" }
+                ),
+                spawnFetcher(
+                    Party.createParty,
+                    { data: {} },
+                    { partyId: null },
+                    { message: "Waiting for Registration Request" }
+                )
+            ]
+        })),
+        assignUsersActor: assign((ctx, ev) => ({
             actor: [
                 spawnFetcher(
                     Party.fetchParties,

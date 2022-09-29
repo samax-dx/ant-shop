@@ -18,6 +18,7 @@ import React, {useRef, useState} from 'react';
 import dayjs from "dayjs";
 import Title from "antd/es/typography/Title";
 import {FileDoneOutlined, FileTextOutlined, FileTextTwoTone, PlusCircleFilled} from "@ant-design/icons";
+import {Party as PartyService} from "../services/Party";
 
 
 
@@ -71,8 +72,9 @@ const CreateForm = ({ form, record, onSave }) => {
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => console.log(JSON.stringify(createForm.getFieldsValue())))
-                        .catch(_ => { })
+                        .then(_ => PartyService.createUser(createForm.getFieldsValue()))
+                        .then(user => console.log(user))
+                        .catch(error => console.log(error))
                     }
                     children={"Submit"}
                 />
@@ -111,13 +113,13 @@ const EditForm = ({ form, record, onSave }) => {
                 padding:'35px'
             }}
         >
-            <Form.Item name="username" label="User Name" rules={[{ required: true }]} children={<Input/>} />
+            <Form.Item name="username" label="User Name" rules={[{ required: true }]} children={<Input defaultValue={"John Brown"}></Input>} />
 
             <Form.Item name="roles" label="Roles" rules={[{ required: true }]} children={ <Select
                 mode="multiple"
                 size={'middle'}
                 placeholder="Please select"
-                // defaultValue={['a10', 'c12']}
+                defaultValue={['Admin', 'Viewer']}
                 onChange={handleChange}
                 style={{
                     width: '100%',
@@ -185,7 +187,6 @@ const SearchForm = ({ onSearch }) => {
 
 const DataView = () => {
     const [editForm] = Form.useForm();
-    const ref = useRef()
     const [isModalVisible, setIsModalVisible] = useState(false);
     const showModal = () => {
 

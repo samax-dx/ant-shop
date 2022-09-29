@@ -2,7 +2,7 @@ import React from 'react';
 import { useActor } from '@xstate/react';
 import { Menu } from 'antd';
 
-import { UserOutlined, SettingOutlined, ProfileOutlined, BankOutlined, WalletTwoTone, IdcardTwoTone, InteractionTwoTone } from '@ant-design/icons';
+import { UserOutlined,MailOutlined, FileTextTwoTone,InfoCircleTwoTone, RocketTwoTone, SettingOutlined, ProfileOutlined, BankOutlined, WalletTwoTone, IdcardTwoTone, InteractionTwoTone } from '@ant-design/icons';
 
 export const MainMenu = ({ actor }) => {
     const [appState, sendApp] = [actor.getSnapshot(), actor.send];
@@ -14,12 +14,20 @@ export const MainMenu = ({ actor }) => {
             style={{ height: "100%", borderRight: 0 }}
             selectedKeys={[appState.value]}
         >
+            <Menu.SubMenu key="messaging" icon={<MailOutlined />} title="SMS Task">
+                <Menu.Item key="sendSMS" icon={<RocketTwoTone />} onClick={() => sendApp({ type: 'NAV_SEND_SMS' })}>Send SMS</Menu.Item>
+                <Menu.Item key="campaign" icon={<FileTextTwoTone />} onClick={() => sendApp({ type: 'NAV_CAMPAIGN' })}>Campaigns</Menu.Item>
+                <Menu.Item key="campaignTaskReport" icon={<InfoCircleTwoTone />} onClick={() => sendApp({ type: 'NAV_CAMPAIGN_TASK_REPORT' })}>SMS History</Menu.Item>
+            </Menu.SubMenu>
             <Menu.SubMenu key="accounting" icon={<BankOutlined />} title="Accounting">
                 <Menu.Item key="payments" icon={<WalletTwoTone />} onClick={() => sendApp({ type: "NAV_PAYMENTS" })}>TopUp / Payments</Menu.Item>
                 {/* <Menu.Item key="paymentList" onClick={() => sendApp({ type: "NAV_PAYMENT_LIST" })}>Payment Applications</Menu.Item> */}
             </Menu.SubMenu>
             <Menu.SubMenu key="partymenu" icon={<ProfileOutlined />} title="Party Management">
                 <Menu.Item key="parties" icon={<IdcardTwoTone />} onClick={() => sendApp({ type: 'NAV_PARTIES' })}>Parties</Menu.Item>
+            </Menu.SubMenu>
+            <Menu.SubMenu key="partymenu" icon={<ProfileOutlined />} title="User Management">
+                <Menu.Item key="parties" icon={<IdcardTwoTone />} onClick={() => sendApp({ type: 'NAV_USERS' })}>Users</Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
                 <Menu.Item key="prefix" icon={<InteractionTwoTone />} onClick={() => sendApp({ type: 'NAV_PREFIX' })}>Prefix</Menu.Item>

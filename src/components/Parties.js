@@ -191,12 +191,12 @@ const EditForm = ({ form, record: party, onSave }) => {
     </>);
 };
 
-const ShowPartyForm = ({form,details,onSave}) => {
+const ShowPartyForm = ({form,data,onSave}) => {
     const [ShowPartyForm] = Form.useForm(form);
 
     return (<>
         <Form
-            key={details.partyId}
+            key={data.partyId}
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
@@ -204,9 +204,9 @@ const ShowPartyForm = ({form,details,onSave}) => {
                 padding:'15px'
             }}
         >
-            <Form.Item name="partyId" label="User ID" children={<Input defaultValue={details.loginId} preventDefault></Input>}></Form.Item>
-            <Form.Item name="partyName" label="Name" children={<Input defaultValue={details.name}></Input>}></Form.Item>
-            <Form.Item name="contactNumber" label="Contact Number" children={<Input defaultValue={details.contactNumber}></Input>}></Form.Item>
+            <Form.Item name="partyId" label="User ID" children={<Input defaultValue={data.loginId} preventDefault></Input>}></Form.Item>
+            <Form.Item name="partyName" label="Name" children={<Input defaultValue={data.name}></Input>}></Form.Item>
+            <Form.Item name="contactNumber" label="Contact Number" children={<Input defaultValue={data.contactNumber}></Input>}></Form.Item>
             <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
                 <Button
                     type="primary"
@@ -398,13 +398,13 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
         <Br />
         <Modal width={800} title="Party Details" visible={!!modalDataOrder} onCancel={handleCancelOrder} footer={[<Button style={{backgroundColor:'#1DA57A'}} onClick={handleOkOrder}>Ok</Button>]}>
             {/*{JSON.stringify(modalDataOrder)}*/}
-            <ShowPartyForm form={ShowPartyForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} details={modalDataOrder}/>
+            <ShowPartyForm form={ShowPartyForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} data={modalDataOrder}/>
         </Modal>
         <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
         <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
             <Spin tip="Sending Request" />
         </Modal>
-        {/*<UserManagement/>*/}
+        <UserManagement/>
     </>);
 };
 
