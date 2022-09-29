@@ -1,20 +1,8 @@
 import { useEffect, useState } from "react";
 import { useActor } from "@xstate/react";
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-import { Col, Row, Form, Input, Button, Table, Space,Descriptions, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin } from "antd";
-=======
-import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin, Upload } from "antd";
->>>>>>> Stashed changes
-=======
-import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin, Upload } from "antd";
->>>>>>> Stashed changes
-=======
-import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin, Upload } from "antd";
->>>>>>> Stashed changes
 import { Br } from "./Br";
 import { countries } from "countries-list";
+import { Col, Row, Form, Input, Button, Table, Space, Pagination, Typography, Divider, Select, notification, Card, Collapse, Modal, Spin, Upload } from "antd";
 import {FormOutlined, PlusCircleFilled, UploadOutlined,  PlusOutlined } from "@ant-design/icons";
 import {PartySearchForm} from "./PartyWidgets";
 import {UserManagement} from "./UserManagement";
