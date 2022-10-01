@@ -3,7 +3,7 @@ import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 import {SpList} from "../Util";
 
-export const SenderIdManager = {
+export const SenderIdManagerService = {
     fetchRecords: (payload) => axios
         .post(
             `${SERVER_URL}/Party/findParties`,
@@ -48,7 +48,7 @@ export const SenderIdManager = {
             const { data } = response;
 
             if (data.partyId) {
-                return Promise.resolve({ ...record, partyId: data.partyId });
+                return Promise.resolve({ ...response, partyId: data.partyId });
             } else {
                 return Promise.reject({ message: data.errorMessage });
             }

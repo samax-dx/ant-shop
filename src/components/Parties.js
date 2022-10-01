@@ -289,7 +289,7 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
     </>);
 };
 
-export const Parties = ({ actor: [lookupActor, saveActor] }) => {
+export const Parties = ({actor: [lookupActor, saveActor]}) => {
     const [lookupState, sendLookup] = useActor(lookupActor);
     const [saveState, sendSave] = useActor(saveActor);
     const [editForm] = Form.useForm();
@@ -301,13 +301,13 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
         limit === undefined && (limit = queryData.limit)
         console.log(queryData, page, limit);
 
-        const query = { data: { ...queryData, page, limit }, type: "LOAD" };
+        const query = {data: {...queryData, page, limit}, type: "LOAD"};
         return sendLookup(query);
     };
 
     const saveRecord = data => {
         console.log(data);
-        return sendSave({ data, type: "LOAD" });
+        return sendSave({data, type: "LOAD"});
     };
 
     useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
@@ -318,7 +318,7 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
             const saveContext = saveActor.getSnapshot().context;
 
             if (state.matches("hasResult")) {
-                sendPagedQuery({ ...lookupContext.payload.data, orderBy: "partyId DESC" })();
+                sendPagedQuery({...lookupContext.payload.data, orderBy: "partyId DESC"})();
 
                 notification.success({
                     key: `cparty_${Date.now()}`,
@@ -335,7 +335,7 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
                 notification.error({
                     key: `cparty_${Date.now()}`,
                     message: "Task Failed",
-                    description: <>Error creating party.<br />{state.context.error.message}</>,
+                    description: <>Error creating party.<br/>{state.context.error.message}</>,
                     duration: 5
                 });
                 setSaving(false);
@@ -347,7 +347,7 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
         if (lookupState.matches("idle")) {
             if (lookupState.context.result.count > 0 && lookupState.context.result.parties.length === 0) {
                 lookupState.context.payload.data.page--;
-                sendLookup({ ...lookupState.context.payload, type: "LOAD" });
+                sendLookup({...lookupState.context.payload, type: "LOAD"});
             }
         }
     }, [lookupState]);
@@ -376,33 +376,39 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
-    const { Title } = Typography;
+    const {Title} = Typography;
     return (<>
-        <Row style={{marginLeft:5}}>
+        <Row style={{marginLeft: 5}}>
             <Col md={24}>
-                 <Card title={<Title level={5}>Parties</Title>}
-                       headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
-                       extra={
-                       <Button type="primary" style={{ background:"#1890ff", borderColor:"#1890ff"}} icon={<PlusCircleFilled />} onClick={showModal}>
-                       Create Party
-                       </Button>}
-                       style={{height:135}} size="small">
-                       <PartySearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)} />
-                 </Card>
+                <Card title={<Title level={5}>Parties</Title>}
+                      headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}}
+                      extra={
+                          <Button type="primary" style={{background: "#1890ff", borderColor: "#1890ff"}}
+                                  icon={<PlusCircleFilled/>} onClick={showModal}>
+                              Create Party
+                          </Button>}
+                      style={{height: 135}} size="small">
+                    <PartySearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)}/>
+                </Card>
             </Col>
-                <Modal width={800} header="Create Party" key="recordEditor" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-                    <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)}/>
-                </Modal>
+            <Modal width={800} header="Create Party" key="recordEditor" visible={isModalVisible} onOk={handleOk}
+                   onCancel={handleCancel}>
+                <EditForm form={editForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)}/>
+            </Modal>
         </Row>
-        <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete} viewPage={viewPage} viewLimit={viewLimit} />
-        <Br />
-        <Modal width={800} title="Party Details" visible={!!modalDataOrder} onCancel={handleCancelOrder} footer={[<Button style={{backgroundColor:'#1DA57A'}} onClick={handleOkOrder}>Ok</Button>]}>
+        <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete}
+                  viewPage={viewPage} viewLimit={viewLimit}/>
+        <Br/>
+        <Modal width={800} title="Party Details" visible={!!modalDataOrder} onCancel={handleCancelOrder}
+               footer={[<Button style={{backgroundColor: '#1DA57A'}} onClick={handleOkOrder}>Ok</Button>]}>
             {/*{JSON.stringify(modalDataOrder)}*/}
-            <ShowPartyForm form={ShowPartyForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} details={modalDataOrder}/>
+            <ShowPartyForm form={ShowPartyForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)}
+                           details={modalDataOrder}/>
         </Modal>
-        <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
+        <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage}
+                   onPagingChange={sendPagedQuery(viewContext.payload.data)}/>
         <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
-            <Spin tip="Sending Request" />
+            <Spin tip="Sending Request"/>
         </Modal>
         {/*<UserManagement/>*/}
     </>);

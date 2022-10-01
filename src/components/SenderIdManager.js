@@ -21,6 +21,7 @@ import { Br } from "./Br";
 import { Prefix as PrefixSvc } from "../services/Prefix";
 import { Route as RouteSvc } from "../services/Route";
 import {PlusCircleFilled} from "@ant-design/icons";
+import {SenderIdManagerService} from "../services/SenderIdManagerService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -117,16 +118,35 @@ const EditForm = ({ form, record, onSave, prefixes, routes }) => {
 };
 
 const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) => {
-    const viewResult = context.result;
-    const viewError = context.error;
+    const [parties, setParties] = useState([]);
+    const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
+    const [partyFetchError, setPartyFetchError] = useState(null);
 
+    useEffect(() => {
+        /*static initializer*/
+
+        SenderIdManagerService.fetchRecords({})
+            .then(parties => {
+                setParties(parties);
+                setPartyFetchResultCount(parties.resultCount);
+                setPartyFetchError(null);
+            })
+            .catch(error => {
+                setParties([]);
+                setPartyFetchResultCount(0);
+                setPartyFetchError(error);
+            });
+
+        return () => { /*destructor*/ };
+    }, []);
+ console.log(parties);
     return (<>
         <Table
             style={{marginLeft:6}}
             size="small"
-            dataSource={viewResult.senderIds}
-            rowKey={senderId => senderId.senderIdId + senderId.senderId}
-            locale={{ emptyText: viewError && `[ ${viewError.message || "Fetch Error"} ]` }}
+            dataSource={parties}
+            rowKey={"partyId"}
+            locale={{ emptyText: parties === null ? "E" : "No Data" }}
             pagination={false}
         >
             <Table.Column
@@ -134,21 +154,9 @@ const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) =>
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-
-            <Table.Column
-                title="Prefix"
-                dataIndex={undefined}
-                render={(_, senderId, i) => {
-                    return (
-                        <Button onClick={() => onView(senderId)} type="link">{senderId.senderIdId}</Button>
-                    );
-                }}
-            />
-
-            <Table.Column title="Route" dataIndex={"senderId"} />
-            <Table.Column title="Priority" dataIndex={"priority"} />
-            <Table.Column title="Egress Prefix" dataIndex={"egressPrefix"} />
-            <Table.Column title="Digit Cut" dataIndex={"digitCut"} />
+            <Table.Column title="User ID" dataIndex={"loginId"} />
+            <Table.Column title="Name" dataIndex={"name"} />
+            <Table.Column title="Contact Number" dataIndex={"contactNumber"} />
 
             <Table.Column
                 title="Actions"
@@ -180,21 +188,9 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
 
 export const SenderIdManager = () => {
 
-    let totalPagingItems;
-    let onPagingChange;
-    let currentPage;
+
     return (<>
-        <>
-            <Space align="end" direction="vertical" style={{ width: "100%" }}>
-                <Pagination
-                    total={totalPagingItems}
-                    defaultPageSize={10}
-                    pageSizeOptions={["10", "20", "50", "100", "200"]}
-                    showSizeChanger={true}
-                    onChange={onPagingChange}
-                    current={currentPage}
-                />
-            </Space>
-        </>
+        <SearchForm/>
+        <DataView/>
     </>);
 };
