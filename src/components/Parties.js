@@ -182,6 +182,7 @@ const EditForm = ({ form, record: party, onSave }) => {
                     onClick={() => editForm
                         .validateFields()
                         .then(_ => onSave(editForm.getFieldsValue()))
+                        .then(data=> console.log(data))
                         .catch(_ => { })
                     }
                     children={"Submit"}
