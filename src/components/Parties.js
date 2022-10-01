@@ -151,7 +151,7 @@ const EditForm = ({ form, record: party, onSave }) => {
                 <Input.Password />
             </Form.Item>
             <Form.Item
-                name="uploadYourPhoto"
+                name="userNid"
                 label="Upload Your National Identity Card"
                 rules={[{ required: true }]}
             >

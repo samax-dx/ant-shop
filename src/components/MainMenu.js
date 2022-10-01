@@ -2,7 +2,16 @@ import React from 'react';
 import { useActor } from '@xstate/react';
 import { Menu } from 'antd';
 
-import { UserOutlined, SettingOutlined, ProfileOutlined, BankOutlined, WalletTwoTone, IdcardTwoTone, InteractionTwoTone } from '@ant-design/icons';
+import {
+    UserOutlined,
+    SettingOutlined,
+    ProfileOutlined,
+    BankOutlined,
+    WalletTwoTone,
+    IdcardTwoTone,
+    InteractionTwoTone,
+    IdcardOutlined
+} from '@ant-design/icons';
 
 export const MainMenu = ({ actor }) => {
     const [appState, sendApp] = [actor.getSnapshot(), actor.send];
@@ -20,6 +29,7 @@ export const MainMenu = ({ actor }) => {
             </Menu.SubMenu>
             <Menu.SubMenu key="partymenu" icon={<ProfileOutlined />} title="Party Management">
                 <Menu.Item key="parties" icon={<IdcardTwoTone />} onClick={() => sendApp({ type: 'NAV_PARTIES' })}>Parties</Menu.Item>
+                <Menu.Item key="senderIdManager" icon={<IdcardOutlined />} onClick={() => sendApp({ type: 'NAV_SENDER_ID_MANAGER' })}>Serder-ID</Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
                 <Menu.Item key="prefix" icon={<InteractionTwoTone />} onClick={() => sendApp({ type: 'NAV_PREFIX' })}>Prefix</Menu.Item>

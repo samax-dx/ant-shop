@@ -34,6 +34,7 @@ export const AppMachine = createMachine({
         prefix: {},
         route: {},
         dialPlan: {},
+        senderIdManager: {},
         package: {},
         login: {},
         logout: {},
@@ -51,6 +52,7 @@ export const AppMachine = createMachine({
         "NAV_ROUTE": { target: "route", actions: ["assignRouteActor"] },
         "NAV_DIAL_PLAN": { target: "dialPlan", actions: ["assignDialPlanActor"] },
         "NAV_PACKAGE": { target: "package", actions: ["assignPackageActor"] },
+        "NAV_SENDER_ID_MANAGER": { target: "senderIdManager", actions: ["assignSenderIdManagerActor"] },
         "LOGIN": { target: "login", actions: ["assignLoginActor"] },
         "LOGOUT": { target: "logout", actions: ["assignLogoutActor"] },
     },
@@ -171,6 +173,9 @@ export const AppMachine = createMachine({
                     { message: "Waiting for DialPlan Save" }
                 )
             ]
+        })),
+        assignSenderIdManagerActor: assign((ctx, ev) => ({
+            actor: null
         })),
         assignPackageActor: assign((ctx, ev) => ({
             actor: [

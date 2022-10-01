@@ -17,6 +17,7 @@ import { Prefix } from './components/Prefix';
 import { DialPlan } from './components/DialPlan';
 import { Route } from './components/Route';
 import { Package } from './components/Package';
+import {SenderIdManager} from "./components/SenderIdManager";
 
 
 export const App = ({ actor }) => {
@@ -24,6 +25,6 @@ export const App = ({ actor }) => {
     const component = capitalize(current.value);
 
     return (
-        <AppLayout render={{ Home, Product, Category, Partner, Rateplan, Parties, Payments, PaymentList, Prefix, Route, DialPlan, Package, Login }[component]} actor={actor} />
+        <AppLayout render={{ Home, Product, Category, Partner, Rateplan, Parties, Payments, PaymentList, Prefix, Route, DialPlan, SenderIdManager, Package, Login }[component]} actor={actor} />
     );
 };
