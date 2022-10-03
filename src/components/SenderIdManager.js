@@ -160,9 +160,9 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
         </Space>
     </>);
 };
-const SearchForm = ({ser})=>{
+const SearchForm = ({onSearch})=>{
     const onFinish = (values) => {
-        ser(values.loginId)
+        onSearch(values.loginId)
     };
     return(<>
         <Form
@@ -218,8 +218,8 @@ export const SenderIdManager = () => {
     useEffect(()=>{
         search?
             setParties(dataForSearch.filter((party) =>
-                party.loginId.includes(search.toLowerCase())||
-                party.name.includes(search.toLowerCase())||
+                party.loginId.toLowerCase().includes(search.toLowerCase())||
+                party.name.toLowerCase().includes(search.toLowerCase())||
                 party.contactNumber.includes(search.toLowerCase())
             ))
           :setParties(dataForSearch);
@@ -231,7 +231,7 @@ export const SenderIdManager = () => {
         {/*<Space style={{marginLeft:5}} header={'he'}> Sene
             <Search onChange={(e)=>setSearch(e.target.value)} />
         </Space>*/}
-        <SearchForm ser={setSearch}/>
+        <SearchForm onSearch={setSearch}/>
         <DataView parties={parties} viewLimit={limit} viewPage={page}/>
     </>);
 };
