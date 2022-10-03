@@ -16,14 +16,17 @@ export const SenderIdManagerService = {
             }
         )
         .then(response => {
+            console.log(response)
             const { data } = response;
+            data.page=1;
+            data.limit=10;
 
             if (data.parties === null) {
                 data.parties = [];
             }
 
             if (data.parties) {
-                return Promise.resolve(SpList.create(data.parties, data.count));
+                return Promise.resolve(data);  //
             } else {
                 return Promise.reject({ code: null, message: data.errorMessage });
             }

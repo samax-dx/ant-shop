@@ -311,6 +311,7 @@ export const Parties = ({actor: [lookupActor, saveActor]}) => {
     };
 
     useEffect(() => sendPagedQuery(lookupState.context.payload.data)(), []);
+    console.log(lookupState.context.payload.data);
 
     useEffect(() => {
         saveActor.subscribe(state => {
@@ -361,8 +362,10 @@ export const Parties = ({actor: [lookupActor, saveActor]}) => {
     const onClickDelete = data => console.log("delete", data);
 
     const viewContext = lookupState.context;
+    console.log(viewContext);
 
     const viewPage = viewContext.payload.data.page;
+    console.log(viewPage);
     const viewLimit = viewContext.payload.data.limit;
 
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -399,9 +402,9 @@ export const Parties = ({actor: [lookupActor, saveActor]}) => {
         <DataView context={viewContext} onView={onClickView} onEdit={onClickEdit} onDelete={onClickDelete}
                   viewPage={viewPage} viewLimit={viewLimit}/>
         <Br/>
-        <Modal width={800} title="Party Details" visible={!!modalDataOrder} onCancel={handleCancelOrder}
+       {/* <Modal width={800} title="Party Details" visible={!!modalDataOrder} onCancel={handleCancelOrder}
                footer={[<Button style={{backgroundColor: '#1DA57A'}} onClick={handleOkOrder}>Ok</Button>]}>
-            {/*{JSON.stringify(modalDataOrder)}*/}
+            {JSON.stringify(modalDataOrder)}
             <ShowPartyForm form={ShowPartyForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)}
                            details={modalDataOrder}/>
         </Modal>
@@ -409,7 +412,7 @@ export const Parties = ({actor: [lookupActor, saveActor]}) => {
                    onPagingChange={sendPagedQuery(viewContext.payload.data)}/>
         <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
             <Spin tip="Sending Request"/>
-        </Modal>
+        </Modal>*/}
         {/*<UserManagement/>*/}
     </>);
 };

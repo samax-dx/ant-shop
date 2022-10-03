@@ -15,16 +15,10 @@ import {
     Col,
     Modal, Typography
 } from "antd";
-import { useActor } from "@xstate/react";
-import { Br } from "./Br";
-
-import { Prefix as PrefixSvc } from "../services/Prefix";
-import { Route as RouteSvc } from "../services/Route";
-import {PlusCircleFilled} from "@ant-design/icons";
 import {SenderIdManagerService} from "../services/SenderIdManagerService";
 
 
-const SearchForm = ({ onSearch }) => {
+/*const SearchForm = ({ onSearch }) => {
     const [searchForm] = Form.useForm();
 
     const performSearch = () => {
@@ -61,7 +55,7 @@ const SearchForm = ({ onSearch }) => {
             //layout={"horizontal"}
 
         >
-            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="senderId" label="Sender-ID" children={<Input />} />
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="loginId" label="Sender-ID" children={<Input />} />
             <Form.Item name="senderId_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
                 <Button
@@ -73,7 +67,7 @@ const SearchForm = ({ onSearch }) => {
             </Form.Item>
         </Form>
     </>);
-};
+};*/
 
 const EditForm = ({ form, record, onSave, prefixes, routes }) => {
     const [editForm] = Form.useForm(form);
@@ -117,30 +111,11 @@ const EditForm = ({ form, record, onSave, prefixes, routes }) => {
     </>);
 };
 
-const DataView = ({ context, viewPage, viewLimit, onView, onEdit, onDelete }) => {
-    const [parties, setParties] = useState([]);
-    const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
-    const [partyFetchError, setPartyFetchError] = useState(null);
+const DataView = ({ parties, viewPage, viewLimit,onEdit }) => {
+    console.log(parties);
+    console.log(viewLimit);
+   return (<>
 
-    useEffect(() => {
-        /*static initializer*/
-
-        SenderIdManagerService.fetchRecords({})
-            .then(parties => {
-                setParties(parties);
-                setPartyFetchResultCount(parties.resultCount);
-                setPartyFetchError(null);
-            })
-            .catch(error => {
-                setParties([]);
-                setPartyFetchResultCount(0);
-                setPartyFetchError(error);
-            });
-
-        return () => { /*destructor*/ };
-    }, []);
- console.log(parties);
-    return (<>
         <Table
             style={{marginLeft:6}}
             size="small"
@@ -185,12 +160,78 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
         </Space>
     </>);
 };
+const SearchForm = ({ser})=>{
+    const onFinish = (values) => {
+        ser(values.loginId)
+    };
+    return(<>
+        <Form
+            labelCol={{span: 18}}
+            wrapperCol={{ span: 23}}
+            labelAlign="left"
+            style={{marginLeft:5}}
+            //layout={"horizontal"}
+            onFinish={onFinish}
+        >
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="loginId" label="Search" children={<Input placeholder="User id/Name/Number"/>} />
+            <Form.Item name="senderId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    children={"Search"}
+                />
+            </Form.Item>
+        </Form>
+    </>)
+}
 
 export const SenderIdManager = () => {
+    const [parties, setParties] = useState([]);
+    const [page, setPage] = useState(0);
+    const [limit, setLimit] = useState(0);
+    const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
+    const [partyFetchError, setPartyFetchError] = useState(null);
+    const [search,setSearch] = useState('');
+    const [dataForSearch,setDataForSearch]=useState([])
+    useEffect(() => {
+        /*static initializer*/
+        SenderIdManagerService.fetchRecords({})
+            .then((data) => {
+                setParties(data.parties);
+                setDataForSearch(data.parties);
+                setPartyFetchResultCount(data.count);
+                setPage(data.page);
+                setLimit(data.limit);
+                setPartyFetchError(null);
+                console.log(data)
+            })
+            .catch(error => {
+                setParties([]);
+                setPartyFetchResultCount(0);
+                setPartyFetchError(error);
+            });
 
+        return () => { /*destructor*/ };
+    }, []);
+
+    useEffect(()=>{
+        search?
+            setParties(dataForSearch.filter((party) =>
+                party.loginId.includes(search.toLowerCase())||
+                party.name.includes(search.toLowerCase())||
+                party.contactNumber.includes(search.toLowerCase())
+            ))
+          :setParties(dataForSearch);
+    },[search])
+
+    //const {Search} = Input;
 
     return (<>
-        <SearchForm/>
-        <DataView/>
+        {/*<Space style={{marginLeft:5}} header={'he'}> Sene
+            <Search onChange={(e)=>setSearch(e.target.value)} />
+        </Space>*/}
+        <SearchForm ser={setSearch}/>
+        <DataView parties={parties} viewLimit={limit} viewPage={page}/>
     </>);
 };
