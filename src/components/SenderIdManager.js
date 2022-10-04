@@ -13,9 +13,12 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography
+    Modal, Typography, Upload
 } from "antd";
 import {SenderIdManagerService} from "../services/SenderIdManagerService";
+import {countries} from "countries-list";
+import {PartySearchForm} from "./PartyWidgets";
+import {PlusCircleFilled} from "@ant-design/icons";
 
 
 /*const SearchForm = ({ onSearch }) => {
@@ -76,26 +79,86 @@ const EditForm = ({ form, record, onSave, prefixes, routes }) => {
         <Form
             form={editForm}
             labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+            wrapperCol={{ span: 20 }}
             labelAlign={"left"}
-            initialValues={record}
             style={{
                 padding:'15px'
             }}
         >
-            <Form.Item name="senderIdId" label="Prefix" rules={[{ required: true }]}>
-                <Select showSearch allowClear style={{ minWidth: 150 }}>
-                    {prefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
-                </Select>
+            <Form.Item name="partyId" label="ID" style={{ display: "none" }} children={<Input />} />
+            <Form.Item name="loginId" label="User ID" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="name" label="Name" rules={[{ required: true }]} children={<Input />} />
+
+            <Form.Item label="Contact Number" required>
+                <Space direction="horizontal" align="start">
+                    <Form.Item
+                        name="contactMech.countryCode"
+                        rules={[{ required: true }]}
+                        style={{ minWidth: "150px", margin: 0 }}
+                    >
+                        <Select
+                            showSearch
+                            placeholder="country"
+                            optionFilterProp="children"
+                            filterOption={true}
+                            allowClear={true}
+                        >
+                            {
+                                Object.values(countries).map(({ name, emoji, phone }) => {
+                                    return (
+                                        <Select.Option value={phone} key={phone}>
+                                            {emoji}&nbsp;&nbsp;{name}
+                                        </Select.Option>
+                                    );
+                                })
+                            }
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item name="contactMech.areaCode" style={{ maxWidth: "85px" }} children={<Input placeholder="area code" />} />
+                    <Form.Item name="contactMech.contactNumber" rules={[{ required: true }]} children={<Input placeholder="Phone Number" />} />
+                </Space>
+            </Form.Item>
+            {record.partyId && <Form.Item
+                name="password_old"
+                label="Current Password"
+                rules={[{ required: true }]}
+                hasFeedback
+            >
+                <Input.Password />
+            </Form.Item>}
+
+            <Form.Item
+                name="password"
+                label={record.partyId ? "New password" : "Password"}
+                rules={[{ required: true }]}
+                hasFeedback
+            >
+                <Input.Password />
             </Form.Item>
 
-            <Form.Item name="senderId" label="Route" rules={[{ required: true }]}>
-                <Select showSearch allowClear style={{ minWidth: 150 }}>
-                    {routes.map((v, i) => <Select.Option value={v.senderId} key={i}>{v.senderId}</Select.Option>)}
-                </Select>
+            <Form.Item
+                name="passwordConfirm"
+                label="Confirm Password"
+                dependencies={record.partyId ? ['password_old', 'password'] : ["password"]}
+                hasFeedback
+                rules={[
+                    { required: true },
+                    ({ getFieldValue }) => ({
+                        validator: (_, value) => {
+                            const password = getFieldValue("password");
+                            const passwordOld = getFieldValue("passwordOld");
+                            if (password === value && password != passwordOld) {
+                                return Promise.resolve();
+                            }
+                            return Promise.reject(new Error('Passwords do not match!'));
+                        },
+                    }),
+                ]}
+            >
+                <Input.Password />
             </Form.Item>
-
-            <Form.Item wrapperCol={{ offset: 8 }}>
+            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -114,8 +177,8 @@ const EditForm = ({ form, record, onSave, prefixes, routes }) => {
 const DataView = ({ parties, viewPage, viewLimit,onEdit }) => {
     console.log(parties);
     console.log(viewLimit);
-   return (<>
 
+    return (<>
         <Table
             style={{marginLeft:6}}
             size="small"
@@ -194,6 +257,12 @@ export const SenderIdManager = () => {
     const [partyFetchError, setPartyFetchError] = useState(null);
     const [search,setSearch] = useState('');
     const [dataForSearch,setDataForSearch]=useState([])
+    const {Title} = Typography;
+    const [editForm] = Form.useForm();
+    const [modalData, setModalData] = useState(null);
+    const showModal = data => setModalData(data);
+    const handleOk = () => setModalData(null);
+    const handleCancel = () => setModalData(null);
     useEffect(() => {
         /*static initializer*/
         SenderIdManagerService.fetchRecords({})
@@ -231,7 +300,25 @@ export const SenderIdManager = () => {
         {/*<Space style={{marginLeft:5}} header={'he'}> Sene
             <Search onChange={(e)=>setSearch(e.target.value)} />
         </Space>*/}
-        <SearchForm onSearch={setSearch}/>
+        <Row style={{marginLeft: 5}}>
+            <Col md={24}>
+                <Card title={<Title level={5}>Sender ID</Title>}
+                      headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}}
+                      extra={
+                          <Button type="primary" style={{background: "#1890ff", borderColor: "#1890ff"}}
+                                  icon={<PlusCircleFilled/>} onClick={showModal}>
+                              Create Sender
+                          </Button>}
+                      style={{height: 135}} size="small">
+                    <SearchForm onSearch={setSearch}/>
+                </Card>
+            </Col>
+            <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData} onOk={handleOk}
+                   onCancel={handleCancel}>
+                <EditForm form={editForm} record={{}} />
+            </Modal>
+        </Row>
         <DataView parties={parties} viewLimit={limit} viewPage={page}/>
+        <DataPager/>
     </>);
 };
