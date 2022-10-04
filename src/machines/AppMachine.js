@@ -53,7 +53,7 @@ export const AppMachine = createMachine({
         "NAV_ROUTE": { target: "route", actions: ["assignRouteActor"] },
         "NAV_DIAL_PLAN": { target: "dialPlan", actions: ["assignDialPlanActor"] },
         "NAV_PACKAGE": { target: "package", actions: ["assignPackageActor"] },
-        "NAV_SENDER_ID_MANAGER": { target: "senderIdManager", actions: ["assignSenderIdManagerActor"] },
+        // "NAV_SENDER_ID_MANAGER": { target: "senderIdManager", actions: ["assignSenderIdManagerActor"] },
         "LOGIN": { target: "login", actions: ["assignLoginActor"] },
         "LOGOUT": { target: "logout", actions: ["assignLogoutActor"] },
     },

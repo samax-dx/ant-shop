@@ -12,6 +12,7 @@ import {
     InteractionTwoTone,
     IdcardOutlined
 } from '@ant-design/icons';
+import {Link} from "react-router-dom";
 
 export const MainMenu = ({ actor }) => {
     const [appState, sendApp] = [actor.getSnapshot(), actor.send];
@@ -27,6 +28,7 @@ export const MainMenu = ({ actor }) => {
                 <Menu.Item key="payments" icon={<WalletTwoTone />} onClick={() => sendApp({ type: "NAV_PAYMENTS" })}>TopUp / Payments</Menu.Item>
                 {/* <Menu.Item key="paymentList" onClick={() => sendApp({ type: "NAV_PAYMENT_LIST" })}>Payment Applications</Menu.Item> */}
             </Menu.SubMenu>
+            {/*<Menu.Item><Link to="/send">Send</Link></Menu.Item>*/}
             <Menu.SubMenu key="partymenu" icon={<ProfileOutlined />} title="Party Management">
                 <Menu.Item key="parties" icon={<IdcardTwoTone />} onClick={() => sendApp({ type: 'NAV_PARTIES' })}>Parties</Menu.Item>
                 <Menu.Item key="senderIdManager" icon={<IdcardOutlined />} onClick={() => sendApp({ type: 'NAV_SENDER_ID_MANAGER' })}>Serder-ID</Menu.Item>

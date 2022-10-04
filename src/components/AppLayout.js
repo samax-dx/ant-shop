@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import { useActor } from '@xstate/react';
 import { Col, Row, Layout, Breadcrumb, Space, Button,Avatar } from 'antd';
 import { TopMenu } from "./TopMenu";
@@ -8,9 +8,8 @@ import getAllConfig from '../config/main';
 const { Header, Sider } = Layout;
 
 
-export const AppLayout = ({ render: PageContent, actor }) => {
+export const AppLayout = ({ render: PageContent, actor, routeComponent }) => {
     const [appState, sendApp] = [actor.getSnapshot(), actor.send];
-
 
     return <Layout>
         {appState.matches("login") || <Header className="header" style={{paddingLeft:'5px', paddingRight:'5px'}}>
@@ -29,6 +28,7 @@ export const AppLayout = ({ render: PageContent, actor }) => {
             </Sider>}
             <Layout style={{ padding: "2px" }}>
                 <PageContent actor={appState.context.actor} />
+                {routeComponent}
             </Layout>
         </Layout>
     </Layout>;

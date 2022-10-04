@@ -7,6 +7,7 @@ import { interpret } from 'xstate';
 import { App } from './App';
 import { AppMachine } from './machines/AppMachine';
 import reportWebVitals from './reportWebVitals';
+import {BrowserRouter} from "react-router-dom";
 
 
 ReactDOM.render(

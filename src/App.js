@@ -1,7 +1,7 @@
+import * as React from "react";
+import {BrowserRouter,Routes} from "react-router-dom";
 import './App.less';
-
 import { useActor } from '@xstate/react';
-
 import { AppLayout } from "./components/AppLayout";
 import { Home } from './components/Home';
 import { Product } from './components/Product';
@@ -15,16 +15,30 @@ import { Parties } from './components/Parties';
 import { Payments } from './components/Payments';
 import { Prefix } from './components/Prefix';
 import { DialPlan } from './components/DialPlan';
-import { Route } from './components/Route';
 import { Package } from './components/Package';
 import {SenderIdManager} from "./components/SenderIdManager";
-
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import {Fragment, useRef, useState} from "react";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
     const component = capitalize(current.value);
 
-    return (
-        <AppLayout render={{ Home, Product, Category, Partner, Rateplan, Parties, Payments, PaymentList, Prefix, Route, DialPlan, SenderIdManager, Package, Login }[component]} actor={actor} />
-    );
+    const createRouteComponent = rc => <AppLayout
+        render={{
+            Home, Product, Category, Partner, Rateplan, Parties,
+            Payments, PaymentList, Prefix, Route, DialPlan, Package, Login
+        }[component]}
+        actor={actor}
+        routeComponent={rc}
+    />;
+
+    return (<>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={createRouteComponent(null)} />
+                <Route path="/send" element={createRouteComponent(<SenderIdManager />)} />
+            </Routes>
+        </BrowserRouter>
+    </>);
 };

@@ -19,6 +19,7 @@ import {SenderIdManagerService} from "../services/SenderIdManagerService";
 import {countries} from "countries-list";
 import {PartySearchForm} from "./PartyWidgets";
 import {PlusCircleFilled} from "@ant-design/icons";
+import {Link} from "react-router-dom";
 
 
 /*const SearchForm = ({ onSearch }) => {
@@ -72,12 +73,12 @@ import {PlusCircleFilled} from "@ant-design/icons";
     </>);
 };*/
 
-const EditForm = ({ form, record, onSave, prefixes, routes }) => {
-    const [editForm] = Form.useForm(form);
+const CreateForm = ({ form, record, onSave, prefixes, routes }) => {
+    const [createForm] = Form.useForm(form);
 
     return (<>
         <Form
-            form={editForm}
+            form={createForm}
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
@@ -162,10 +163,10 @@ const EditForm = ({ form, record, onSave, prefixes, routes }) => {
                 <Button
                     type="primary"
                     htmlType="submit"
-                    onClick={() => editForm
+                    onClick={() => createForm
                         .validateFields()
-                        .then(_ => onSave(editForm.getFieldsValue()))
-                        .catch(_ => { })
+                        .then(_ => SenderIdManagerService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
+                        .catch(error => {alert(error.message)})
                     }
                     children={"Submit"}
                 />
@@ -258,7 +259,7 @@ export const SenderIdManager = () => {
     const [search,setSearch] = useState('');
     const [dataForSearch,setDataForSearch]=useState([])
     const {Title} = Typography;
-    const [editForm] = Form.useForm();
+    const [createForm] = Form.useForm();
     const [modalData, setModalData] = useState(null);
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
@@ -315,7 +316,7 @@ export const SenderIdManager = () => {
             </Col>
             <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData} onOk={handleOk}
                    onCancel={handleCancel}>
-                <EditForm form={editForm} record={{}} />
+                <CreateForm form={createForm} record={{}}/>
             </Modal>
         </Row>
         <DataView parties={parties} viewLimit={limit} viewPage={page}/>

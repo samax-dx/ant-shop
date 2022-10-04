@@ -26,6 +26,7 @@ export const SenderIdManagerService = {
             }
 
             if (data.parties) {
+                console.log(data)
                 return Promise.resolve(data);  //
             } else {
                 return Promise.reject({ code: null, message: data.errorMessage });
@@ -51,6 +52,7 @@ export const SenderIdManagerService = {
             const { data } = response;
 
             if (data.partyId) {
+                console.log(data)
                 return Promise.resolve({ ...response, partyId: data.partyId });
             } else {
                 return Promise.reject({ message: data.errorMessage });
