@@ -192,7 +192,7 @@ const EditForm = ({ form, record: party, onSave }) => {
     </>);
 };
 
-const ShowPartyForm = ({form,data,onSave}) => {
+const PartyEditForm = ({form,data,onSave}) => {
     const [ShowPartyForm] = Form.useForm(form);
 
     return (<>
@@ -399,7 +399,7 @@ export const Parties = ({ actor: [lookupActor, saveActor] }) => {
         <Br />
         <Modal width={800} title="Party Details" visible={!!modalDataOrder} onCancel={handleCancelOrder} footer={[<Button style={{backgroundColor:'#1DA57A'}} onClick={handleOkOrder}>Ok</Button>]}>
             {/*{JSON.stringify(modalDataOrder)}*/}
-            <ShowPartyForm form={ShowPartyForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} data={modalDataOrder}/>
+            <PartyEditForm form={PartyEditForm} record={{}} onSave={data => setSaving(true) || saveRecord(data)} data={modalDataOrder}/>
         </Modal>
         <DataPager totalPagingItems={viewContext.result.count} currentPage={viewPage} onPagingChange={sendPagedQuery(viewContext.payload.data)} />
         <Modal visible={saving} footer={null} closable="false" maskClosable={false}>
