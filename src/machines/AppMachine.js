@@ -12,7 +12,7 @@ import { Prefix } from "../services/Prefix";
 import { DialPlan } from "../services/DialPlan";
 import { Route } from "../services/Route";
 import { Package } from "../services/Package";
-import {SenderIdManagerService} from "../services/SenderIdManagerService";
+import {PartyService} from "../services/PartyService";
 
 
 export const AppMachine = createMachine({

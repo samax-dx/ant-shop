@@ -12,10 +12,11 @@ import {
     Col,
     Modal, Typography, DatePicker
 } from "antd";
-import {SenderIdManagerService} from "../services/SenderIdManagerService";
+import {PartyService} from "../services/PartyService";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
+import {SenderIdService} from "../services/SenderIdService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -33,7 +34,7 @@ const SearchForm = ({ onSearch }) => {
             }
         });
 
-        const queryData = ["name", "phoneNumber", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
+        const queryData = ["senderId", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -59,8 +60,8 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 23}}
             labelAlign="left"
         >
-            <Form.Item name="name" label="Sender-ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
-            <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="senderId" label="Sender-ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
+            <Form.Item name="senderId_op" initialValue={"contains"} hidden children={<Input />} />
 
             <Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
             <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
@@ -97,11 +98,17 @@ const WriteForm = ({ form, record }) => {
             }}
             onFinish={form.resetFields}
         >
-            <Form.Item name="partyId" label="ID" style={{ display: "none" }} children={<Input />} />
-            <Form.Item name="loginId" label="User ID" rules={[{ required: true }]} children={<Input />} />
-            <Form.Item name="name" label="Name" rules={[{ required: true }]} children={<Input />} />
-
-            <Form.Item label="Contact Number" required>
+            {/*<Form.Item name="partyId" label="I333D" style={{ display: "none" }} children={<Input />} />*/}
+            <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="type" id="selected" label="Type" initialValue={""} rules={[{required:true}]}>
+                <Select>
+                    <Option value="masking">Masking</Option>
+                    <Option value="non_masking">Non-Masking</Option>
+                </Select>
+            </Form.Item>
+            <Form.Item name="parties" label="Parties" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="routes" label="Routes" rules={[{ required: true }]} children={<Input placeholder="Robi,Bangalink.."/>} />
+            {/*<Form.Item label="Contact Number" required>
                 <Space direction="horizontal" align="start">
                     <Form.Item
                         name="contactMech.countryCode"
@@ -130,12 +137,6 @@ const WriteForm = ({ form, record }) => {
                     <Form.Item name="contactMech.areaCode" style={{ maxWidth: "85px" }} children={<Input placeholder="area code" />} />
                     <Form.Item name="contactMech.contactNumber" rules={[{ required: true }]} children={<Input placeholder="Phone Number" />} />
                 </Space>
-            </Form.Item>
-            <Form.Item name="selectedPolicy" id="selected" label="Schedule Policy" initialValue={""} rules={[{required:true}]}>
-                <Select>
-                    <Option value="masking">Masking</Option>
-                    <Option value="non_masking">Non-Masking</Option>
-                </Select>
             </Form.Item>
             <Form.Item name="roles" label="Roles" rules={[{ required: true }]} children={ <Select
                 mode="multiple"
@@ -185,14 +186,14 @@ const WriteForm = ({ form, record }) => {
                 ]}
             >
                 <Input.Password />
-            </Form.Item>
+            </Form.Item>*/}
             <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
                 <Button
                     type="primary"
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => SenderIdManagerService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
+                        .then(_ => SenderIdService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
                         .catch(error => {alert(error.message)})
                     }
                     children={"Submit"}
@@ -202,14 +203,14 @@ const WriteForm = ({ form, record }) => {
     </>);
 };
 
-const DataView = ({ parties, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ senderId, viewPage, viewLimit, onEdit }) => {
     return (<>
         <Table
             style={{marginLeft:6}}
             size="small"
-            dataSource={parties}
+            dataSource={senderId}
             rowKey={"partyId"}
-            locale={{ emptyText: parties === null ? "E" : "No Data" }}
+            locale={{ emptyText: senderId === null ? "E" : "No Data" }}
             pagination={false}
         >
             <Table.Column
@@ -217,9 +218,10 @@ const DataView = ({ parties, viewPage, viewLimit, onEdit }) => {
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="User ID" dataIndex={"loginId"} />
-            <Table.Column title="Name" dataIndex={"name"} />
-            <Table.Column title="Contact Number" dataIndex={"contactNumber"} />
+            <Table.Column title="Sender ID" dataIndex={"senderId"} />
+            <Table.Column title="Type" dataIndex={"type"} />
+            <Table.Column title="Parties" dataIndex={"parties"} render={value => value?value: "Not Available"} />
+            <Table.Column title="Routes" dataIndex={"routes"} />
             <Table.Column title="Created On" dataIndex={"createdOn"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />
 
             <Table.Column
@@ -250,9 +252,9 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
     </>);
 };
 
-export const SenderIdManager = () => {
+export const SenderId = () => {
     const [lastQuery, setLastQuery] = useState({});
-    const [parties, setParties] = useState([]);
+    const [senderID, setSenderId] = useState([]);
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
 
@@ -265,14 +267,15 @@ export const SenderIdManager = () => {
     const handleCancel = () => setModalData(null);
 
     useEffect(() => {
-        SenderIdManagerService.fetchRecords(lastQuery)
+        SenderIdService.fetchRecords(lastQuery)
             .then((data) => {
-                setParties(data.parties);
+                console.log(data)
+                setSenderId(data);
                 setPartyFetchResultCount(data.count);
                 setPartyFetchError(null);
             })
             .catch(error => {
-                setParties([]);
+                setSenderId([]);
                 setPartyFetchResultCount(0);
                 setPartyFetchError(error);
             });
@@ -301,7 +304,7 @@ export const SenderIdManager = () => {
                 <WriteForm form={writeForm} record={modalData}/>
             </Modal>
         </Row>
-        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
+        <DataView senderId={senderID} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);

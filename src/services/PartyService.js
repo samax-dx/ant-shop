@@ -2,7 +2,7 @@ import axios from "axios";
 import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
-export const SenderIdManagerService = {
+export const PartyService = {
     fetchRecords: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/Party/findParties`,

@@ -17,9 +17,10 @@ import { Prefix } from './components/Prefix';
 import { Route } from "./components/Route";
 import { DialPlan } from './components/DialPlan';
 import { Package } from './components/Package';
-import {SenderIdManager} from "./components/SenderIdManager";
+import {PartiesNew} from "./components/PartiesNew";
 import { BrowserRouter as Router, Route as ReactRoute } from "react-router-dom";
 import {Fragment, useRef, useState} from "react";
+import {SenderId} from "./components/SenderId";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
@@ -38,7 +39,8 @@ export const App = ({ actor }) => {
         <BrowserRouter>
             <Routes>
                 <ReactRoute path="/" element={createRouteComponent(null)} />
-                <ReactRoute path="/sender" element={createRouteComponent(<SenderIdManager />)} />
+                <ReactRoute path="/parties" element={createRouteComponent(<PartiesNew />)} />
+                <ReactRoute path="/senderId" element={createRouteComponent(<SenderId />)} />
             </Routes>
         </BrowserRouter>
     </>);
