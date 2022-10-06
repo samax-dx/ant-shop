@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Form,
     Input,
@@ -20,20 +20,22 @@ import {countries} from "countries-list";
 import {PartySearchForm} from "./PartyWidgets";
 import {PlusCircleFilled} from "@ant-design/icons";
 import {Link} from "react-router-dom";
+import {UserManagement} from "./UserManagement";
+import dayjs from "dayjs";
 
 
-/*const SearchForm = ({ onSearch }) => {
+const SearchForm = ({ onSearch }) => {
     const [searchForm] = Form.useForm();
 
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        // ["date_fld0_value", "date_fld1_value"].forEach((n, i) => {
+        // ["updatedAt_fld0_value", "updatedAt_fld1_value"].forEach((n, i) => {
         //     const date = formData[n];
         //     formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
         // });
 
-        const queryData = ["senderId"].reduce((acc, v) => {
+        const queryData = ["name", "phoneNumber"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -47,6 +49,8 @@ import {Link} from "react-router-dom";
 
             return acc;
         }, formData);
+
+        // queryData = { userName: "value", userName_op: "contains", phoneNumber: "value", phoneNumber_op: "contains" };
         onSearch(queryData);
     };
 
@@ -56,11 +60,15 @@ import {Link} from "react-router-dom";
             labelCol={{span: 18}}
             wrapperCol={{ span: 23}}
             labelAlign="left"
-            //layout={"horizontal"}
-
         >
-            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="loginId" label="Sender-ID" children={<Input />} />
-            <Form.Item name="senderId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="name" label="Sender-ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
+            <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
+
+            {/*<Form.Item name="date_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"}/>}/>*/}
+            {/*<Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>*/}
+            {/*<Form.Item name="date_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"}/>}/>*/}
+            {/*<Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>*/}
+
             <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
                 <Button
                     type="primary"
@@ -71,10 +79,20 @@ import {Link} from "react-router-dom";
             </Form.Item>
         </Form>
     </>);
-};*/
+};
 
+const {Option} = Select;
 const CreateForm = ({ form, record, onSave, prefixes, routes }) => {
     const [createForm] = Form.useForm(form);
+    const handleSubmit = (e)=>{
+        form.resetFields()
+    }
+
+    const roles = ['admin','user']
+    const children = [];
+    const handleChange = (value) => {
+        console.log(`Selected: ${value}`);
+    };
 
     return (<>
         <Form
@@ -85,6 +103,7 @@ const CreateForm = ({ form, record, onSave, prefixes, routes }) => {
             style={{
                 padding:'15px'
             }}
+            onFinish={handleSubmit}
         >
             <Form.Item name="partyId" label="ID" style={{ display: "none" }} children={<Input />} />
             <Form.Item name="loginId" label="User ID" rules={[{ required: true }]} children={<Input />} />
@@ -120,6 +139,24 @@ const CreateForm = ({ form, record, onSave, prefixes, routes }) => {
                     <Form.Item name="contactMech.contactNumber" rules={[{ required: true }]} children={<Input placeholder="Phone Number" />} />
                 </Space>
             </Form.Item>
+            <Form.Item name="selectedPolicy" id="selected" label="Schedule Policy" initialValue={""} rules={[{required:true}]}>
+                <Select>
+                    <Option value="masking">Masking</Option>
+                    <Option value="non_masking">Non-Masking</Option>
+                </Select>
+            </Form.Item>
+            <Form.Item name="roles" label="Roles" rules={[{ required: true }]} children={ <Select
+                mode="multiple"
+                size={'middle'}
+                placeholder="Please select"
+                defaultValue={['a10', 'c12']}
+                onChange={handleChange}
+                style={{
+                    width: '100%',
+                }}
+            >
+                {children}
+            </Select>} />
             {record.partyId && <Form.Item
                 name="password_old"
                 label="Current Password"
@@ -176,9 +213,6 @@ const CreateForm = ({ form, record, onSave, prefixes, routes }) => {
 };
 
 const DataView = ({ parties, viewPage, viewLimit,onEdit }) => {
-    console.log(parties);
-    console.log(viewLimit);
-
     return (<>
         <Table
             style={{marginLeft:6}}
@@ -224,10 +258,7 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
         </Space>
     </>);
 };
-const SearchForm = ({onSearch})=>{
-    const onFinish = (values) => {
-        onSearch(values.loginId)
-    };
+/*const SearchForm = ({ onSearch }) => {
     return(<>
         <Form
             labelCol={{span: 18}}
@@ -235,10 +266,13 @@ const SearchForm = ({onSearch})=>{
             labelAlign="left"
             style={{marginLeft:5}}
             //layout={"horizontal"}
-            onFinish={onFinish}
+            onFinish={formData => {
+                onSearch(Object.entries(formData)
+                    .filter(([key, value]) => value.trim().length > 0));
+            }}
         >
-            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="loginId" label="Search" children={<Input placeholder="User id/Name/Number"/>} />
-            <Form.Item name="senderId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="userName" label="Search" children={<Input placeholder="User Name"/>} />
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="phoneNumber" label="Search" children={<Input placeholder="User Number"/>} />
             <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
                 <Button
                     type="primary"
@@ -248,54 +282,40 @@ const SearchForm = ({onSearch})=>{
             </Form.Item>
         </Form>
     </>)
-}
+}*/
 
 export const SenderIdManager = () => {
+    const [lastQuery, setLastQuery] = useState({});
     const [parties, setParties] = useState([]);
-    const [page, setPage] = useState(0);
-    const [limit, setLimit] = useState(0);
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
-    const [search,setSearch] = useState('');
-    const [dataForSearch,setDataForSearch]=useState([])
+
     const {Title} = Typography;
     const [createForm] = Form.useForm();
     const [modalData, setModalData] = useState(null);
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
-    useEffect(() => {
-        /*static initializer*/
-        SenderIdManagerService.fetchRecords({})
+
+    const [search,setSearch] = useState('');
+
+    useEffect(() => {console.log(lastQuery);
+        SenderIdManagerService.fetchRecords(lastQuery)
             .then((data) => {
                 setParties(data.parties);
-                setDataForSearch(data.parties);
                 setPartyFetchResultCount(data.count);
-                setPage(data.page);
-                setLimit(data.limit);
                 setPartyFetchError(null);
-                console.log(data)
             })
             .catch(error => {
                 setParties([]);
                 setPartyFetchResultCount(0);
                 setPartyFetchError(error);
             });
+    }, [lastQuery]);
 
-        return () => { /*destructor*/ };
+    useEffect(() => {
+        setLastQuery({ page: 1, limit: 10 })
     }, []);
-
-    useEffect(()=>{
-        search?
-            setParties(dataForSearch.filter((party) =>
-                party.loginId.toLowerCase().includes(search.toLowerCase())||
-                party.name.toLowerCase().includes(search.toLowerCase())||
-                party.contactNumber.includes(search.toLowerCase())
-            ))
-          :setParties(dataForSearch);
-    },[search])
-
-    //const {Search} = Input;
 
     return (<>
         {/*<Space style={{marginLeft:5}} header={'he'}> Sene
@@ -311,7 +331,7 @@ export const SenderIdManager = () => {
                               Create Sender
                           </Button>}
                       style={{height: 135}} size="small">
-                    <SearchForm onSearch={setSearch}/>
+                    <SearchForm onSearch={data => setLastQuery({ ...lastQuery, ...data, page: 1 })}/>
                 </Card>
             </Col>
             <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData} onOk={handleOk}
@@ -319,7 +339,8 @@ export const SenderIdManager = () => {
                 <CreateForm form={createForm} record={{}}/>
             </Modal>
         </Row>
-        <DataView parties={parties} viewLimit={limit} viewPage={page}/>
-        <DataPager />
+        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page}/>
+        <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
+                   onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);
 };

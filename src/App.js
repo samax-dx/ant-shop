@@ -14,10 +14,11 @@ import { capitalize } from "./Util.js"
 import { Parties } from './components/Parties';
 import { Payments } from './components/Payments';
 import { Prefix } from './components/Prefix';
+import { Route } from "./components/Route";
 import { DialPlan } from './components/DialPlan';
 import { Package } from './components/Package';
 import {SenderIdManager} from "./components/SenderIdManager";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route as ReactRoute } from "react-router-dom";
 import {Fragment, useRef, useState} from "react";
 
 export const App = ({ actor }) => {
@@ -36,9 +37,8 @@ export const App = ({ actor }) => {
     return (<>
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={createRouteComponent(null)} />
-                <Route path="/send" element={createRouteComponent(<SenderIdManager />)} />
-                <Route path="/dialplan" element={createRouteComponent(<DialPlan />)} />
+                <ReactRoute path="/" element={createRouteComponent(null)} />
+                <ReactRoute path="/sender" element={createRouteComponent(<SenderIdManager />)} />
             </Routes>
         </BrowserRouter>
     </>);
