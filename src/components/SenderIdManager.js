@@ -6,21 +6,15 @@ import {
     Table,
     Space,
     Pagination,
-    DatePicker,
-    notification,
-    Collapse,
     Card,
     Select,
     Row,
     Col,
-    Modal, Typography, Upload
+    Modal, Typography, DatePicker
 } from "antd";
 import {SenderIdManagerService} from "../services/SenderIdManagerService";
 import {countries} from "countries-list";
-import {PartySearchForm} from "./PartyWidgets";
 import {PlusCircleFilled} from "@ant-design/icons";
-import {Link} from "react-router-dom";
-import {UserManagement} from "./UserManagement";
 import dayjs from "dayjs";
 
 
@@ -30,12 +24,16 @@ const SearchForm = ({ onSearch }) => {
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        // ["updatedAt_fld0_value", "updatedAt_fld1_value"].forEach((n, i) => {
-        //     const date = formData[n];
-        //     formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : "";
-        // });
+        ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
+            const date = formData[n];
+            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
 
-        const queryData = ["name", "phoneNumber"].reduce((acc, v) => {
+            if (formData[n] === null) {
+                delete formData[n];
+            }
+        });
+
+        const queryData = ["name", "phoneNumber", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -51,7 +49,7 @@ const SearchForm = ({ onSearch }) => {
         }, formData);
 
         // queryData = { userName: "value", userName_op: "contains", phoneNumber: "value", phoneNumber_op: "contains" };
-        onSearch(queryData);
+        onSearch(Object.keys(queryData).length ? queryData : null);
     };
 
     return (<>
@@ -64,10 +62,10 @@ const SearchForm = ({ onSearch }) => {
             <Form.Item name="name" label="Sender-ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
             <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
 
-            {/*<Form.Item name="date_fld0_value" label="From Date" children={<DatePicker format={"MMM D, YYYY"}/>}/>*/}
-            {/*<Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>*/}
-            {/*<Form.Item name="date_fld1_value" label="To Date" children={<DatePicker format={"MMM D, YYYY"}/>}/>*/}
-            {/*<Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>*/}
+            <Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
+            <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
+            <Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
+            <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>
 
             <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
                 <Button
@@ -81,18 +79,11 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const {Option} = Select;
-const CreateForm = ({ form, record, onSave, prefixes, routes }) => {
+const WriteForm = ({ form, record }) => {
+    const { Option } = Select;
     const [createForm] = Form.useForm(form);
-    const handleSubmit = (e)=>{
-        form.resetFields()
-    }
 
-    const roles = ['admin','user']
-    const children = [];
-    const handleChange = (value) => {
-        console.log(`Selected: ${value}`);
-    };
+    useEffect(() => createForm.resetFields(), [record, createForm]);
 
     return (<>
         <Form
@@ -100,10 +91,11 @@ const CreateForm = ({ form, record, onSave, prefixes, routes }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
+            initialValues={record}
             style={{
                 padding:'15px'
             }}
-            onFinish={handleSubmit}
+            onFinish={form.resetFields}
         >
             <Form.Item name="partyId" label="ID" style={{ display: "none" }} children={<Input />} />
             <Form.Item name="loginId" label="User ID" rules={[{ required: true }]} children={<Input />} />
@@ -150,12 +142,10 @@ const CreateForm = ({ form, record, onSave, prefixes, routes }) => {
                 size={'middle'}
                 placeholder="Please select"
                 defaultValue={['a10', 'c12']}
-                onChange={handleChange}
                 style={{
                     width: '100%',
                 }}
             >
-                {children}
             </Select>} />
             {record.partyId && <Form.Item
                 name="password_old"
@@ -212,7 +202,7 @@ const CreateForm = ({ form, record, onSave, prefixes, routes }) => {
     </>);
 };
 
-const DataView = ({ parties, viewPage, viewLimit,onEdit }) => {
+const DataView = ({ parties, viewPage, viewLimit, onEdit }) => {
     return (<>
         <Table
             style={{marginLeft:6}}
@@ -230,13 +220,14 @@ const DataView = ({ parties, viewPage, viewLimit,onEdit }) => {
             <Table.Column title="User ID" dataIndex={"loginId"} />
             <Table.Column title="Name" dataIndex={"name"} />
             <Table.Column title="Contact Number" dataIndex={"contactNumber"} />
+            <Table.Column title="Created On" dataIndex={"createdOn"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />
 
             <Table.Column
                 title="Actions"
                 dataIndex={undefined}
-                render={(_, senderId, i) => {
+                render={(record, value, index) => {
                     return (
-                        <Button onClick={() => onEdit(senderId)} type="link">Edit</Button>
+                        <Button onClick={() => onEdit(record)} type="link">Edit</Button>
                     );
                 }}
             />
@@ -258,31 +249,6 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
         </Space>
     </>);
 };
-/*const SearchForm = ({ onSearch }) => {
-    return(<>
-        <Form
-            labelCol={{span: 18}}
-            wrapperCol={{ span: 23}}
-            labelAlign="left"
-            style={{marginLeft:5}}
-            //layout={"horizontal"}
-            onFinish={formData => {
-                onSearch(Object.entries(formData)
-                    .filter(([key, value]) => value.trim().length > 0));
-            }}
-        >
-            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="userName" label="Search" children={<Input placeholder="User Name"/>} />
-            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="phoneNumber" label="Search" children={<Input placeholder="User Number"/>} />
-            <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
-                <Button
-                    type="primary"
-                    htmlType="submit"
-                    children={"Search"}
-                />
-            </Form.Item>
-        </Form>
-    </>)
-}*/
 
 export const SenderIdManager = () => {
     const [lastQuery, setLastQuery] = useState({});
@@ -291,15 +257,14 @@ export const SenderIdManager = () => {
     const [partyFetchError, setPartyFetchError] = useState(null);
 
     const {Title} = Typography;
-    const [createForm] = Form.useForm();
+    const [writeForm] = Form.useForm();
+
     const [modalData, setModalData] = useState(null);
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
 
-    const [search,setSearch] = useState('');
-
-    useEffect(() => {console.log(lastQuery);
+    useEffect(() => {
         SenderIdManagerService.fetchRecords(lastQuery)
             .then((data) => {
                 setParties(data.parties);
@@ -318,28 +283,25 @@ export const SenderIdManager = () => {
     }, []);
 
     return (<>
-        {/*<Space style={{marginLeft:5}} header={'he'}> Sene
-            <Search onChange={(e)=>setSearch(e.target.value)} />
-        </Space>*/}
         <Row style={{marginLeft: 5}}>
             <Col md={24}>
                 <Card title={<Title level={5}>Sender ID</Title>}
                       headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}}
                       extra={
                           <Button type="primary" style={{background: "#1890ff", borderColor: "#1890ff"}}
-                                  icon={<PlusCircleFilled/>} onClick={showModal}>
+                                  icon={<PlusCircleFilled/>} onClick={() => showModal({})}>
                               Create Sender
                           </Button>}
                       style={{height: 135}} size="small">
-                    <SearchForm onSearch={data => setLastQuery({ ...lastQuery, ...data, page: 1 })}/>
+                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData} onOk={handleOk}
-                   onCancel={handleCancel}>
-                <CreateForm form={createForm} record={{}}/>
+            <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData}
+                   maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
+                <WriteForm form={writeForm} record={modalData}/>
             </Modal>
         </Row>
-        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page}/>
+        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);

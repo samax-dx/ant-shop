@@ -1,10 +1,9 @@
 import axios from "axios";
 import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
-import {SpList} from "../Util";
 
 export const SenderIdManagerService = {
-    fetchRecords: (payload) => axios
+    fetchRecords: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/Party/findParties`,
             { ...payload },
@@ -16,17 +15,14 @@ export const SenderIdManagerService = {
             }
         )
         .then(response => {
-            console.log(response)
             const { data } = response;
-            data.page=1;
-            data.limit=10;
+            console.log(data)
 
             if (data.parties === null) {
                 data.parties = [];
             }
 
             if (data.parties) {
-                console.log(data)
                 return Promise.resolve(data);  //
             } else {
                 return Promise.reject({ code: null, message: data.errorMessage });
@@ -35,9 +31,12 @@ export const SenderIdManagerService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         }),
-    saveRecord: (payload) => axios
+    saveRecord: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/Party/createParty`,
             { ...payload },
@@ -50,6 +49,7 @@ export const SenderIdManagerService = {
         )
         .then(response => {
             const { data } = response;
+            console.log(data)
 
             if (data.partyId) {
                 console.log(data)
@@ -61,6 +61,9 @@ export const SenderIdManagerService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         })
 };
