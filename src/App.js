@@ -38,6 +38,7 @@ export const App = ({ actor }) => {
             <Routes>
                 <Route path="/" element={createRouteComponent(null)} />
                 <Route path="/send" element={createRouteComponent(<SenderIdManager />)} />
+                <Route path="/dialplan" element={createRouteComponent(<DialPlan />)} />
             </Routes>
         </BrowserRouter>
     </>);

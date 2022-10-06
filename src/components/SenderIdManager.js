@@ -320,6 +320,6 @@ export const SenderIdManager = () => {
             </Modal>
         </Row>
         <DataView parties={parties} viewLimit={limit} viewPage={page}/>
-        <DataPager/>
+        <DataPager />
     </>);
 };

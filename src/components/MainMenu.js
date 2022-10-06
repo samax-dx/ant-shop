@@ -49,6 +49,31 @@ export const MainMenu = ({ actor }) => {
                 <Menu.Item key="rates">Rates</Menu.Item>
                 <Menu.Item key="lcr">LCR</Menu.Item>
             </Menu.SubMenu>
+
+        {/*    My Menu  */}
+            <Menu.SubMenu key="accounting" icon={<BankOutlined />} title="Accounting">
+                <Menu.Item icon={<WalletTwoTone/>}><Link to="/payment">TopUp / Payments</Link></Menu.Item>
+            </Menu.SubMenu>
+            <Menu.SubMenu key="partymenu" icon={<ProfileOutlined />} title="Party Management">
+                <Menu.Item icon={<IdcardTwoTone />}><Link to="/parties">Parties</Link></Menu.Item>
+                <Menu.Item icon={<IdcardOutlined />}><Link to="/send">Serder-ID</Link></Menu.Item>
+            </Menu.SubMenu>
+            <Menu.SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
+                <Menu.Item icon={<InteractionTwoTone />} ><Link to="/prefix">Prefix</Link></Menu.Item>
+                <Menu.Item icon={<InteractionTwoTone />}><Link to="route">Route</Link></Menu.Item>
+                <Menu.Item icon={<InteractionTwoTone />} ><Link to="dialplan">Dial Plan</Link></Menu.Item>
+                <Menu.Item icon={<InteractionTwoTone />} ><Link to="package-prefix">Package Prefix</Link></Menu.Item>
+            </Menu.SubMenu>
+            <Menu.SubMenu key="sub5" icon={<UserOutlined />} title="..." disabled>
+                <Menu.Item ><Link to="partners">Partners</Link></Menu.Item>
+                <Menu.Item ><Link to="account-details">Account Details</Link></Menu.Item>
+                <Menu.Item ><Link to="import-routes">Import Routes</Link></Menu.Item>
+                <Menu.Item ><Link to="bridge-routes">Bridge Routes</Link></Menu.Item>
+                <Menu.Item ><Link to="view-routes">View Routes</Link></Menu.Item>
+                <Menu.Item ><Link to="rate-plan">Rate Plan</Link></Menu.Item>
+                <Menu.Item ><Link to="rates">Rates</Link></Menu.Item>
+                <Menu.Item ><Link to="lcr">LCR</Link></Menu.Item>
+            </Menu.SubMenu>
         </Menu>
     );
 };
