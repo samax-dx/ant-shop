@@ -10,12 +10,13 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker
+    Modal, Typography, DatePicker, notification, Spin
 } from "antd";
-import {PartyService} from "../services/PartyService";
+import {AccountingService} from "../services/AccountingService";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
+import {TopupParties} from "./TopupParties";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -33,7 +34,7 @@ const SearchForm = ({ onSearch }) => {
             }
         });
 
-        const queryData = ["name", "phoneNumber", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
+        const queryData = ["partyLoginId", "partyName", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -59,8 +60,10 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 23}}
             labelAlign="left"
         >
-            <Form.Item name="name" label="Sender-ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
-            <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="partyLoginId" label="User-ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
+            <Form.Item name="partyLoginId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="partyName" label="Party Name" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
+            <Form.Item name="partyName_op" initialValue={"contains"} hidden children={<Input />} />
 
             <Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
             <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
@@ -192,7 +195,7 @@ const WriteForm = ({ form, record }) => {
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => PartyService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
+                        .then(_ => AccountingService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
                         .catch(error => {alert(error.message)})
                     }
                     children={"Submit"}
@@ -202,14 +205,14 @@ const WriteForm = ({ form, record }) => {
     </>);
 };
 
-const DataView = ({ parties, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ payments, viewPage, viewLimit, onEdit }) => {
     return (<>
         <Table
             style={{marginLeft:6}}
             size="small"
-            dataSource={parties}
+            dataSource={payments}
             rowKey={"partyId"}
-            locale={{ emptyText: parties === null ? "E" : "No Data" }}
+            locale={{ emptyText: payments === null ? "E" : "No Data" }}
             pagination={false}
         >
             <Table.Column
@@ -217,20 +220,12 @@ const DataView = ({ parties, viewPage, viewLimit, onEdit }) => {
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="User ID" dataIndex={"loginId"} />
-            <Table.Column title="Name" dataIndex={"name"} />
-            <Table.Column title="Contact Number" dataIndex={"contactNumber"} />
-            <Table.Column title="Created On" dataIndex={"createdOn"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />
+            <Table.Column title="Payment ID" dataIndex={"paymentId"} />
+            <Table.Column title="User ID" dataIndex={"partyLoginId"} />
+            <Table.Column title="Party Name" dataIndex={"partyName"} />
+            <Table.Column title="Date" dataIndex={"createdOn"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />
+            <Table.Column title="Amount" dataIndex={"amount"} />
 
-            <Table.Column
-                title="Actions"
-                dataIndex={undefined}
-                render={(record, value, index) => {
-                    return (
-                        <Button onClick={() => onEdit(record)} type="link">Edit</Button>
-                    );
-                }}
-            />
         </Table>
     </>);
 };
@@ -250,9 +245,9 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
     </>);
 };
 
-export const PartiesNew = () => {
+export const Topup = () => {
     const [lastQuery, setLastQuery] = useState({});
-    const [parties, setParties] = useState([]);
+    const [payments, setPayments] = useState([]);
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
 
@@ -265,14 +260,14 @@ export const PartiesNew = () => {
     const handleCancel = () => setModalData(null);
 
     useEffect(() => {
-        PartyService.fetchRecords(lastQuery)
+        AccountingService.fetchBalanceRequests(lastQuery)
             .then((data) => {
-                setParties(data.parties);
+                setPayments(data.payments);
                 setPartyFetchResultCount(data.count);
                 setPartyFetchError(null);
             })
             .catch(error => {
-                setParties([]);
+                setPayments([]);
                 setPartyFetchResultCount(0);
                 setPartyFetchError(error);
             });
@@ -285,23 +280,23 @@ export const PartiesNew = () => {
     return (<>
         <Row style={{marginLeft: 5}}>
             <Col md={24}>
-                <Card title={<Title level={5}>Parties</Title>}
+                <Card title={<Title level={5}>TopUp / Payment</Title>}
                       headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}}
                       extra={
                           <Button type="primary" style={{background: "#1890ff", borderColor: "#1890ff"}}
                                   icon={<PlusCircleFilled/>} onClick={() => showModal({})}>
-                              Create Party
+                              TopUp / Make Payment
                           </Button>}
                       style={{height: 135}} size="small">
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData}
+            <Modal  width={"90vw"} header="TopUp / Make Payment" key="recordEditor" visible={modalData}
                    maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
-                <WriteForm form={writeForm} record={modalData}/>
+                <TopupParties/>
             </Modal>
         </Row>
-        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
+        <DataView payments={payments} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);
