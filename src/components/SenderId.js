@@ -19,6 +19,8 @@ import dayjs from "dayjs";
 import {SenderIdService} from "../services/SenderIdService";
 import {Route} from "../services/Route";
 import {RouteService} from "../services/RouteService";
+import Debounce from "./Debounce";
+import {DebounceSelect} from "./DebounceSelect";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -128,7 +130,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     <Option value="non_masking">Non-Masking</Option>
                 </Select>
             </Form.Item>
-            <Form.Item name="parties" label="Parties" rules={[{ required: false }]} children={<Input />} />
+            <Form.Item name="parties" label="Parties" rules={[{ required: false }]} children={<DebounceSelect />} />
             <Form.Item name="routes" label="Routes" rules={[{required:true}]}>
             <Select
                 mode="multiple"
