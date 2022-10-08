@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
     Form,
     Input,
@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker
+    Modal, Typography, DatePicker, notification
 } from "antd";
 import {PartyService} from "../services/PartyService";
 import {countries} from "countries-list";
@@ -19,7 +19,6 @@ import dayjs from "dayjs";
 import {SenderIdService} from "../services/SenderIdService";
 import {Route} from "../services/Route";
 import {RouteService} from "../services/RouteService";
-import Debounce from "./Debounce";
 import {DebounceSelect} from "./DebounceSelect";
 
 
@@ -29,14 +28,14 @@ const SearchForm = ({ onSearch }) => {
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
+      /*  ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
             const date = formData[n];
             formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
 
             if (formData[n] === null) {
                 delete formData[n];
             }
-        });
+        });*/
 
         const queryData = ["senderId", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
             const field = v;
@@ -67,10 +66,10 @@ const SearchForm = ({ onSearch }) => {
             <Form.Item name="senderId" label="Sender-ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
             <Form.Item name="senderId_op" initialValue={"contains"} hidden children={<Input />} />
 
-            <Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
+            {/*<Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
             <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
             <Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
-            <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>
+            <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>*/}
 
             <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
                 <Button
@@ -89,6 +88,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
     const [createForm] = Form.useForm(form);
 
     const [routes, setRoutes] = useState([]);
+    const ref = useRef();
     useEffect(()=> {
         RouteService.fetchRecords({})
             .then(data=>{
@@ -109,7 +109,16 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
         record.routes = record.routes?.split(",");
         return record;
     };
-
+    const openNotificationSuccess = (type) => {
+        notification[type]({
+            message: "Sender Id create successfully",
+        });
+    };
+    const openNotificationError = (type) => {
+        notification[type]({
+            message: "Please input all valid data",
+        });
+    };
     return (<>
         <Form
             form={createForm}
@@ -130,14 +139,17 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     <Option value="non_masking">Non-Masking</Option>
                 </Select>
             </Form.Item>
-            <Form.Item name="parties" label="Parties" rules={[{ required: false }]} children={<DebounceSelect />} />
+            <Form.Item label="Parties" children={<DebounceSelect />} />
             <Form.Item name="routes" label="Routes" rules={[{required:true}]}>
             <Select
+                ref={ref}
                 mode="multiple"
                 placeholder="Please select"
                 style={{
                     width: '100%',
                 }}
+                onChange={() => ref.current.blur()}
+
             >
                 {routes.map(route => <Option key={route.routeId}>{route.routeId}</Option>)}
             </Select>
@@ -150,10 +162,10 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                         .validateFields()
                         .then(_ => SenderIdService.saveRecord(transformRecordAtoS(createForm.getFieldsValue())))
                         .then(senderId => {
-                            alert("Sender Create Success!");
+                            openNotificationSuccess("success")
                             onRecordSaved(senderId);
                         })
-                        .catch(error => alert(error.message))
+                        .catch(error => openNotificationError('error'))
                     }
                     children={"Submit"}
                 />
@@ -179,10 +191,9 @@ const DataView = ({ senderId, viewPage, viewLimit, onEdit }) => {
             />
             <Table.Column title="Sender ID" dataIndex={"senderId"} />
             <Table.Column title="Type" dataIndex={"type"} />
-            <Table.Column title="Parties" dataIndex={"parties"} render={value => value?value: "Not Available"} />
+            <Table.Column title="Parties" dataIndex={"parties"} render={value => value?value: "All"} />
             <Table.Column title="Routes" dataIndex={"routes"} />
-            <Table.Column title="Created On" dataIndex={"createdOn"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />
-
+            {/*<Table.Column title="Created On" dataIndex={"createdOn"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />*/}
             <Table.Column
                 title="Actions"
                 dataIndex={undefined}
