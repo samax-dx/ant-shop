@@ -44,6 +44,7 @@ export const SenderIdService = {
             const { status: code, statusText: text, data } = response;
             const errorEx = { code, message: data.error || text };
             console.log(errorEx);
+
             return Promise.reject(errorEx);
         }),
     saveRecord: (payload) => console.log(payload) || /*axios

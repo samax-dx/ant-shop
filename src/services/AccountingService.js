@@ -25,6 +25,7 @@ export const AccountingService = ({
         )
         .then(response => {
             const { data } = response;
+            console.log(data)
 
             if (data.payments) {
                 return Promise.resolve(data);
@@ -35,7 +36,10 @@ export const AccountingService = ({
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         }),
     handleBalanceRequest: (payload) => axios
         .post(
@@ -50,6 +54,7 @@ export const AccountingService = ({
         )
         .then(response => {
             const { data } = response;
+            console.log(data)
 
             if (data.paymentId) {
                 return Promise.resolve(data);
@@ -60,7 +65,10 @@ export const AccountingService = ({
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         }),
     addPartyBalance: (payload) =>console.log(payload) || axios
         .post(
@@ -75,6 +83,7 @@ export const AccountingService = ({
         )
         .then(response => {
             const { data } = response;
+            console.log(data)
 
             if (data.paymentId) {
                 return Promise.resolve(data);
@@ -85,6 +94,9 @@ export const AccountingService = ({
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         })
 });

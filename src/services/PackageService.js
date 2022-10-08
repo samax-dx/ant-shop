@@ -3,7 +3,7 @@ import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const PackageService = {
-    fetchRecords: (payload) => axios
+    fetchRecords: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/Prefix/listPackages`,
             { ...payload },
@@ -16,6 +16,7 @@ export const PackageService = {
         )
         .then(response => {
             const { data } = response;
+            console.log(data)
 
             if (data.packages === null) {
                 data.packages = [];
@@ -29,9 +30,12 @@ export const PackageService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         }),
-    saveRecord: (payload) => axios
+    saveRecord: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/Prefix/savePackage`,
             { ...payload },
@@ -54,6 +58,9 @@ export const PackageService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         })
 };

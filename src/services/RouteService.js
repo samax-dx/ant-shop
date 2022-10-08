@@ -3,7 +3,7 @@ import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const RouteService = {
-    fetchRecords: (payload) => axios
+    fetchRecords: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/Prefix/listRoutes`,
             { ...payload },
@@ -16,6 +16,7 @@ export const RouteService = {
         )
         .then(response => {
             const { data } = response;
+            console.log(data)
 
             if (data.routes === null) {
                 data.routes = [];
@@ -29,7 +30,10 @@ export const RouteService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         }),
     saveRecord: (payload) => axios
         .post(
@@ -44,6 +48,7 @@ export const RouteService = {
         )
         .then(response => {
             const { data } = response;
+            console.log(data)
 
             if (data.route) {
                 return Promise.resolve(data);
@@ -54,6 +59,9 @@ export const RouteService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         })
 };

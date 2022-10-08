@@ -131,12 +131,6 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     <Form.Item name="contactMech.contactNumber" rules={[{ required: true }]} children={<Input placeholder="Phone Number" />} />
                 </Space>
             </Form.Item>
-            <Form.Item name="selectedPolicy" id="selected" label="Schedule Policy" initialValue={""} rules={[{required:true}]}>
-                <Select>
-                    <Option value="masking">Masking</Option>
-                    <Option value="non_masking">Non-Masking</Option>
-                </Select>
-            </Form.Item>
             <Form.Item name="roles" label="Roles" rules={[{ required: false }]} children={ <Select
                 mode="multiple"
                 size={'middle'}

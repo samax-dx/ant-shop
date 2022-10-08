@@ -3,7 +3,7 @@ import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
 export const ProductService = {
-    fetchProducts: (payload) => axios
+    fetchProducts: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/Product/listProducts`,
             { ...payload },
@@ -16,6 +16,7 @@ export const ProductService = {
         )
         .then(response => {
             const { data } = response;
+            console.log(data)
 
             if (data.products) {
                 return Promise.resolve(data);
@@ -26,9 +27,12 @@ export const ProductService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         }),
-    fetchProductLineups: (payload) => axios
+    fetchProductLineups: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/Product/listProductLineups`,
             { ...payload },
@@ -41,6 +45,7 @@ export const ProductService = {
         )
         .then(response => {
             const { data } = response;
+            console.log(data)
 
             if (data.lineups) {
                 return Promise.resolve(data);
@@ -51,6 +56,9 @@ export const ProductService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         })
 };

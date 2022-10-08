@@ -16,7 +16,7 @@ export const PrefixService = {
         )
         .then(response => {
             const { data } = response;
-
+            console.log(data)
 
 
             if (data.prefixes === null) {
@@ -31,9 +31,12 @@ export const PrefixService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         }),
-    saveRecord: (payload) => axios
+    saveRecord: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/Prefix/savePrefix`,
             { ...payload },
@@ -57,6 +60,9 @@ export const PrefixService = {
         .catch(error => {
             const response = error.response || { data: { error: error.message } };
             const { status: code, statusText: text, data } = response;
-            return Promise.reject({ code, message: data.error || text });
+            const errorEx = { code, message: data.error || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
         })
 };
