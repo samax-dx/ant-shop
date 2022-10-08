@@ -12,12 +12,10 @@ import {
     Col,
     Modal, Typography, DatePicker
 } from "antd";
-import { Product as ProductSvc } from "../services/Product";
-import { Prefix as PrefixSvc } from "../services/Prefix";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
-import {PackageService} from "../services/PackageService";
+import {DialPlanService} from "../services/DialPlanService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -35,7 +33,7 @@ const SearchForm = ({ onSearch }) => {
         //     }
         // });
 
-        const queryData = ["packageId", "prefix", "dialPlanId"].reduce((acc, v) => {
+        const queryData = ["dialPlanId", "routeId", "egressPrefix", "digitCut"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -61,13 +59,14 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 23}}
             labelAlign="left"
         >
-            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="packageId" label="Package" children={<Input />} />
-            <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="dialPlanId" label="DialPlan Prefix" children={<Input />} />
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="dialPlanId" label="Prefix" children={<Input />} />
             <Form.Item name="dialPlanId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="prefix" label="Client Prefix" children={<Input />} />
-            <Form.Item name="prefix_op" initialValue={"contains"} hidden children={<Input />} />
-
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="routeId" label="Route" children={<Input />} />
+            <Form.Item name="routeId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="egressPrefix" label="Egress Prefix" children={<Input />} />
+            <Form.Item name="egressPrefix_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="digitCut" label="Digit Cut" children={<Input />} />
+            <Form.Item name="digitCut_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
                 <Button
                     type="primary"
@@ -80,7 +79,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record, pkgPrefixes, lineups }) => {
+const WriteForm = ({ form, record, prefixes, routes  }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
 
@@ -98,19 +97,23 @@ const WriteForm = ({ form, record, pkgPrefixes, lineups }) => {
             }}
             onFinish={form.resetFields}
         >
-            <Form.Item name="packageId" label="Package" rules={[{ required: true }]}>
+            <Form.Item name="dialPlanId" label="Prefix" rules={[{ required: true }]}>
                 <Select showSearch allowClear style={{ minWidth: 150 }}>
-                    {lineups.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName} ({v.productId})</Select.Option>)}
+                    {prefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
                 </Select>
             </Form.Item>
 
-            <Form.Item name="dialPlanId" label="DialPlan Prefix" rules={[{ required: true }]}>
+            <Form.Item name="routeId" label="Route" rules={[{ required: true }]}>
                 <Select showSearch allowClear style={{ minWidth: 150 }}>
-                    {pkgPrefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
+                    {routes.map((v, i) => <Select.Option value={v.routeId} key={i}>{v.routeId}</Select.Option>)}
                 </Select>
             </Form.Item>
 
-            <Form.Item name="prefix" label="Client Prefix" children={<Input />} />
+            <Form.Item name="priority" label="Priority" rules={[{ required: true }]} children={<Input />} />
+
+            <Form.Item name="egressPrefix" label="Egress Prefix" children={<Input />} />
+
+            <Form.Item name="digitCut" label="Digit Cut" children={<Input />} />
 
             <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
                 <Button
@@ -118,7 +121,7 @@ const WriteForm = ({ form, record, pkgPrefixes, lineups }) => {
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => PackageService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
+                        .then(_ => DialPlanService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
                         .catch(error => {alert(error.message)})
                     }
                     children={"Submit"}
@@ -128,14 +131,14 @@ const WriteForm = ({ form, record, pkgPrefixes, lineups }) => {
     </>);
 };
 
-const DataView = ({ packages, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ dialPlans, viewPage, viewLimit, onEdit }) => {
     return (<>
         <Table
             style={{marginLeft:6}}
             size="small"
-            dataSource={packages}
-            rowKey={"packageId"}
-            locale={{ emptyText: packages === null ? "E" : "No Data" }}
+            dataSource={dialPlans}
+            rowKey={dialPlan => dialPlan.dialPlanId + dialPlan.routeId}
+            locale={{ emptyText: dialPlans === null ? "E" : "No Data" }}
             pagination={false}
         >
             <Table.Column
@@ -143,9 +146,11 @@ const DataView = ({ packages, viewPage, viewLimit, onEdit }) => {
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="Package" dataIndex={"packageId"}/>
-            <Table.Column title="DialPlan Prefix" dataIndex={"dialPlanId"} />
-            <Table.Column title="Client Prefix" dataIndex={"prefix"} />
+            <Table.Column title="Prefix" dataIndex={"prefixId"}/>
+            <Table.Column title="Route" dataIndex={"routeId"} />
+            <Table.Column title="Priority" dataIndex={"priority"} />
+            <Table.Column title="Egress Prefix" dataIndex={"egressPrefix"} />
+            <Table.Column title="Digit Cut" dataIndex={"digitCut"} />
 
             <Table.Column
                 title="Actions"
@@ -175,9 +180,9 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
     </>);
 };
 
-export const NewPackage = () => {
+export const DialPlanNew = () => {
     const [lastQuery, setLastQuery] = useState({});
-    const [packages, setPackages] = useState([]);
+    const [dialPlans, setDialPlans] = useState([]);
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
 
@@ -190,14 +195,14 @@ export const NewPackage = () => {
     const handleCancel = () => setModalData(null);
 
     useEffect(() => {
-        PackageService.fetchRecords(lastQuery)
+        DialPlanService.fetchRecords(lastQuery)
             .then((data) => {
-                setPackages(data.packages);
+                setDialPlans(data.dialPlans);
                 setPartyFetchResultCount(data.count);
                 setPartyFetchError(null);
             })
             .catch(error => {
-                setPackages([]);
+                setDialPlans([]);
                 setPartyFetchResultCount(0);
                 setPartyFetchError(error);
             });
@@ -210,23 +215,23 @@ export const NewPackage = () => {
     return (<>
         <Row style={{marginLeft: 5}}>
             <Col md={24}>
-                <Card title={<Title level={5}>Package</Title>}
+                <Card title={<Title level={5}>Dial Plan</Title>}
                       headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}}
                       extra={
                           <Button type="primary" style={{background: "#1890ff", borderColor: "#1890ff"}}
                                   icon={<PlusCircleFilled/>} onClick={() => showModal({})}>
-                              Create Package
+                              Create DialPlan
                           </Button>}
                       style={{height: 135}} size="small">
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal width={800} header="Create Package" key="recordEditor" visible={modalData}
+            <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData}
                    maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
                 <WriteForm form={writeForm} record={modalData}/>
             </Modal>
         </Row>
-        <DataView packages={packages} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
+        <DataView dialPlans={dialPlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);

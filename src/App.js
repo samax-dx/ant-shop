@@ -17,14 +17,15 @@ import { Prefix } from './components/Prefix';
 import { Route } from "./components/Route";
 import { DialPlan } from './components/DialPlan';
 import { Package } from './components/Package';
-import {SenderIdManager} from "./components/SenderIdManager";
 import { BrowserRouter as Router, Route as ReactRoute } from "react-router-dom";
 import {Fragment, useRef, useState} from "react";
 import {Topup} from "./components/Topup";
-import {NewPrefix} from "./components/NewPrefix";
-import {NewRoute} from "./components/NewRoute";
-import {NewDialPlan} from "./components/NewDialPlan";
-import {NewPackage} from "./components/NewPackage";
+import {PrefixNew} from "./components/PrefixNew";
+import {RouteNew} from "./components/RouteNew";
+import {DialPlanNew} from "./components/DialPlanNew";
+import {PackageNew} from "./components/PackageNew";
+import {SenderId} from "./components/SenderId";
+import {PartiesNew} from "./components/PartiesNew";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
@@ -43,12 +44,13 @@ export const App = ({ actor }) => {
         <BrowserRouter>
             <Routes>
                 <ReactRoute path="/" element={createRouteComponent(null)} />
-                <ReactRoute path="/sender" element={createRouteComponent(<SenderIdManager />)} />
+                <ReactRoute path="/parties" element={createRouteComponent(<PartiesNew />)} />
+                <ReactRoute path="/senderId" element={createRouteComponent(<SenderId />)} />
                 <ReactRoute path="/payment" element={createRouteComponent(<Topup />)} />
-                <ReactRoute path="/prefix" element={createRouteComponent(<NewPrefix />)} />
-                <ReactRoute path="/route" element={createRouteComponent(<NewRoute />)} />
-                <ReactRoute path="/dialplan" element={createRouteComponent(<NewDialPlan />)} />
-                <ReactRoute path="/package-prefix" element={createRouteComponent(<NewPackage />)} />
+                <ReactRoute path="/prefix" element={createRouteComponent(<PrefixNew />)} />
+                <ReactRoute path="/route" element={createRouteComponent(<RouteNew />)} />
+                <ReactRoute path="/dialplan" element={createRouteComponent(<DialPlanNew />)} />
+                <ReactRoute path="/package-prefix" element={createRouteComponent(<PackageNew />)} />
             </Routes>
         </BrowserRouter>
     </>);

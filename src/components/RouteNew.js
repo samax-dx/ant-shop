@@ -10,13 +10,12 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker
+    Modal, Typography, DatePicker, Checkbox
 } from "antd";
-import {PrefixService} from "../services/PrefixService";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
-
+import {RouteService} from "../services/RouteService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -34,7 +33,7 @@ const SearchForm = ({ onSearch }) => {
         //     }
         // });
 
-        const queryData = ["prefixId", "countryCode", "description"].reduce((acc, v) => {
+        const queryData = ["routeId", "description"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -60,10 +59,8 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 23}}
             labelAlign="left"
         >
-            <Form.Item name="prefixId" label="Prefix" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
-            <Form.Item name="prefixId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="countryCode" label="Country Code" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
-            <Form.Item name="countryCode_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="routeId" label="Route ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
+            <Form.Item name="routeId_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item name="description" label="Description" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
             <Form.Item name="description_op" initialValue={"contains"} hidden children={<Input />} />
 
@@ -87,6 +84,11 @@ const SearchForm = ({ onSearch }) => {
 const WriteForm = ({ form, record }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
+    var rec = { ...record };
+    if (rec.disabled !== "Y") {
+        console.log("fefg");
+        rec.disabled = null;
+    }
 
     useEffect(() => createForm.resetFields(), [record, createForm]);
 
@@ -102,41 +104,17 @@ const WriteForm = ({ form, record }) => {
             }}
             onFinish={form.resetFields}
         >
-            <Form.Item style={{marginBottom:'5px'}} name="prefixId" label="Prefix" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="routeId" label="Route ID" rules={[{ required: true }]} children={<Input />} />
 
-            <Form.Item style={{marginBottom:'5px'}}
-                       name="countryCode"
-                       label="Country Code"
-                       children={(
-                           <Select
-                               showSearch
-                               style={{ width: 200 }}
-                               onChange={_ => console.log("changed")}
-                               optionFilterProp="children"
-                               filterOption={true}
-                               allowClear={true}
-                           >
-                               {
-                                   Object.entries(countries).map(([code, { name, emoji, phone }]) => {
-                                       return (
-                                           <Select.Option value={phone} key={phone}>
-                                               {emoji}&nbsp;&nbsp;{name}
-                                           </Select.Option>
-                                       );
-                                   })
-                               }
-                           </Select>
-                       )}
-            />
-            <Form.Item name="description" label="Description"  children={<Input />} />
-
-            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 200}} >
+            <Form.Item name="description" label="Description" children={<Input />} />
+            <Form.Item name="disabled" label="Disabled" valuePropName="checked" children={<Checkbox />} />
+            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 150}} >
                 <Button
                     type="primary"
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => PrefixService.saveRecord(createForm.getFieldsValue()) && alert("Prefix Create Success!"))
+                        .then(_ => RouteService.saveRecord(createForm.getFieldsValue()) && alert("Route Create Success!"))
                         .catch(error => {alert(error.message)})
                     }
                     children={"Submit"}
@@ -146,14 +124,14 @@ const WriteForm = ({ form, record }) => {
     </>);
 };
 
-const DataView = ({ prefixes, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ routes, viewPage, viewLimit, onEdit }) => {
     return (<>
         <Table
             style={{marginLeft:6}}
             size="small"
-            dataSource={prefixes}
-            rowKey={"prefixId"}
-            locale={{ emptyText: prefixes === null ? "E" : "No Data" }}
+            dataSource={routes}
+            rowKey={"routeId"}
+            locale={{ emptyText: routes === null ? "E" : "No Data" }}
             pagination={false}
         >
             <Table.Column
@@ -161,9 +139,10 @@ const DataView = ({ prefixes, viewPage, viewLimit, onEdit }) => {
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="Prefix" dataIndex={"prefixId"} />
-            <Table.Column title="Country Code" dataIndex={"countryCode"} />
+            <Table.Column title="Route ID" dataIndex={"routeId"}/>
             <Table.Column title="Description" dataIndex={"description"} />
+            <Table.Column title="Disabled" dataIndex={"disabled"} render={disabled => disabled === "Y" ? "Yes" : "No" } />
+
             <Table.Column
                 title="Actions"
                 dataIndex={undefined}
@@ -192,9 +171,9 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
     </>);
 };
 
-export const NewPrefix  = () => {
+export const RouteNew = () => {
     const [lastQuery, setLastQuery] = useState({});
-    const [prefixes, setPrefixes] = useState([]);
+    const [routes, setRoutes] = useState([]);
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
 
@@ -207,14 +186,14 @@ export const NewPrefix  = () => {
     const handleCancel = () => setModalData(null);
 
     useEffect(() => {
-        PrefixService.fetchRecords(lastQuery)
+        RouteService.fetchRecords(lastQuery)
             .then((data) => {
-                setPrefixes(data.prefixes);
+                setRoutes(data.routes);
                 setPartyFetchResultCount(data.count);
                 setPartyFetchError(null);
             })
             .catch(error => {
-                setPrefixes([]);
+                setRoutes([]);
                 setPartyFetchResultCount(0);
                 setPartyFetchError(error);
             });
@@ -227,23 +206,23 @@ export const NewPrefix  = () => {
     return (<>
         <Row style={{marginLeft: 5}}>
             <Col md={24}>
-                <Card title={<Title level={5}>Prefix</Title>}
+                <Card title={<Title level={5}>Route</Title>}
                       headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}}
                       extra={
                           <Button type="primary" style={{background: "#1890ff", borderColor: "#1890ff"}}
                                   icon={<PlusCircleFilled/>} onClick={() => showModal({})}>
-                              Create Prefix
+                              Create Route
                           </Button>}
                       style={{height: 135}} size="small">
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal header="Create Prefix" key="recordEditor" visible={modalData}
+            <Modal header="Create Route" key="recordEditor" visible={modalData}
                    maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
                 <WriteForm form={writeForm} record={modalData}/>
             </Modal>
         </Row>
-        <DataView prefixes={prefixes} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
+        <DataView routes={routes} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);

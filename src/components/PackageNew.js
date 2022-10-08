@@ -10,12 +10,14 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, Checkbox
+    Modal, Typography, DatePicker
 } from "antd";
+import { Product as ProductSvc } from "../services/Product";
+import { Prefix as PrefixSvc } from "../services/Prefix";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
-import {RouteService} from "../services/RouteService";
+import {PackageService} from "../services/PackageService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -33,7 +35,7 @@ const SearchForm = ({ onSearch }) => {
         //     }
         // });
 
-        const queryData = ["routeId", "description"].reduce((acc, v) => {
+        const queryData = ["packageId", "prefix", "dialPlanId"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -59,15 +61,12 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 23}}
             labelAlign="left"
         >
-            <Form.Item name="routeId" label="Route ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
-            <Form.Item name="routeId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="description" label="Description" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
-            <Form.Item name="description_op" initialValue={"contains"} hidden children={<Input />} />
-
-            {/*<Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>*/}
-            {/*<Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>*/}
-            {/*<Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>*/}
-            {/*<Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>*/}
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="packageId" label="Package" children={<Input />} />
+            <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="dialPlanId" label="DialPlan Prefix" children={<Input />} />
+            <Form.Item name="dialPlanId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item style={{display:'inline-block',marginBottom:'0px'}} name="prefix" label="Client Prefix" children={<Input />} />
+            <Form.Item name="prefix_op" initialValue={"contains"} hidden children={<Input />} />
 
             <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
                 <Button
@@ -81,14 +80,9 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record }) => {
+const WriteForm = ({ form, record, pkgPrefixes, lineups }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
-    var rec = { ...record };
-    if (rec.disabled !== "Y") {
-        console.log("fefg");
-        rec.disabled = null;
-    }
 
     useEffect(() => createForm.resetFields(), [record, createForm]);
 
@@ -104,17 +98,27 @@ const WriteForm = ({ form, record }) => {
             }}
             onFinish={form.resetFields}
         >
-            <Form.Item name="routeId" label="Route ID" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="packageId" label="Package" rules={[{ required: true }]}>
+                <Select showSearch allowClear style={{ minWidth: 150 }}>
+                    {lineups.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName} ({v.productId})</Select.Option>)}
+                </Select>
+            </Form.Item>
 
-            <Form.Item name="description" label="Description" children={<Input />} />
-            <Form.Item name="disabled" label="Disabled" valuePropName="checked" children={<Checkbox />} />
-            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 150}} >
+            <Form.Item name="dialPlanId" label="DialPlan Prefix" rules={[{ required: true }]}>
+                <Select showSearch allowClear style={{ minWidth: 150 }}>
+                    {pkgPrefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
+                </Select>
+            </Form.Item>
+
+            <Form.Item name="prefix" label="Client Prefix" children={<Input />} />
+
+            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
                 <Button
                     type="primary"
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => RouteService.saveRecord(createForm.getFieldsValue()) && alert("Route Create Success!"))
+                        .then(_ => PackageService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
                         .catch(error => {alert(error.message)})
                     }
                     children={"Submit"}
@@ -124,14 +128,14 @@ const WriteForm = ({ form, record }) => {
     </>);
 };
 
-const DataView = ({ routes, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ packages, viewPage, viewLimit, onEdit }) => {
     return (<>
         <Table
             style={{marginLeft:6}}
             size="small"
-            dataSource={routes}
-            rowKey={"routeId"}
-            locale={{ emptyText: routes === null ? "E" : "No Data" }}
+            dataSource={packages}
+            rowKey={"packageId"}
+            locale={{ emptyText: packages === null ? "E" : "No Data" }}
             pagination={false}
         >
             <Table.Column
@@ -139,9 +143,9 @@ const DataView = ({ routes, viewPage, viewLimit, onEdit }) => {
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="Route ID" dataIndex={"routeId"}/>
-            <Table.Column title="Description" dataIndex={"description"} />
-            <Table.Column title="Disabled" dataIndex={"disabled"} render={disabled => disabled === "Y" ? "Yes" : "No" } />
+            <Table.Column title="Package" dataIndex={"packageId"}/>
+            <Table.Column title="DialPlan Prefix" dataIndex={"dialPlanId"} />
+            <Table.Column title="Client Prefix" dataIndex={"prefix"} />
 
             <Table.Column
                 title="Actions"
@@ -171,9 +175,9 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
     </>);
 };
 
-export const NewRoute = () => {
+export const PackageNew = () => {
     const [lastQuery, setLastQuery] = useState({});
-    const [routes, setRoutes] = useState([]);
+    const [packages, setPackages] = useState([]);
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
 
@@ -186,14 +190,14 @@ export const NewRoute = () => {
     const handleCancel = () => setModalData(null);
 
     useEffect(() => {
-        RouteService.fetchRecords(lastQuery)
+        PackageService.fetchRecords(lastQuery)
             .then((data) => {
-                setRoutes(data.routes);
+                setPackages(data.packages);
                 setPartyFetchResultCount(data.count);
                 setPartyFetchError(null);
             })
             .catch(error => {
-                setRoutes([]);
+                setPackages([]);
                 setPartyFetchResultCount(0);
                 setPartyFetchError(error);
             });
@@ -206,23 +210,23 @@ export const NewRoute = () => {
     return (<>
         <Row style={{marginLeft: 5}}>
             <Col md={24}>
-                <Card title={<Title level={5}>Route</Title>}
+                <Card title={<Title level={5}>Package</Title>}
                       headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}}
                       extra={
                           <Button type="primary" style={{background: "#1890ff", borderColor: "#1890ff"}}
                                   icon={<PlusCircleFilled/>} onClick={() => showModal({})}>
-                              Create Route
+                              Create Package
                           </Button>}
                       style={{height: 135}} size="small">
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal header="Create Route" key="recordEditor" visible={modalData}
+            <Modal width={800} header="Create Package" key="recordEditor" visible={modalData}
                    maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
                 <WriteForm form={writeForm} record={modalData}/>
             </Modal>
         </Row>
-        <DataView routes={routes} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
+        <DataView packages={packages} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);

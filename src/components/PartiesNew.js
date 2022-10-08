@@ -59,7 +59,7 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 23}}
             labelAlign="left"
         >
-            <Form.Item name="name" label="Sender-ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
+            <Form.Item name="name" label="Name" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
             <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
 
             <Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
