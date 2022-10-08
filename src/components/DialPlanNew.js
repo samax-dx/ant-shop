@@ -16,6 +16,8 @@ import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 import {DialPlanService} from "../services/DialPlanService";
+import {RouteService} from "../services/RouteService";
+import {PrefixService} from "../services/PrefixService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -79,9 +81,24 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record, prefixes, routes  }) => {
+const WriteForm = ({ form, record, onRecordSaved }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
+
+    const [routes, setRoutes] = useState([]);
+    useEffect(()=> {
+        RouteService.fetchRecords({})
+            .then(data=>{
+                setRoutes(data.routes);
+            })
+    },[])
+    const [prefixes, setPrefixes] = useState([]);
+    useEffect(()=> {
+        PrefixService.fetchRecords({})
+            .then(data=>{
+                setPrefixes(data.prefixes);
+            })
+    },[])
 
     useEffect(() => createForm.resetFields(), [record, createForm]);
 
@@ -95,9 +112,9 @@ const WriteForm = ({ form, record, prefixes, routes  }) => {
             style={{
                 padding:'15px'
             }}
-            onFinish={form.resetFields}
+            onFinish={() => createForm.resetFields()}
         >
-            <Form.Item name="dialPlanId" label="Prefix" rules={[{ required: true }]}>
+            <Form.Item name="prefixId" label="Prefix" rules={[{ required: true }]}>
                 <Select showSearch allowClear style={{ minWidth: 150 }}>
                     {prefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
                 </Select>
@@ -121,8 +138,12 @@ const WriteForm = ({ form, record, prefixes, routes  }) => {
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => DialPlanService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
-                        .catch(error => {alert(error.message)})
+                        .then(_ => DialPlanService.saveRecord(createForm.getFieldsValue()))
+                        .then(dialPlanId => {
+                            alert("DialPlan Create Success!");
+                            onRecordSaved(dialPlanId);
+                        })
+                        .catch(error => alert(error.message))
                     }
                     children={"Submit"}
                 />
@@ -132,12 +153,13 @@ const WriteForm = ({ form, record, prefixes, routes  }) => {
 };
 
 const DataView = ({ dialPlans, viewPage, viewLimit, onEdit }) => {
+
     return (<>
         <Table
             style={{marginLeft:6}}
             size="small"
             dataSource={dialPlans}
-            rowKey={dialPlan => dialPlan.dialPlanId + dialPlan.routeId}
+            rowKey={"dialPlanId"}
             locale={{ emptyText: dialPlans === null ? "E" : "No Data" }}
             pagination={false}
         >
@@ -146,7 +168,7 @@ const DataView = ({ dialPlans, viewPage, viewLimit, onEdit }) => {
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="Prefix" dataIndex={"prefixId"}/>
+            <Table.Column title="Prefix" dataIndex={"dialPlanId"}/>
             <Table.Column title="Route" dataIndex={"routeId"} />
             <Table.Column title="Priority" dataIndex={"priority"} />
             <Table.Column title="Egress Prefix" dataIndex={"egressPrefix"} />
@@ -226,9 +248,9 @@ export const DialPlanNew = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData}
+            <Modal width={800} header="Create DialPlan" key="recordEditor" visible={modalData}
                    maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
-                <WriteForm form={writeForm} record={modalData}/>
+                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "dialPlanId DESC", page: 1 })}/>
             </Modal>
         </Row>
         <DataView dialPlans={dialPlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>

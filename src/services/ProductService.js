@@ -2,10 +2,10 @@ import axios from "axios";
 import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
 
-export const DialPlanService = {
-    fetchRecords: (payload) => axios
+export const ProductService = {
+    fetchProducts: (payload) => axios
         .post(
-            `${SERVER_URL}/Prefix/listDialPlans`,
+            `${SERVER_URL}/Product/listProducts`,
             { ...payload },
             {
                 headers: {
@@ -17,10 +17,7 @@ export const DialPlanService = {
         .then(response => {
             const { data } = response;
 
-            if (data.dialPlans === null) {
-                data.dialPlans = [];
-            }
-            if (data.dialPlans) {
+            if (data.products) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });
@@ -31,9 +28,9 @@ export const DialPlanService = {
             const { status: code, statusText: text, data } = response;
             return Promise.reject({ code, message: data.error || text });
         }),
-    saveRecord: (payload) => console.log(payload) || axios
+    fetchProductLineups: (payload) => axios
         .post(
-            `${SERVER_URL}/Prefix/saveDialPlan`,
+            `${SERVER_URL}/Product/listProductLineups`,
             { ...payload },
             {
                 headers: {
@@ -45,7 +42,7 @@ export const DialPlanService = {
         .then(response => {
             const { data } = response;
 
-            if (data.dialPlan) {
+            if (data.lineups) {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });

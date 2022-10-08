@@ -98,7 +98,7 @@ const WriteForm = ({ form, record }) => {
             style={{
                 padding:'15px'
             }}
-            onFinish={form.resetFields}
+            onFinish={() => createForm.resetFields()}
         >
             <Form.Item name="partyId" label="ID" style={{ display: "none" }} children={<Input />} />
             <Form.Item name="loginId" label="User ID" rules={[{ required: true }]} children={<Input />} />

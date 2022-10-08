@@ -12,12 +12,12 @@ import {
     Col,
     Modal, Typography, DatePicker
 } from "antd";
-import { Product as ProductSvc } from "../services/Product";
-import { Prefix as PrefixSvc } from "../services/Prefix";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 import {PackageService} from "../services/PackageService";
+import {PrefixService} from "../services/PrefixService";
+import {ProductService} from "../services/ProductService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -80,9 +80,24 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record, pkgPrefixes, lineups }) => {
+const WriteForm = ({ form, record, onRecordSaved }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
+    const [prefixes, setPrefixes] = useState([]);
+    useEffect(()=> {
+        PrefixService.fetchRecords({})
+            .then(data=>{
+                setPrefixes(data.prefixes);
+            })
+    },[])
+
+    const [productLineups, setProductLineups] = useState([]);
+    useEffect(()=> {
+        ProductService.fetchProductLineups({})
+            .then(data=>{
+                setProductLineups(data.lineups);
+            })
+    },[])
 
     useEffect(() => createForm.resetFields(), [record, createForm]);
 
@@ -96,29 +111,33 @@ const WriteForm = ({ form, record, pkgPrefixes, lineups }) => {
             style={{
                 padding:'15px'
             }}
-            onFinish={form.resetFields}
+            onFinish={() => createForm.resetFields()}
         >
             <Form.Item name="packageId" label="Package" rules={[{ required: true }]}>
                 <Select showSearch allowClear style={{ minWidth: 150 }}>
-                    {lineups.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName} ({v.productId})</Select.Option>)}
+                    {productLineups.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName} ({v.productId})</Select.Option>)}
                 </Select>
             </Form.Item>
 
             <Form.Item name="dialPlanId" label="DialPlan Prefix" rules={[{ required: true }]}>
                 <Select showSearch allowClear style={{ minWidth: 150 }}>
-                    {pkgPrefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
+                    {prefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
                 </Select>
             </Form.Item>
 
             <Form.Item name="prefix" label="Client Prefix" children={<Input />} />
 
-            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
+            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 150}} >
                 <Button
                     type="primary"
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => PackageService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
+                        .then(_ => PackageService.saveRecord(createForm.getFieldsValue()))
+                        .then(packageId => {
+                            alert("Package Create Success!");
+                            onRecordSaved(packageId);
+                        })
                         .catch(error => {alert(error.message)})
                     }
                     children={"Submit"}
@@ -221,9 +240,9 @@ export const PackageNew = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal width={800} header="Create Package" key="recordEditor" visible={modalData}
+            <Modal header="Create Package" key="recordEditor" visible={modalData}
                    maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
-                <WriteForm form={writeForm} record={modalData}/>
+                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "packageId DESC", page: 1 })}/>
             </Modal>
         </Row>
         <DataView packages={packages} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>

@@ -81,7 +81,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record }) => {
+const WriteForm = ({ form, record, onRecordSaved }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
     var rec = { ...record };
@@ -102,7 +102,7 @@ const WriteForm = ({ form, record }) => {
             style={{
                 padding:'15px'
             }}
-            onFinish={form.resetFields}
+            onFinish={() => createForm.resetFields()}
         >
             <Form.Item name="routeId" label="Route ID" rules={[{ required: true }]} children={<Input />} />
 
@@ -114,7 +114,11 @@ const WriteForm = ({ form, record }) => {
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => RouteService.saveRecord(createForm.getFieldsValue()) && alert("Route Create Success!"))
+                        .then(_ => RouteService.saveRecord(createForm.getFieldsValue()))
+                        .then(routeId => {
+                            alert("Route Create Success!");
+                            onRecordSaved(routeId);
+                        })
                         .catch(error => {alert(error.message)})
                     }
                     children={"Submit"}
@@ -219,7 +223,7 @@ export const RouteNew = () => {
             </Col>
             <Modal header="Create Route" key="recordEditor" visible={modalData}
                    maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
-                <WriteForm form={writeForm} record={modalData}/>
+                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "routeId DESC", page: 1 })}/>
             </Modal>
         </Row>
         <DataView routes={routes} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>

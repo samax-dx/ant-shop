@@ -84,7 +84,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record }) => {
+const WriteForm = ({ form, record, onRecordSaved }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
 
@@ -100,7 +100,7 @@ const WriteForm = ({ form, record }) => {
             style={{
                 padding:'15px'
             }}
-            onFinish={form.resetFields}
+            onFinish={() => createForm.resetFields()}
         >
             <Form.Item style={{marginBottom:'5px'}} name="prefixId" label="Prefix" rules={[{ required: true }]} children={<Input />} />
 
@@ -130,13 +130,17 @@ const WriteForm = ({ form, record }) => {
             />
             <Form.Item name="description" label="Description"  children={<Input />} />
 
-            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 200}} >
+            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 150}} >
                 <Button
                     type="primary"
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => PrefixService.saveRecord(createForm.getFieldsValue()) && alert("Prefix Create Success!"))
+                        .then(_ => PrefixService.saveRecord(createForm.getFieldsValue()))
+                        .then(senderId => {
+                            alert("Prefix Create Success!");
+                            onRecordSaved(senderId);
+                        })
                         .catch(error => {alert(error.message)})
                     }
                     children={"Submit"}
@@ -240,7 +244,7 @@ export const PrefixNew  = () => {
             </Col>
             <Modal header="Create Prefix" key="recordEditor" visible={modalData}
                    maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
-                <WriteForm form={writeForm} record={modalData}/>
+                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "prefixId DESC", page: 1 })}/>
             </Modal>
         </Row>
         <DataView prefixes={prefixes} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>

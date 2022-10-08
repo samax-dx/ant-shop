@@ -79,7 +79,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record }) => {
+const WriteForm = ({ form, record, onRecordSaved }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
 
@@ -95,7 +95,7 @@ const WriteForm = ({ form, record }) => {
             style={{
                 padding:'15px'
             }}
-            onFinish={form.resetFields}
+            onFinish={() => createForm.resetFields()}
         >
             <Form.Item name="partyId" label="ID" style={{ display: "none" }} children={<Input />} />
             <Form.Item name="loginId" label="User ID" rules={[{ required: true }]} children={<Input />} />
@@ -192,7 +192,11 @@ const WriteForm = ({ form, record }) => {
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => PartyService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
+                        .then(_ => PartyService.saveRecord(createForm.getFieldsValue()))
+                        .then(partyId => {
+                            alert("Party Create Success!");
+                            onRecordSaved(partyId);
+                        })
                         .catch(error => {alert(error.message)})
                     }
                     children={"Submit"}
@@ -298,7 +302,7 @@ export const PartiesNew = () => {
             </Col>
             <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData}
                    maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
-                <WriteForm form={writeForm} record={modalData}/>
+                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "partyId DESC", page: 1 })}/>
             </Modal>
         </Row>
         <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
