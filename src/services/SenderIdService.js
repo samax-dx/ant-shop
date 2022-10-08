@@ -13,7 +13,7 @@ const senderIds = [
 ];
 
 export const SenderIdService = {
-    fetchRecords: (payload) =>  /*axios
+    fetchRecords: (payload) =>  console.log(payload) || /*axios
         .post(
             `${SERVER_URL}/Party/findParties`,
             { ...payload },
@@ -24,14 +24,14 @@ export const SenderIdService = {
                 }
             }
         )*/
-        Promise.resolve(senderIds.filter(senderId => senderId) ) //senderId.includes(payload.senderId)))
+        Promise.resolve({ senderIds: senderIds.filter(senderId => payload), count: senderIds.length }) //senderId.includes(payload.senderId)))
         .then(response => {
             const  data  = response;
             console.log(data)
 
-           /* if (data.senderId === null) {
-                data.senderId = [];
-            }*/
+           if (data.senderIds === null) {
+                data.senderIds = [];
+            }
 
             if (data) {
                 return Promise.resolve(data);  //

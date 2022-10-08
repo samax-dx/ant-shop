@@ -17,6 +17,8 @@ import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 import {SenderIdService} from "../services/SenderIdService";
+import {Route} from "../services/Route";
+import {RouteService} from "../services/RouteService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -84,7 +86,27 @@ const WriteForm = ({ form, record }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
 
+    const [routes, setRoutes] = useState([]);
+    useEffect(()=> {
+        RouteService.fetchRecords({})
+            .then(data=>{
+                setRoutes(data.routes);
+            })
+    },[])
     useEffect(() => createForm.resetFields(), [record, createForm]);
+
+    const transformRecordAtoS = r => {
+        const record = { ...r };
+        record.parties = record.parties?.join(",");
+        record.routes = record.routes?.join(",");
+        return record;
+    };
+    const transformRecordStoA = r => {
+        const record = { ...r };
+        record.parties = record.parties?.split(",");
+        record.routes = record.routes?.split(",");
+        return record;
+    };
 
     return (<>
         <Form
@@ -92,7 +114,7 @@ const WriteForm = ({ form, record }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
-            initialValues={record}
+            initialValues={transformRecordStoA(record)}
             style={{
                 padding:'15px'
             }}
@@ -107,7 +129,17 @@ const WriteForm = ({ form, record }) => {
                 </Select>
             </Form.Item>
             <Form.Item name="parties" label="Parties" rules={[{ required: true }]} children={<Input />} />
-            <Form.Item name="routes" label="Routes" rules={[{ required: true }]} children={<Input placeholder="Robi,Bangalink.."/>} />
+            <Form.Item name="routes" label="Routes" rules={[{required:true}]}>
+            <Select
+                mode="multiple"
+                placeholder="Please select"
+                style={{
+                    width: '100%',
+                }}
+            >
+                {routes.map(route => <Option key={route.routeId}>{route.routeId}</Option>)}
+            </Select>
+            </Form.Item>
             {/*<Form.Item label="Contact Number" required>
                 <Space direction="horizontal" align="start">
                     <Form.Item
@@ -193,7 +225,7 @@ const WriteForm = ({ form, record }) => {
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => SenderIdService.saveRecord(createForm.getFieldsValue()) && alert("Sender Create Success!"))
+                        .then(_ => SenderIdService.saveRecord(transformRecordAtoS(createForm.getFieldsValue())) && alert("Sender Create Success!"))
                         .catch(error => {alert(error.message)})
                     }
                     children={"Submit"}
@@ -254,7 +286,7 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
 
 export const SenderId = () => {
     const [lastQuery, setLastQuery] = useState({});
-    const [senderID, setSenderId] = useState([]);
+    const [senderIds, setSenderIds] = useState([]);
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
 
@@ -269,13 +301,12 @@ export const SenderId = () => {
     useEffect(() => {
         SenderIdService.fetchRecords(lastQuery)
             .then((data) => {
-                console.log(data)
-                setSenderId(data);
+                setSenderIds(data.senderIds);
                 setPartyFetchResultCount(data.count);
                 setPartyFetchError(null);
             })
             .catch(error => {
-                setSenderId([]);
+                setSenderIds([]);
                 setPartyFetchResultCount(0);
                 setPartyFetchError(error);
             });
@@ -304,7 +335,7 @@ export const SenderId = () => {
                 <WriteForm form={writeForm} record={modalData}/>
             </Modal>
         </Row>
-        <DataView senderId={senderID} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
+        <DataView senderId={senderIds} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);

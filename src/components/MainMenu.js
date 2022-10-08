@@ -56,13 +56,13 @@ export const MainMenu = ({ actor }) => {
             </Menu.SubMenu>
             <Menu.SubMenu key="partymenu" icon={<ProfileOutlined />} title="Party Management">
                 <Menu.Item icon={<IdcardTwoTone />}><Link to="/parties">Parties</Link></Menu.Item>
-                <Menu.Item icon={<IdcardOutlined />}><Link to="/senderId">Serder-ID</Link></Menu.Item>
+                <Menu.Item icon={<IdcardOutlined />}><Link to="/senderId">Sender-ID</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
                 <Menu.Item icon={<InteractionTwoTone />} ><Link to="/prefix">Prefix</Link></Menu.Item>
                 <Menu.Item icon={<InteractionTwoTone />}><Link to="/route">Route</Link></Menu.Item>
                 <Menu.Item icon={<InteractionTwoTone />} ><Link to="/dialplan">Dial Plan</Link></Menu.Item>
-                <Menu.Item icon={<InteractionTwoTone />} ><Link to="/package-prefix">Package Prefix</Link></Menu.Item>
+                <Menu.Item icon={<InteractionTwoTone />} ><Link to="/packagePrefix">Package Prefix</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="sub5" icon={<UserOutlined />} title="..." disabled>
                 <Menu.Item ><Link to="partners">Partners</Link></Menu.Item>
