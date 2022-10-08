@@ -114,7 +114,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
             }}
             onFinish={() => createForm.resetFields()}
         >
-            <Form.Item name="prefixId" label="Prefix" rules={[{ required: true }]}>
+            <Form.Item name="dialPlanId" label="Prefix" rules={[{ required: true }]}>
                 <Select showSearch allowClear style={{ minWidth: 150 }}>
                     {prefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
                 </Select>
@@ -250,7 +250,7 @@ export const DialPlanNew = () => {
             </Col>
             <Modal width={800} header="Create DialPlan" key="recordEditor" visible={modalData}
                    maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
-                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "dialPlanId DESC", page: 1 })}/>
+                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "dialPlanId ASC", page: 1 })}/>
             </Modal>
         </Row>
         <DataView dialPlans={dialPlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
