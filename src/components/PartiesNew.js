@@ -137,7 +137,7 @@ const WriteForm = ({ form, record }) => {
                     <Option value="non_masking">Non-Masking</Option>
                 </Select>
             </Form.Item>
-            <Form.Item name="roles" label="Roles" rules={[{ required: true }]} children={ <Select
+            <Form.Item name="roles" label="Roles" rules={[{ required: false }]} children={ <Select
                 mode="multiple"
                 size={'middle'}
                 placeholder="Please select"

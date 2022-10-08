@@ -82,7 +82,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record }) => {
+const WriteForm = ({ form, record, onRecordSaved }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
 
@@ -118,7 +118,7 @@ const WriteForm = ({ form, record }) => {
             style={{
                 padding:'15px'
             }}
-            onFinish={form.resetFields}
+            onFinish={() => createForm.resetFields()}
         >
             {/*<Form.Item name="partyId" label="I333D" style={{ display: "none" }} children={<Input />} />*/}
             <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input />} />
@@ -128,7 +128,7 @@ const WriteForm = ({ form, record }) => {
                     <Option value="non_masking">Non-Masking</Option>
                 </Select>
             </Form.Item>
-            <Form.Item name="parties" label="Parties" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="parties" label="Parties" rules={[{ required: false }]} children={<Input />} />
             <Form.Item name="routes" label="Routes" rules={[{required:true}]}>
             <Select
                 mode="multiple"
@@ -140,93 +140,18 @@ const WriteForm = ({ form, record }) => {
                 {routes.map(route => <Option key={route.routeId}>{route.routeId}</Option>)}
             </Select>
             </Form.Item>
-            {/*<Form.Item label="Contact Number" required>
-                <Space direction="horizontal" align="start">
-                    <Form.Item
-                        name="contactMech.countryCode"
-                        rules={[{ required: true }]}
-                        style={{ minWidth: "150px", margin: 0 }}
-                    >
-                        <Select
-                            showSearch
-                            placeholder="country"
-                            optionFilterProp="children"
-                            filterOption={true}
-                            allowClear={true}
-                        >
-                            {
-                                Object.values(countries).map(({ name, emoji, phone }) => {
-                                    return (
-                                        <Select.Option value={phone} key={phone}>
-                                            {emoji}&nbsp;&nbsp;{name}
-                                        </Select.Option>
-                                    );
-                                })
-                            }
-                        </Select>
-                    </Form.Item>
-
-                    <Form.Item name="contactMech.areaCode" style={{ maxWidth: "85px" }} children={<Input placeholder="area code" />} />
-                    <Form.Item name="contactMech.contactNumber" rules={[{ required: true }]} children={<Input placeholder="Phone Number" />} />
-                </Space>
-            </Form.Item>
-            <Form.Item name="roles" label="Roles" rules={[{ required: true }]} children={ <Select
-                mode="multiple"
-                size={'middle'}
-                placeholder="Please select"
-                defaultValue={['a10', 'c12']}
-                style={{
-                    width: '100%',
-                }}
-            >
-            </Select>} />
-            {record.partyId && <Form.Item
-                name="password_old"
-                label="Current Password"
-                rules={[{ required: true }]}
-                hasFeedback
-            >
-                <Input.Password />
-            </Form.Item>}
-
-            <Form.Item
-                name="password"
-                label={record.partyId ? "New password" : "Password"}
-                rules={[{ required: true }]}
-                hasFeedback
-            >
-                <Input.Password />
-            </Form.Item>
-
-            <Form.Item
-                name="passwordConfirm"
-                label="Confirm Password"
-                dependencies={record.partyId ? ['password_old', 'password'] : ["password"]}
-                hasFeedback
-                rules={[
-                    { required: true },
-                    ({ getFieldValue }) => ({
-                        validator: (_, value) => {
-                            const password = getFieldValue("password");
-                            const passwordOld = getFieldValue("passwordOld");
-                            if (password === value && password != passwordOld) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Passwords do not match!'));
-                        },
-                    }),
-                ]}
-            >
-                <Input.Password />
-            </Form.Item>*/}
             <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
                 <Button
                     type="primary"
                     htmlType="submit"
                     onClick={() => createForm
                         .validateFields()
-                        .then(_ => SenderIdService.saveRecord(transformRecordAtoS(createForm.getFieldsValue())) && alert("Sender Create Success!"))
-                        .catch(error => {alert(error.message)})
+                        .then(_ => SenderIdService.saveRecord(transformRecordAtoS(createForm.getFieldsValue())))
+                        .then(senderId => {
+                            alert("Sender Create Success!");
+                            onRecordSaved(senderId);
+                        })
+                        .catch(error => alert(error.message))
                     }
                     children={"Submit"}
                 />
@@ -332,7 +257,7 @@ export const SenderId = () => {
             </Col>
             <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData}
                    maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
-                <WriteForm form={writeForm} record={modalData}/>
+                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })}/>
             </Modal>
         </Row>
         <DataView senderId={senderIds} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>

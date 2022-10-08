@@ -24,7 +24,7 @@ export const SenderIdService = {
                 }
             }
         )*/
-        Promise.resolve({ senderIds: senderIds.filter(senderId => payload), count: senderIds.length }) //senderId.includes(payload.senderId)))
+        Promise.resolve({ senderIds: senderIds.filter(senderId => senderId.senderId.includes(payload.senderId || "")), count: senderIds.length }) //senderId.includes(payload.senderId)))
         .then(response => {
             const  data  = response;
             console.log(data)
@@ -63,7 +63,6 @@ export const SenderIdService = {
             console.log(data)
 
             if (data) {
-                console.log(data)
                 return Promise.resolve({ ...response, senderIdId: data.senderIdId });
             } else {
                 return Promise.reject({ message: data.errorMessage });
