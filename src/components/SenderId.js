@@ -269,7 +269,7 @@ export const SenderId = () => {
                 </Card>
             </Col>
             <Modal width={800} key="recordEditor" visible={modalData}
-                   maskClosable={false} onCancel={handleCancel} closable={false} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
+                   maskClosable={false} onCancel={handleCancel} closable={false}  footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
                 <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })}/>
             </Modal>
         </Row>
