@@ -135,7 +135,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                 mode="multiple"
                 size={'middle'}
                 placeholder="Please select"
-                defaultValue={['a10', 'c12']}
+                defaultValue={['Admin', 'User']}
                 style={{
                     width: '100%',
                 }}
@@ -180,7 +180,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
             >
                 <Input.Password />
             </Form.Item>
-            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
+            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 240}} >
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -295,7 +295,7 @@ export const PartiesNew = () => {
                 </Card>
             </Col>
             <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData}
-                   maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
+                   maskClosable={false} onCancel={handleCancel} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
                 <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "partyId DESC", page: 1 })}/>
             </Modal>
         </Row>

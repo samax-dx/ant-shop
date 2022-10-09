@@ -132,7 +132,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
 
             <Form.Item name="digitCut" label="Digit Cut" children={<Input />} />
 
-            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 333}} >
+            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 240}} >
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -249,7 +249,7 @@ export const DialPlanNew = () => {
                 </Card>
             </Col>
             <Modal width={800} header="Create DialPlan" key="recordEditor" visible={modalData}
-                   maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
+                   maskClosable={false} onCancel={handleCancel} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
                 <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "dialPlanId ASC", page: 1 })}/>
             </Modal>
         </Row>

@@ -292,8 +292,8 @@ export const Topup = () => {
                 </Card>
             </Col>
             <Modal  width={"90vw"} header="TopUp / Make Payment" key="recordEditor" visible={modalData}
-                   maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
-                <TopupParties/>
+                   maskClosable={false} onCancel={handleCancel} style={{ top: 20 }} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
+                <TopupParties />
             </Modal>
         </Row>
         <DataView payments={payments} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>

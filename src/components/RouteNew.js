@@ -222,7 +222,7 @@ export const RouteNew = () => {
                 </Card>
             </Col>
             <Modal header="Create Route" key="recordEditor" visible={modalData}
-                   maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
+                   maskClosable={false} onCancel={handleCancel} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
                 <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "routeId DESC", page: 1 })}/>
             </Modal>
         </Row>

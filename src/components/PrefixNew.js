@@ -243,7 +243,7 @@ export const PrefixNew  = () => {
                 </Card>
             </Col>
             <Modal header="Create Prefix" key="recordEditor" visible={modalData}
-                   maskClosable={false} onOk={handleOk} onCancel={handleCancel}>
+                   maskClosable={false} onCancel={handleCancel} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
                 <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "prefixId DESC", page: 1 })}/>
             </Modal>
         </Row>
