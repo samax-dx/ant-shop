@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
     Form,
     Input,
@@ -82,6 +82,7 @@ const SearchForm = ({ onSearch }) => {
 const WriteForm = ({ form, record, onRecordSaved }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
+    const ref = useRef();
 
     useEffect(() => createForm.resetFields(), [record, createForm]);
 
@@ -132,14 +133,17 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                 </Space>
             </Form.Item>
             <Form.Item name="roles" label="Roles" rules={[{ required: false }]} children={ <Select
+                ref={ref}
                 mode="multiple"
                 size={'middle'}
                 placeholder="Please select"
-                defaultValue={['Admin', 'User']}
                 style={{
                     width: '100%',
                 }}
+                onChange={() => ref.current.blur()}
             >
+                <Option key="admin">Admin</Option>
+                <Option key="user">User</Option>
             </Select>} />
             {record.partyId && <Form.Item
                 name="password_old"
