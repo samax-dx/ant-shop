@@ -4,6 +4,7 @@ import { Col, Row, Layout, Breadcrumb, Space, Button,Avatar } from 'antd';
 import { TopMenu } from "./TopMenu";
 import { MainMenu } from './MainMenu';
 import getAllConfig from '../config/main';
+import {Link} from "react-router-dom";
 
 const { Header, Sider } = Layout;
 
@@ -14,10 +15,10 @@ export const AppLayout = ({ render: PageContent, actor, routeComponent }) => {
     return <Layout>
         {appState.matches("login") || <Header className="header" style={{paddingLeft:'5px', paddingRight:'5px'}}>
             <Row>
-                <Col xs={10} sm={4} className="logo" onClick={() => actor.send("NAV_HOME")}>
-                    <img height={45} width={45} src={getAllConfig.logo} style={{ marginBottom: "4px"}} />
+                <Col xs={10} sm={4} className="logo" >
+                    <Link to='/'><img height={45} width={45} src={getAllConfig.logo} style={{ marginBottom: "4px"}} /></Link>
                     &nbsp;
-                    <span>SMS-Portal Admin</span>
+                    <Link to='/' style={{color:"white"}}>SMS-Portal Admin</Link>
                 </Col>
                 <Col xs={14} sm={20} className="menu"><TopMenu actor={actor} /></Col>
             </Row>

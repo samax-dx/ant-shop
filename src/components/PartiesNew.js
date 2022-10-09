@@ -294,7 +294,7 @@ export const PartiesNew = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal width={800} header="Create Sender" key="recordEditor" visible={modalData}
+            <Modal width={800} closable={false} key="recordEditor" visible={modalData}
                    maskClosable={false} onCancel={handleCancel} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
                 <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "partyId DESC", page: 1 })}/>
             </Modal>

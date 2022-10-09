@@ -398,8 +398,8 @@ export const Payments = ({actor: [lookupActor, saveActor, partyActor]}) => {
                     <SearchForm onSearch={data => sendPagedQuery(data)(1, viewLimit)}/>
                 </Card>
             </Col>
-            <Modal header="TopUp / Make Payment" key="recordEditor" visible={isModalVisible} onOk={handleOk}
-                   onCancel={handleCancel} width={"90vw"}>
+            <Modal key="recordEditor" visible={isModalVisible} onOk={handleOk}
+                   onCancel={handleCancel} width={"90vw"} closable={false}>
                 <PartyPayer actor={[partyActor, saveActor]}/>
             </Modal>
         </Row>

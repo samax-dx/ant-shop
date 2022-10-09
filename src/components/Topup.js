@@ -291,7 +291,7 @@ export const Topup = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal  width={"90vw"} header="TopUp / Make Payment" key="recordEditor" visible={modalData}
+            <Modal  width={"90vw"} closable={false} key="recordEditor" visible={modalData}
                    maskClosable={false} onCancel={handleCancel} style={{ top: 20 }} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
                 <TopupParties />
             </Modal>

@@ -240,7 +240,7 @@ export const PackageNew = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal header="Create Package" key="recordEditor" visible={modalData}
+            <Modal closable={false} key="recordEditor" visible={modalData}
                    maskClosable={false} onCancel={handleCancel} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
                 <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "packageId DESC", page: 1 })}/>
             </Modal>
