@@ -110,7 +110,7 @@ const DataView = ({parties, viewPage, viewLimit, onRecordSaved}) => {
         <Table.Column
             dataIndex={undefined}
             title={"Pay Amount"}
-            render={(record, value, index) => (<>
+            render={(value, record, index) => (<>
                 <Input onChange={e => amountInputRef.current = e.target} placeholder="Write amount"
                        value={amountInputRef.current && amountInputRef.current.value === ":__RESET" ? (amountInputRef.current = null) || "" : undefined}/>
                 <Button type="link" onClick={

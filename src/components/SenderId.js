@@ -109,16 +109,6 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
         record.routes = record.routes?.split(",");
         return record;
     };
-/*    const openNotificationSuccess = (type) => {
-        notification[type]({
-            message: "Sender Id create successfully",
-        });
-    };
-    const openNotificationError = (type) => {
-        notification[type]({
-            message: "Please input all valid data",
-        });
-    };*/
     return (<>
         <Form
             form={createForm}
@@ -132,6 +122,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
             onFinish={() => createForm.resetFields()}
         >
             {/*<Form.Item name="partyId" label="I333D" style={{ display: "none" }} children={<Input />} />*/}
+            <Form.Item name="senderIdId" label="Sender ID" hidden children={<Input />} />
             <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input />} />
             <Form.Item name="type" id="selected" label="Type" initialValue={""} rules={[{required:true}]}>
                 <Select>
@@ -166,7 +157,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                             notification.success({
                                 key: `cparty_${Date.now()}`,
                                 message: "Task Complete",
-                                description: <>SenderId created: {data.senderIdId}</>,
+                                description: <>SenderId Saved: {data.senderIdId}</>,
                                 duration: 5
                             });
                         })
@@ -207,7 +198,7 @@ const DataView = ({ senderId, viewPage, viewLimit, onEdit }) => {
             <Table.Column
                 title="Actions"
                 dataIndex={undefined}
-                render={(record, value, index) => {
+                render={(value, record, index) => {
                     return (
                         <Button onClick={() => onEdit(record)} type="link">Edit</Button>
                     );

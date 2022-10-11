@@ -6,3 +6,15 @@ export const SpList = {
         return newItems;
     }
 };
+export const createOrUpdateMocked = (dataTable, idField, record) => {
+    const rowIndex = dataTable.findIndex(r => r[idField] === record[idField]);
+
+    if (rowIndex > -1) {
+        dataTable[rowIndex] = { ...dataTable[rowIndex], ...record };
+        return Promise.resolve(dataTable[rowIndex]);
+    } else {
+        record[idField] = Date.now() + "";
+        dataTable.push(record);
+        return Promise.resolve(record);
+    }
+};

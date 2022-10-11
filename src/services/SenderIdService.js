@@ -1,6 +1,7 @@
 import axios from "axios";
 import { SERVER_URL } from "../config";
 import { XAuth } from "./XAuth";
+import {createOrUpdateMocked} from "../Util";
 
 const senderIds = [
     { senderIdId: "111", senderId: "8801717590383", type: "non-masking", parties: null, routes: "banglalink,grameenphone" },
@@ -57,8 +58,7 @@ export const SenderIdService = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        )*/(payload.senderIdId = Date.now() + "") && senderIds.push(payload) &&
-                        Promise.resolve({ data: { senderIdId: payload.senderIdId } })
+        )*/createOrUpdateMocked(senderIds, "senderIdId", payload).then(record => ({ data: record }))
         .then(response => {
             const { data } = response;
             console.log(data)
