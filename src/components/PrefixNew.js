@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker
+    Modal, Typography, DatePicker, notification
 } from "antd";
 import {PrefixService} from "../services/PrefixService";
 import {countries} from "countries-list";
@@ -137,9 +137,14 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     onClick={() => createForm
                         .validateFields()
                         .then(_ => PrefixService.saveRecord(createForm.getFieldsValue()))
-                        .then(senderId => {
-                            alert("Prefix Create Success!");
-                            onRecordSaved(senderId);
+                        .then(data => {
+                            onRecordSaved(data.prefix);
+                            notification.success({
+                                key: `cprefix_${Date.now()}`,
+                                message: "Task Complete",
+                                description: <>Prefix Created: {data.prefix.prefixId}</>,
+                                duration: 5
+                            });
                         })
                         .catch(error => {alert(error.message)})
                     }

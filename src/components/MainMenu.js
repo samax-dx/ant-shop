@@ -12,17 +12,18 @@ import {
     InteractionTwoTone,
     IdcardOutlined
 } from '@ant-design/icons';
-import {Link} from "react-router-dom";
+import {Link, NavLink, useLocation } from "react-router-dom";
 
 export const MainMenu = ({ actor }) => {
     const [appState, sendApp] = [actor.getSnapshot(), actor.send];
-
+    const location = useLocation();console.log(location.pathname.replace("/", ""))
+    const paths = location.pathname.split("/").slice(1);
     return (
         <Menu
             mode="inline"
-            defaultOpenKeys={["accounting"]}
+            defaultOpenKeys={[paths[0]]}
             style={{ height: "100%", borderRight: 0 }}
-            selectedKeys={[appState.value]}
+            selectedKeys={[paths[1]]}
         >
             {/*<Menu.SubMenu key="accounting" icon={<BankOutlined />} title="Accounting">*/}
             {/*    <Menu.Item key="payments" icon={<WalletTwoTone />} onClick={() => sendApp({ type: "NAV_PAYMENTS" })}>TopUp / Payments</Menu.Item>*/}
@@ -51,18 +52,18 @@ export const MainMenu = ({ actor }) => {
             {/*</Menu.SubMenu>*/}
 
         {/*    My Menu  */}
-            <Menu.SubMenu key="accounting" icon={<BankOutlined />} title="Accounting">
-                <Menu.Item icon={<WalletTwoTone/>}><Link to="/payment">TopUp / Payments</Link></Menu.Item>
+            <Menu.SubMenu key="Accounting" icon={<BankOutlined />} title="Accounting">
+                <Menu.Item key="payment" icon={<WalletTwoTone/>}><NavLink to="/Accounting/payment" >TopUp / Payments</NavLink></Menu.Item>
             </Menu.SubMenu>
-            <Menu.SubMenu key="partymenu" icon={<ProfileOutlined />} title="Party Management">
-                <Menu.Item icon={<IdcardTwoTone />}><Link to="/parties">Parties</Link></Menu.Item>
-                <Menu.Item icon={<IdcardOutlined />}><Link to="/senderId">Sender-ID</Link></Menu.Item>
+            <Menu.SubMenu key="PartyManagement" icon={<ProfileOutlined />} title="Party Management">
+                <Menu.Item key="parties" icon={<IdcardTwoTone />}><Link to="/PartyManagement/parties">Parties</Link></Menu.Item>
+                <Menu.Item key="senderId" icon={<IdcardOutlined />}><Link to="/PartyManagement/senderId">Sender-ID</Link></Menu.Item>
             </Menu.SubMenu>
-            <Menu.SubMenu key="settings" icon={<SettingOutlined />} title="Settings">
-                <Menu.Item icon={<InteractionTwoTone />} ><Link to="/prefix">Prefix</Link></Menu.Item>
-                <Menu.Item icon={<InteractionTwoTone />}><Link to="/route">Route</Link></Menu.Item>
-                <Menu.Item icon={<InteractionTwoTone />} ><Link to="/dialplan">Dial Plan</Link></Menu.Item>
-                <Menu.Item icon={<InteractionTwoTone />} ><Link to="/packagePrefix">Package Prefix</Link></Menu.Item>
+            <Menu.SubMenu key="Settings" icon={<SettingOutlined />} title="Settings">
+                <Menu.Item key="prefix" icon={<InteractionTwoTone />} ><Link to="/Settings/prefix">Prefix</Link></Menu.Item>
+                <Menu.Item key="route" icon={<InteractionTwoTone />}><Link to="/Settings/route">Route</Link></Menu.Item>
+                <Menu.Item key="dialplan" icon={<InteractionTwoTone />} ><Link to="/Settings/dialplan">Dial Plan</Link></Menu.Item>
+                <Menu.Item key="packagePrefix" icon={<InteractionTwoTone />} ><Link to="/Settings/packagePrefix">Package Prefix</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="sub5" icon={<UserOutlined />} title="..." disabled>
                 <Menu.Item ><Link to="partners">Partners</Link></Menu.Item>

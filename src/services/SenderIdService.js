@@ -63,8 +63,8 @@ export const SenderIdService = {
             const { data } = response;
             console.log(data)
 
-            if (data) {
-                return Promise.resolve({ ...response, senderIdId: data.senderIdId });
+            if (data.senderIdId) {
+                return Promise.resolve(data/*{ ...response, senderIdId: data.senderIdId }*/);
             } else {
                 return Promise.reject({ message: data.errorMessage });
             }

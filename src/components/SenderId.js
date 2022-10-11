@@ -109,7 +109,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
         record.routes = record.routes?.split(",");
         return record;
     };
-    const openNotificationSuccess = (type) => {
+/*    const openNotificationSuccess = (type) => {
         notification[type]({
             message: "Sender Id create successfully",
         });
@@ -118,7 +118,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
         notification[type]({
             message: "Please input all valid data",
         });
-    };
+    };*/
     return (<>
         <Form
             form={createForm}
@@ -161,11 +161,21 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     onClick={() => createForm
                         .validateFields()
                         .then(_ => SenderIdService.saveRecord(transformRecordAtoS(createForm.getFieldsValue())))
-                        .then(senderId => {
-                            openNotificationSuccess("success")
-                            onRecordSaved(senderId);
+                        .then(data => {
+                            onRecordSaved(data.senderIdId);
+                            notification.success({
+                                key: `cparty_${Date.now()}`,
+                                message: "Task Complete",
+                                description: <>SenderId created: {data.senderIdId}</>,
+                                duration: 5
+                            });
                         })
-                        .catch(error => openNotificationError('error'))
+                        .catch(error => notification.error({
+                            key: `cparty_${Date.now()}`,
+                            message: "Task Failed",
+                            description: <>Error creating party.<br/>{error.message}</>,
+                            duration: 5
+                        }))
                     }
                     children={"Submit"}
                 />
@@ -180,7 +190,7 @@ const DataView = ({ senderId, viewPage, viewLimit, onEdit }) => {
             style={{marginLeft:6}}
             size="small"
             dataSource={senderId}
-            rowKey={"partyId"}
+            rowKey={"senderId"}
             locale={{ emptyText: senderId === null ? "E" : "No Data" }}
             pagination={false}
         >

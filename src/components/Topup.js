@@ -16,7 +16,7 @@ import {AccountingService} from "../services/AccountingService";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
-import {TopupParties} from "./TopupParties";
+import {TopupParty} from "./TopupParty";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -211,7 +211,7 @@ const DataView = ({ payments, viewPage, viewLimit, onEdit }) => {
             style={{marginLeft:6}}
             size="small"
             dataSource={payments}
-            rowKey={"partyId"}
+            rowKey={"paymentId"}
             locale={{ emptyText: payments === null ? "E" : "No Data" }}
             pagination={false}
         >
@@ -293,7 +293,7 @@ export const Topup = () => {
             </Col>
             <Modal  width={"90vw"} closable={false} key="recordEditor" visible={modalData}
                    maskClosable={false} onCancel={handleCancel} style={{ top: 20 }} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
-                <TopupParties />
+                <TopupParty onRecordSaved={_ => setLastQuery({ ...lastQuery, page: 1 })}/>
             </Modal>
         </Row>
         <DataView payments={payments} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>

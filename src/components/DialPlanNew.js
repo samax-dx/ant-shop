@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker
+    Modal, Typography, DatePicker, notification
 } from "antd";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
@@ -139,11 +139,22 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     onClick={() => createForm
                         .validateFields()
                         .then(_ => DialPlanService.saveRecord(createForm.getFieldsValue()))
-                        .then(dialPlanId => {
-                            alert("DialPlan Create Success!");
-                            onRecordSaved(dialPlanId);
+                        .then(data => {
+                            // alert("DialPlan Create Success!");
+                            onRecordSaved(data.dialPlan);
+                            notification.success({
+                                key: `cdialplan_${Math.random()+''}`,
+                                message: "Task Complete",
+                                description: <>DialPlan Created: {data.dialPlan.dialPlanId}</>,
+                                duration: 5
+                            });
                         })
-                        .catch(error => alert(error.message))
+                        .catch(error => notification.error({
+                            key: `cdialplan_${Date.now()}`,
+                            message: "Task Failed",
+                            description: <>{error.message}</>,
+                            duration: 5
+                        }))
                     }
                     children={"Submit"}
                 />
@@ -159,7 +170,7 @@ const DataView = ({ dialPlans, viewPage, viewLimit, onEdit }) => {
             style={{marginLeft:6}}
             size="small"
             dataSource={dialPlans}
-            rowKey={"dialPlanId"}
+            rowKey={(dialPlan)=> dialPlan.dialPlanId+'_'+dialPlan.routeId}
             locale={{ emptyText: dialPlans === null ? "E" : "No Data" }}
             pagination={false}
         >

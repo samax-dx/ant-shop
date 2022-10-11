@@ -48,6 +48,7 @@ export const PackageService = {
         )
         .then(response => {
             const { data } = response;
+            console.log(data)
 
             if (data.package) {
                 return Promise.resolve(data);

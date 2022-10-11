@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, Checkbox
+    Modal, Typography, DatePicker, Checkbox, notification
 } from "antd";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
@@ -115,11 +115,21 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     onClick={() => createForm
                         .validateFields()
                         .then(_ => RouteService.saveRecord(createForm.getFieldsValue()))
-                        .then(routeId => {
-                            alert("Route Create Success!");
-                            onRecordSaved(routeId);
+                        .then(data => {
+                            onRecordSaved(data.route);
+                            notification.success({
+                                key: `croute_${Date.now()}`,
+                                message: "Task Complete",
+                                description: <>Route Created: {data.route.routeId}</>,
+                                duration: 5
+                            });
                         })
-                        .catch(error => {alert(error.message)})
+                        .catch(error => notification.error({
+                            key: `croute_${Date.now()}`,
+                            message: "Task Failed",
+                            description: <>{error.message}</>,
+                            duration: 5
+                        }))
                     }
                     children={"Submit"}
                 />

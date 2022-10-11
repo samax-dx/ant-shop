@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker
+    Modal, Typography, DatePicker, notification
 } from "antd";
 import {PartyService} from "../services/PartyService";
 import {countries} from "countries-list";
@@ -191,11 +191,22 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     onClick={() => createForm
                         .validateFields()
                         .then(_ => PartyService.saveRecord(createForm.getFieldsValue()))
-                        .then(partyId => {
-                            alert("Party Create Success!");
-                            onRecordSaved(partyId);
+                        .then(data => {
+                            onRecordSaved(data.party);
+                            notification.success({
+                                key: `cparty_${Date.now()}`,
+                                message: "Task Complete",
+                                description: <>Party created: {data.partyId}</>,
+                                duration: 5
+                            })
                         })
-                        .catch(error => {alert(error.message)})
+                        .catch(error => notification.error({
+                            key: `cparty_${Date.now()}`,
+                            message: "Task Failed",
+                            description: <>Error creating party.<br/>{error.message}</>,
+                            duration: 5
+                        })
+                        )
                     }
                     children={"Submit"}
                 />

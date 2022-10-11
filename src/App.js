@@ -43,13 +43,13 @@ export const App = ({ actor }) => {
         <BrowserRouter>
             <Routes>
                 <ReactRoute path="/" element={createRouteComponent(null)} />
-                <ReactRoute path="/parties" element={createRouteComponent(<PartiesNew/>)} />
-                <ReactRoute path="/senderId" element={createRouteComponent(<SenderId />)} />
-                <ReactRoute path="/payment" element={createRouteComponent(<Topup />)} />
-                <ReactRoute path="/prefix" element={createRouteComponent(<PrefixNew />)} />
-                <ReactRoute path="/route" element={createRouteComponent(<RouteNew />)} />
-                <ReactRoute path="/dialplan" element={createRouteComponent(<DialPlanNew />)} />
-                <ReactRoute path="/packagePrefix" element={createRouteComponent(<PackageNew />)} />
+                <ReactRoute path="/PartyManagement/parties" element={createRouteComponent(<PartiesNew/>)} />
+                <ReactRoute path="/PartyManagement/senderId" element={createRouteComponent(<SenderId />)} />
+                <ReactRoute path="/Accounting/payment" element={createRouteComponent(<Topup />)} />
+                <ReactRoute path="/Settings/prefix" element={createRouteComponent(<PrefixNew />)} />
+                <ReactRoute path="/Settings/route" element={createRouteComponent(<RouteNew />)} />
+                <ReactRoute path="/Settings/dialplan" element={createRouteComponent(<DialPlanNew />)} />
+                <ReactRoute path="/Settings/packagePrefix" element={createRouteComponent(<PackageNew />)} />
             </Routes>
         </BrowserRouter>
     </>);

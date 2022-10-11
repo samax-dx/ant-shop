@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker
+    Modal, Typography, DatePicker, notification, Spin
 } from "antd";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
@@ -83,9 +83,14 @@ const SearchForm = ({ onSearch }) => {
 };
 
 
-const DataView = ({ parties, viewPage, viewLimit }) => {
-    const inputRef = useRef(null);
-    const [paymentAmount, setPaymentAmount] = useState(0);
+const DataView = ({ parties, viewPage, viewLimit, onRecordSaved }) => {
+    const [amountInput, setAmountInput] = useState(null);
+    const [spinning, setSpinning] = useState(false);
+    // const [lastPayment, setLastPayment] = useState(null);
+
+    const [resetAmount,setResetAmount] = useState(false);
+    useEffect(() => resetAmount && setResetAmount(false), [resetAmount])
+
     return (<>
         <Table
             style={{marginLeft:6, marginRight: 10}}
@@ -103,15 +108,32 @@ const DataView = ({ parties, viewPage, viewLimit }) => {
             <Table.Column title="User ID" dataIndex={"loginId"} />
             <Table.Column title="Name" dataIndex={"name"} />
             <Table.Column title="Contact Number" dataIndex={"contactNumber"} />
+
             <Table.Column
                 dataIndex={undefined}
                 title={"Pay Amount"}
                 render={(record, value, index) => (<>
-                    <Input  ref={inputRef} onChange={e => setPaymentAmount(+(e.target.value || 0))} placeholder="Write amount"/>
+                    <Input onFocus={e => setAmountInput(e.target)} placeholder="Write amount" value={resetAmount ? "" : undefined}/>
                     <Button type="link" onClick={
-                        () => AccountingService.addPartyBalance({partyId: record.partyId, amount: paymentAmount })
-                            .then(data => alert(JSON.stringify(data)))
-                            .catch(error => alert(JSON.stringify(error)))
+                        () => setSpinning(true) || AccountingService
+                            .addPartyBalance({partyId: record.partyId, amount: +(amountInput.value || 0) })
+                            .then(payment => {
+                                setSpinning(false);
+                                setResetAmount(true);
+                                onRecordSaved(payment);
+                                notification.success({
+                                    key: `cpayment_${Date.now()}`,
+                                    message: "Task Complete",
+                                    description: <>Payment Completed: {payment.amount}</>,
+                                    duration: 5
+                                });
+                            })
+                            .catch(error => setSpinning(false) || notification.error({
+                                key: `cpayment_${Date.now()}`,
+                                message: "Task Failed",
+                                description: <>Input Valid Amount{error.message}</>,
+                                duration: 5
+                            }))
                     }>Add Payment</Button>
                 </>)}
             />
@@ -136,7 +158,7 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
     </>);
 };
 
-export const TopupParties = () => {
+export const TopupParty = ({ onRecordSaved }) => {
     const [lastQuery, setLastQuery] = useState({});
     const [parties, setParties] = useState([]);
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
@@ -174,7 +196,7 @@ export const TopupParties = () => {
                 </Card>
             </Col>
         </Row>
-        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page}/>
+        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onRecordSaved={onRecordSaved}/>
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);

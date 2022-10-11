@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker
+    Modal, Typography, DatePicker, notification
 } from "antd";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
@@ -134,11 +134,22 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     onClick={() => createForm
                         .validateFields()
                         .then(_ => PackageService.saveRecord(createForm.getFieldsValue()))
-                        .then(packageId => {
-                            alert("Package Create Success!");
-                            onRecordSaved(packageId);
+                        .then(data => {
+                            // alert("Package Create Success!");
+                            onRecordSaved(data.package);
+                            notification.success({
+                                key: `cpackage_${Date.now()}`,
+                                message: "Task Complete",
+                                description: <>Assigned Package to Prefix: {data.package.packageId}:{data.package.dialPlanId}</>,
+                                duration: 5
+                            });
                         })
-                        .catch(error => {alert(error.message)})
+                        .catch(error => notification.error({
+                            key: `cpackage_${Date.now()}`,
+                            message: "Task Failed",
+                            description: <>{error.message}</>,
+                            duration: 5
+                        }))
                     }
                     children={"Submit"}
                 />
@@ -153,7 +164,7 @@ const DataView = ({ packages, viewPage, viewLimit, onEdit }) => {
             style={{marginLeft:6}}
             size="small"
             dataSource={packages}
-            rowKey={"packageId"}
+            rowKey={(packagePrefix)=> packagePrefix.packageId+'_'+ packagePrefix.dialPlanId }
             locale={{ emptyText: packages === null ? "E" : "No Data" }}
             pagination={false}
         >
