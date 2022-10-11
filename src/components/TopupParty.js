@@ -19,7 +19,7 @@ import {AccountingService} from "../services/AccountingService";
 import {PartyService} from "../services/PartyService";
 
 
-const SearchForm = ({ onSearch }) => {
+const SearchForm = ({onSearch}) => {
     const [searchForm] = Form.useForm();
 
     const performSearch = () => {
@@ -57,20 +57,22 @@ const SearchForm = ({ onSearch }) => {
         <Form
             form={searchForm}
             labelCol={{span: 18}}
-            wrapperCol={{ span: 23}}
+            wrapperCol={{span: 23}}
             labelAlign="left"
         >
-            <Form.Item name="loginId" label="User ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
-            <Form.Item name="loginId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item name="name" label="Name" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
-            <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="loginId" label="User ID" children={<Input/>}
+                       style={{display: "inline-block", marginBottom: '0px'}}/>
+            <Form.Item name="loginId_op" initialValue={"contains"} hidden children={<Input/>}/>
+            <Form.Item name="name" label="Name" children={<Input/>}
+                       style={{display: "inline-block", marginBottom: '0px'}}/>
+            <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input/>}/>
 
             {/*<Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>*/}
             {/*<Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>*/}
             {/*<Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>*/}
             {/*<Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>*/}
 
-            <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
+            <Form.Item style={{display: 'inline-block', marginBottom: 0}} label=" " colon={false}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -83,68 +85,118 @@ const SearchForm = ({ onSearch }) => {
 };
 
 
-const DataView = ({ parties, viewPage, viewLimit, onRecordSaved }) => {
+const DataView = ({parties, viewPage, viewLimit, onRecordSaved}) => {
     const [amountInput, setAmountInput] = useState(null);
     const [spinning, setSpinning] = useState(false);
     // const [lastPayment, setLastPayment] = useState(null);
 
-    const [resetAmount,setResetAmount] = useState(false);
+    const [resetAmount, setResetAmount] = useState(false);
     useEffect(() => resetAmount && setResetAmount(false), [resetAmount])
 
     return (<>
-        <Table
-            style={{marginLeft:6, marginRight: 10}}
-            size="medium"
-            dataSource={parties}
-            rowKey={"partyId"}
-            locale={{ emptyText: parties === null ? "E" : "No Data" }}
-            pagination={false}
-        >
-            <Table.Column
-                dataIndex={undefined}
-                title={"#"}
-                render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
-            />
-            <Table.Column title="User ID" dataIndex={"loginId"} />
-            <Table.Column title="Name" dataIndex={"name"} />
-            <Table.Column title="Contact Number" dataIndex={"contactNumber"} />
+        {spinning ? <Spin tip="Processing Payment..." size="large">{<Table
+                style={{marginLeft: 6, marginRight: 10}}
+                size="medium"
+                dataSource={parties}
+                rowKey={"partyId"}
+                locale={{emptyText: parties === null ? "E" : "No Data"}}
+                pagination={false}
+            >
+                <Table.Column
+                    dataIndex={undefined}
+                    title={"#"}
+                    render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
+                />
+                <Table.Column title="User ID" dataIndex={"loginId"}/>
+                <Table.Column title="Name" dataIndex={"name"}/>
+                <Table.Column title="Contact Number" dataIndex={"contactNumber"}/>
 
-            <Table.Column
-                dataIndex={undefined}
-                title={"Pay Amount"}
-                render={(record, value, index) => (<>
-                    <Input onFocus={e => setAmountInput(e.target)} placeholder="Write amount" value={resetAmount ? "" : undefined}/>
-                    <Button type="link" onClick={
-                        () => setSpinning(true) || AccountingService
-                            .addPartyBalance({partyId: record.partyId, amount: +(amountInput.value || 0) })
-                            .then(payment => {
-                                setSpinning(false);
-                                setResetAmount(true);
-                                onRecordSaved(payment);
-                                notification.success({
+                <Table.Column
+                    dataIndex={undefined}
+                    title={"Pay Amount"}
+                    render={(record, value, index) => (<>
+                        <Input onFocus={e => setAmountInput(e.target)} placeholder="Write amount"
+                               value={resetAmount ? "" : undefined}/>
+                        <Button type="link" onClick={
+                            () => setSpinning(true) || AccountingService
+                                .addPartyBalance({partyId: record.partyId, amount: +(amountInput.value || 0)})
+                                .then(payment => {
+                                    setSpinning(false);
+                                    setResetAmount(true);
+                                    onRecordSaved(payment);
+                                    notification.success({
+                                        key: `cpayment_${Date.now()}`,
+                                        message: "Task Complete",
+                                        description: <>Payment Completed: {payment.amount}</>,
+                                        duration: 5
+                                    });
+                                })
+                                .catch(error => setSpinning(false) || notification.error({
                                     key: `cpayment_${Date.now()}`,
-                                    message: "Task Complete",
-                                    description: <>Payment Completed: {payment.amount}</>,
+                                    message: "Task Failed",
+                                    description: <>Input Valid Amount{error.message}</>,
                                     duration: 5
-                                });
-                            })
-                            .catch(error => setSpinning(false) || notification.error({
-                                key: `cpayment_${Date.now()}`,
-                                message: "Task Failed",
-                                description: <>Input Valid Amount{error.message}</>,
-                                duration: 5
-                            }))
-                    }>Add Payment</Button>
-                </>)}
-            />
+                                }))
+                        }>Add Payment</Button>
+                    </>)}
+                />
 
-        </Table>
+            </Table>}</Spin> :
+            <Table
+                style={{marginLeft: 6, marginRight: 10}}
+                size="medium"
+                dataSource={parties}
+                rowKey={"partyId"}
+                locale={{emptyText: parties === null ? "E" : "No Data"}}
+                pagination={false}
+            >
+                <Table.Column
+                    dataIndex={undefined}
+                    title={"#"}
+                    render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
+                />
+                <Table.Column title="User ID" dataIndex={"loginId"}/>
+                <Table.Column title="Name" dataIndex={"name"}/>
+                <Table.Column title="Contact Number" dataIndex={"contactNumber"}/>
+
+                <Table.Column
+                    dataIndex={undefined}
+                    title={"Pay Amount"}
+                    render={(record, value, index) => (<>
+                        <Input onFocus={e => setAmountInput(e.target)} placeholder="Write amount"
+                               value={resetAmount ? "" : undefined}/>
+                        <Button type="link" onClick={
+                            () => setSpinning(true) || AccountingService
+                                .addPartyBalance({partyId: record.partyId, amount: +(amountInput.value || 0)})
+                                .then(payment => {
+                                    setSpinning(false);
+                                    setResetAmount(true);
+                                    onRecordSaved(payment);
+                                    notification.success({
+                                        key: `cpayment_${Date.now()}`,
+                                        message: "Task Complete",
+                                        description: <>Payment Completed: {payment.amount}</>,
+                                        duration: 5
+                                    });
+                                })
+                                .catch(error => setSpinning(false) || notification.error({
+                                    key: `cpayment_${Date.now()}`,
+                                    message: "Task Failed",
+                                    description: <>Input Valid Amount{error.message}</>,
+                                    duration: 5
+                                }))
+                        }>Add Payment</Button>
+                    </>)}
+                />
+
+            </Table>}
+
     </>);
 };
 
-const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
+const DataPager = ({totalPagingItems, currentPage, onPagingChange}) => {
     return (<>
-        <Space align="end" direction="vertical" style={{ width: "100%" }}>
+        <Space align="end" direction="vertical" style={{width: "100%"}}>
             <Pagination
                 total={totalPagingItems}
                 defaultPageSize={10}
@@ -158,7 +210,7 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
     </>);
 };
 
-export const TopupParty = ({ onRecordSaved }) => {
+export const TopupParty = ({onRecordSaved}) => {
     const [lastQuery, setLastQuery] = useState({});
     const [parties, setParties] = useState([]);
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
@@ -183,7 +235,7 @@ export const TopupParty = ({ onRecordSaved }) => {
     }, [lastQuery]);
 
     useEffect(() => {
-        setLastQuery({ page: 1, limit: 10 })
+        setLastQuery({page: 1, limit: 10})
     }, []);
 
     return (<>
@@ -192,12 +244,13 @@ export const TopupParty = ({ onRecordSaved }) => {
                 <Card title={<Title level={5}>Find Party To Pay</Title>}
                       headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '5px'}}
                       style={{height: 135, marginLeft: 5}} size="small">
-                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                    <SearchForm onSearch={data => setLastQuery({...(data || {}), page: 1, limit: lastQuery.limit})}/>
                 </Card>
             </Col>
         </Row>
-        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onRecordSaved={onRecordSaved}/>
+        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page}
+                  onRecordSaved={onRecordSaved}/>
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
-                   onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+                   onPagingChange={(page, limit) => setLastQuery({...lastQuery, page, limit})}/>
     </>);
 };
