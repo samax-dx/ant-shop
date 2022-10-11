@@ -180,7 +180,7 @@ const DataView = ({ packages, viewPage, viewLimit, onEdit }) => {
             <Table.Column
                 title="Actions"
                 dataIndex={undefined}
-                render={(record, value, index) => {
+                render={(value,record, index) => {
                     return (
                         <Button onClick={() => onEdit(record)} type="link">Edit</Button>
                     );
