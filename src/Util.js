@@ -6,6 +6,7 @@ export const SpList = {
         return newItems;
     }
 };
+
 export const createOrUpdateMocked = (dataTable, idField, record) => {
     const rowIndex = dataTable.findIndex(r => r[idField] === record[idField]);
 

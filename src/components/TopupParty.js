@@ -112,12 +112,12 @@ const DataView = ({parties, viewPage, viewLimit, onRecordSaved}) => {
             title={"Pay Amount"}
             render={(value, record, index) => (<>
                 <Input onChange={e => amountInputRef.current = e.target} placeholder="Write amount"
-                       value={amountInputRef.current && amountInputRef.current.value === ":__RESET" ? (amountInputRef.current = null) || "" : undefined}/>
+                       value={amountInputRef.current === undefined ? (amountInputRef.current = null) || "" : undefined}/>
                 <Button type="link" onClick={
                     () => setSpinning(true) || AccountingService
                         .addPartyBalance({partyId: record.partyId, amount: +(amountInputRef.current?.value || 0)})
                         .then(payment => {
-                            amountInputRef.current.value = ":__RESET";
+                            amountInputRef.current = undefined; // resetting
                             setSpinning(false);
                             onRecordSaved(payment);
                             notification.success({

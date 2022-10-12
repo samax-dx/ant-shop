@@ -144,6 +144,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                                 duration: 5
                             });
                         })
+                        // .then(_=> createForm.resetFields())
                         .catch(error => notification.error({
                             key: `cpackage_${Date.now()}`,
                             message: "Task Failed",

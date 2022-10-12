@@ -1,6 +1,3 @@
-import axios from "axios";
-import { SERVER_URL } from "../config";
-import { XAuth } from "./XAuth";
 import {createOrUpdateMocked} from "../Util";
 
 const senderIds = [
@@ -50,7 +47,7 @@ export const SenderIdService = {
         }),
     saveRecord: (payload) => console.log(payload) || /*axios
         .post(
-            `${SERVER_URL}/Party/createParty`,
+            `${SERVER_URL}/SenderId/saveSenderId`,
             { ...payload },
             {
                 headers: {
@@ -66,7 +63,7 @@ export const SenderIdService = {
             if (data.senderIdId) {
                 return Promise.resolve(data/*{ ...response, senderIdId: data.senderIdId }*/);
             } else {
-                return Promise.reject({ message: data.errorMessage });
+                return Promise.reject({ code: null, message: data.errorMessage });
             }
         })
         .catch(error => {
