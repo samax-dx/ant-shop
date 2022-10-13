@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, Spin
+    Modal, Typography, DatePicker, notification, Spin, Divider
 } from "antd";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
@@ -25,14 +25,14 @@ const SearchForm = ({onSearch}) => {
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        // ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
-        //     const date = formData[n];
-        //     formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
-        //
-        //     if (formData[n] === null) {
-        //         delete formData[n];
-        //     }
-        // });
+        ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
+            const date = formData[n];
+            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
+
+            if (formData[n] === null) {
+                delete formData[n];
+            }
+        });
 
         const queryData = ["name", "phoneNumber"].reduce((acc, v) => {
             const field = v;
@@ -91,73 +91,24 @@ const DataView = ({parties, viewPage, viewLimit, onRecordSaved}) => {
     // const [lastPayment, setLastPayment] = useState(null);
 
     const [resetAmount, setResetAmount] = useState(false);
-    useEffect(() => resetAmount && setResetAmount(false), [resetAmount])
+    useEffect(() => resetAmount && setResetAmount(false), [resetAmount]);
 
-    return (<>
-        {spinning ? <Spin tip="Processing Payment..." size="large">{<Table
-                style={{marginLeft: 6, marginRight: 10}}
-                size="medium"
-                dataSource={parties}
-                rowKey={"partyId"}
-                locale={{emptyText: parties === null ? "E" : "No Data"}}
-                pagination={false}
-            >
-                <Table.Column
-                    dataIndex={undefined}
-                    title={"#"}
-                    render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
-                />
-                <Table.Column title="User ID" dataIndex={"loginId"}/>
-                <Table.Column title="Name" dataIndex={"name"}/>
-                <Table.Column title="Contact Number" dataIndex={"contactNumber"}/>
-
-                <Table.Column
-                    dataIndex={undefined}
-                    title={"Pay Amount"}
-                    render={(record, value, index) => (<>
-                        <Input onFocus={e => setAmountInput(e.target)} placeholder="Write amount"
-                               value={resetAmount ? "" : undefined}/>
-                        <Button type="link" onClick={
-                            () => setSpinning(true) || AccountingService
-                                .addPartyBalance({partyId: record.partyId, amount: +(amountInput.value || 0)})
-                                .then(payment => {
-                                    setSpinning(false);
-                                    setResetAmount(true);
-                                    onRecordSaved(payment);
-                                    notification.success({
-                                        key: `cpayment_${Date.now()}`,
-                                        message: "Task Complete",
-                                        description: <>Payment Completed: {payment.amount}</>,
-                                        duration: 5
-                                    });
-                                })
-                                .catch(error => setSpinning(false) || notification.error({
-                                    key: `cpayment_${Date.now()}`,
-                                    message: "Task Failed",
-                                    description: <>Input Valid Amount{error.message}</>,
-                                    duration: 5
-                                }))
-                        }>Add Payment</Button>
-                    </>)}
-                />
-
-            </Table>}</Spin> :
-            <Table
-                style={{marginLeft: 6, marginRight: 10}}
-                size="medium"
-                dataSource={parties}
-                rowKey={"partyId"}
-                locale={{emptyText: parties === null ? "E" : "No Data"}}
-                pagination={false}
-            >
-                <Table.Column
-                    dataIndex={undefined}
-                    title={"#"}
-                    render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
-                />
-                <Table.Column title="User ID" dataIndex={"loginId"}/>
-                <Table.Column title="Name" dataIndex={"name"}/>
-                <Table.Column title="Contact Number" dataIndex={"contactNumber"}/>
+    const dataTable = (<Table
+        style={{marginLeft: 6, marginRight: 10}}
+        size="medium"
+        dataSource={parties}
+        rowKey={"partyId"}
+        locale={{emptyText: parties === null ? "E" : "No Data"}}
+        pagination={false}
+    >
+        <Table.Column
+            dataIndex={undefined}
+            title={"#"}
+            render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
+        />
+        <Table.Column title="User ID" dataIndex={"loginId"}/>
+        <Table.Column title="Name" dataIndex={"name"}/>
+        <Table.Column title="Contact Number" dataIndex={"contactNumber"}/>
 
         <Table.Column
             dataIndex={undefined}
@@ -241,13 +192,9 @@ export const TopupParty = ({onRecordSaved}) => {
     }, []);
 
     return (<>
-        <Row style={{marginLeft: 5, marginRight: 10}}>
+        <Row style={{marginLeft: 5}}>
             <Col md={24}>
-                <Card title={<Title level={5}>Find Party To Pay</Title>}
-                      headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '5px'}}
-                      style={{height: 135, marginLeft: 5}} size="small">
-                    <SearchForm onSearch={data => setLastQuery({...(data || {}), page: 1, limit: lastQuery.limit})}/>
-                </Card>
+                <SearchForm style={{}} onSearch={data => setLastQuery({...(data || {}), page: 1, limit: lastQuery.limit})}/>
             </Col>
         </Row>
         <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page}
