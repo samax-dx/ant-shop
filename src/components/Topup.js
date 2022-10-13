@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
+    Button,
+    Card,
+    Col,
+    DatePicker,
     Form,
     Input,
-    Button,
-    Table,
-    Space,
+    Modal,
     Pagination,
-    Card,
-    Select,
     Row,
-    Col,
-    Modal, Typography, DatePicker, notification, Spin
+    Select,
+    Space,
+    Table,
+    Typography
 } from "antd";
 import {AccountingService} from "../services/AccountingService";
 import {countries} from "countries-list";
 import {PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 import {TopupParty} from "./TopupParty";
+import {ModalTitleBar} from "./ModalTitleBar";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -291,9 +294,12 @@ export const Topup = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal  width={"90vw"} closable={false} key="recordEditor" visible={modalData}
+            <Modal bodyStyle={{padding: 0}} width={"90vw"} closable={false} key="recordEditor" visible={modalData}
                    maskClosable={false} onCancel={handleCancel} style={{ top: 20 }} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
-                <TopupParty onRecordSaved={_ => setLastQuery({ ...lastQuery, page: 1 })}/>
+                <ModalTitleBar onClose={handleCancel}>Find Party to Pay</ModalTitleBar>
+                <Card bordered={false}>
+                    <TopupParty onRecordSaved={_ => setLastQuery({ ...lastQuery, page: 1 })}/>
+                </Card>
             </Modal>
         </Row>
         <DataView payments={payments} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
