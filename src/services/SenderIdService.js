@@ -1,4 +1,4 @@
-import {createOrUpdateMocked} from "../Util";
+import {createOrUpdateMocked, findListMocked} from "../Util";
 
 const senderIds = [
     { senderIdId: "111", senderId: "8801717590383", type: "non-masking", parties: null, routes: "banglalink,grameenphone" },
@@ -22,7 +22,7 @@ export const SenderIdService = {
                 }
             }
         )*/
-        Promise.resolve({ senderIds: senderIds.filter(senderId => senderId.senderId.includes(payload.senderId || "")), count: senderIds.length }) //senderId.includes(payload.senderId)))
+        Promise.resolve(findListMocked(senderIds, payload, "senderId", "senderIds"))//senderId.includes(payload.senderId)))
         .then(response => {
             const  data  = response;
             console.log(data)
@@ -55,7 +55,7 @@ export const SenderIdService = {
                     'Authorization': `Bearer ${XAuth.token()}`,
                 }
             }
-        )*/createOrUpdateMocked(senderIds, "senderIdId", payload).then(record => ({ data: record }))
+        )*/createOrUpdateMocked(senderIds, "senderIdId", payload).then(({record}) => ({ data: record }))
         .then(response => {
             const { data } = response;
             console.log(data)
