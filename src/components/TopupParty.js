@@ -93,57 +93,57 @@ const DataView = ({parties, viewPage, viewLimit, onRecordSaved}) => {
     const [resetAmount, setResetAmount] = useState(false);
     useEffect(() => resetAmount && setResetAmount(false), [resetAmount]);
 
-    const dataTable = (<Table
-        style={{marginLeft: 6, marginRight: 10}}
-        size="medium"
-        dataSource={parties}
-        rowKey={"partyId"}
-        locale={{emptyText: parties === null ? "E" : "No Data"}}
-        pagination={false}
-    >
-        <Table.Column
-            dataIndex={undefined}
-            title={"#"}
-            render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
-        />
-        <Table.Column title="User ID" dataIndex={"loginId"}/>
-        <Table.Column title="Name" dataIndex={"name"}/>
-        <Table.Column title="Contact Number" dataIndex={"contactNumber"}/>
-
-        <Table.Column
-            dataIndex={undefined}
-            title={"Pay Amount"}
-            render={(record, value, index) => (<>
-                <Input onFocus={e => setAmountInput(e.target)} placeholder="Write amount"
-                       value={resetAmount ? "" : undefined}/>
-                <Button type="link" onClick={
-                    () => setSpinning(true) || AccountingService
-                        .addPartyBalance({partyId: record.partyId, amount: +(amountInput.value || 0)})
-                        .then(payment => {
-                            setSpinning(false);
-                            setResetAmount(true);
-                            onRecordSaved(payment);
-                            notification.success({
-                                key: `cpayment_${Date.now()}`,
-                                message: "Task Complete",
-                                description: <>Payment Completed: {payment.amount}</>,
-                                duration: 5
-                            });
-                        })
-                        .catch(error => setSpinning(false) || notification.error({
-                            key: `cpayment_${Date.now()}`,
-                            message: "Task Failed",
-                            description: <>Input Valid Amount{error.message}</>,
-                            duration: 5
-                        }))
-                }>Add Payment</Button>
-            </>)}
-        />
-
-    </Table>);
-
     return (<>
-        {spinning ? <Spin tip="Processing Payment..." size="large">{dataTable}</Spin> : dataTable}
+        <Spin spinning={spinning} size={"large"}>
+            <Table
+                style={{marginLeft: 6, marginRight: 10}}
+                size="medium"
+                dataSource={parties}
+                rowKey={"partyId"}
+                locale={{emptyText: parties === null ? "E" : "No Data"}}
+                pagination={false}
+            >
+                <Table.Column
+                    dataIndex={undefined}
+                    title={"#"}
+                    render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
+                />
+                <Table.Column title="User ID" dataIndex={"loginId"}/>
+                <Table.Column title="Name" dataIndex={"name"}/>
+                <Table.Column title="Contact Number" dataIndex={"contactNumber"}/>
+
+                <Table.Column
+                    dataIndex={undefined}
+                    title={"Pay Amount"}
+                    render={(record, value, index) => (<>
+                        <Input onFocus={e => setAmountInput(e.target)} placeholder="Write amount"
+                               value={resetAmount ? "" : undefined}/>
+                        <Button type="link" onClick={
+                            () => setSpinning(true) || AccountingService
+                                .addPartyBalance({partyId: record.partyId, amount: +(amountInput.value || 0)})
+                                .then(payment => {
+                                    setSpinning(false);
+                                    setResetAmount(true);
+                                    onRecordSaved(payment);
+                                    notification.success({
+                                        key: `cpayment_${Date.now()}`,
+                                        message: "Task Complete",
+                                        description: <>Payment Completed: {payment.amount}</>,
+                                        duration: 5
+                                    });
+                                })
+                                .catch(error => setSpinning(false) || notification.error({
+                                    key: `cpayment_${Date.now()}`,
+                                    message: "Task Failed",
+                                    description: <>Input Valid Amount{error.message}</>,
+                                    duration: 5
+                                }))
+                        }>Add Payment</Button>
+                    </>)}
+                />
+
+            </Table>
+        </Spin>
     </>);
 };
 
@@ -194,7 +194,8 @@ export const TopupParty = ({onRecordSaved}) => {
     return (<>
         <Row style={{marginLeft: 5}}>
             <Col md={24}>
-                <SearchForm style={{}} onSearch={data => setLastQuery({...(data || {}), page: 1, limit: lastQuery.limit})}/>
+                <SearchForm style={{}}
+                            onSearch={data => setLastQuery({...(data || {}), page: 1, limit: lastQuery.limit})}/>
             </Col>
         </Row>
         <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page}
