@@ -9,7 +9,7 @@ export const SpList = {
 
 export const findListMocked = (dataTable, query, searchField, outputName) => {
     const records = dataTable.filter(record => record[searchField]?.toLowerCase().includes(query[searchField]?.toLowerCase() || ""));
-    return { [outputName]: [...records.slice((query.page - 1) * query.limit, query.page * query.limit)], count: records.length };
+    return { [outputName]: [...records.slice(((query.page || 1) - 1) * (query.limit || 10), (query.page || 1) * (query.limit || 10))], count: records.length };
 };
 
 export const createOrUpdateMocked = (dataTable, idField, record) => {
