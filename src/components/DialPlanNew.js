@@ -81,7 +81,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record, onRecordSaved }) => {
+const WriteForm = ({ form, record, onRecordSaved,close }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
 
@@ -132,7 +132,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
 
             <Form.Item name="digitCut" label="Digit Cut" children={<Input />} />
 
-            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 240}} >
+            <Form.Item wrapperCol={{ offset: 19}}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -158,6 +158,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     }
                     children={"Submit"}
                 />
+                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none',marginLeft:4}} onClick={close}>Close</Button>
             </Form.Item>
         </Form>
     </>);
@@ -260,8 +261,8 @@ export const DialPlanNew = () => {
                 </Card>
             </Col>
             <Modal width={800} closable={false} key="recordEditor" visible={modalData}
-                   maskClosable={false} onCancel={handleCancel} footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
-                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "dialPlanId ASC", page: 1 })}/>
+                   maskClosable={false} onCancel={handleCancel} footer={null}>
+                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "dialPlanId ASC", page: 1 })} close={handleCancel}/>
             </Modal>
         </Row>
         <DataView dialPlans={dialPlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>

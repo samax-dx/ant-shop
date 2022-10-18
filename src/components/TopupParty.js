@@ -34,7 +34,7 @@ const SearchForm = ({onSearch}) => {
             }
         });
 
-        const queryData = ["name", "phoneNumber"].reduce((acc, v) => {
+        const queryData = ["name", "contactNumber"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -63,9 +63,9 @@ const SearchForm = ({onSearch}) => {
             <Form.Item name="loginId" label="User ID" children={<Input/>}
                        style={{display: "inline-block", marginBottom: '0px'}}/>
             <Form.Item name="loginId_op" initialValue={"contains"} hidden children={<Input/>}/>
-            <Form.Item name="name" label="Name" children={<Input/>}
+            <Form.Item name="contactNumber" label="Contact Number" children={<Input/>}
                        style={{display: "inline-block", marginBottom: '0px'}}/>
-            <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input/>}/>
+            <Form.Item name="contactNumber_op" initialValue={"contains"} hidden children={<Input/>}/>
 
             {/*<Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>*/}
             {/*<Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>*/}

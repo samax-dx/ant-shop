@@ -28,14 +28,14 @@ const SearchForm = ({ onSearch }) => {
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        /*  ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
-              const date = formData[n];
-              formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
-   
-              if (formData[n] === null) {
-                  delete formData[n];
-              }
-          });*/
+      /*  ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
+            const date = formData[n];
+            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
+
+            if (formData[n] === null) {
+                delete formData[n];
+            }
+        });*/
 
         const queryData = ["senderId", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
             const field = v;
@@ -67,9 +67,9 @@ const SearchForm = ({ onSearch }) => {
             <Form.Item name="senderId_op" initialValue={"contains"} hidden children={<Input />} />
 
             {/*<Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
-           <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
-           <Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
-           <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>*/}
+            <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
+            <Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
+            <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>*/}
 
             <Form.Item style={{ display: 'inline-block', marginBottom: 0 }} label=" " colon={false}>
                 <Button
@@ -83,7 +83,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record, onRecordSaved }) => {
+const WriteForm = ({ form, record, onRecordSaved,close }) => {
     const { Option } = Select;
     const [createForm] = Form.useForm(form);
 
@@ -115,12 +115,14 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
-            initialValues={console.log(transformRecordStoA(record)) || transformRecordStoA(record)}
+            initialValues={transformRecordStoA(record)}
             style={{
                 padding: '15px'
             }}
             onFinish={() => createForm.resetFields()}
         >
+            {/*<Form.Item name="partyId" label="I333D" style={{ display: "none" }} children={<Input />} />*/}
+            <Form.Item name="senderIdId" label="Sender ID" hidden children={<Input />} />
             <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input />} />
             <Form.Item name="type" id="selected" label="Type" rules={[{ required: true }]}>
                 <Select>
@@ -142,7 +144,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     {routes.map(route => <Option key={route.routeId}>{route.routeId}</Option>)}
                 </Select>
             </Form.Item>
-            <Form.Item wrapperCol={{ offset: 0 }} style={{ marginLeft: 240 }} >
+            <Form.Item wrapperCol={{ offset: 19}} >
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -167,6 +169,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                     }
                     children={"Submit"}
                 />
+                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none',marginLeft:6}} onClick={close}>Close</Button>
             </Form.Item>
         </Form>
     </>);
@@ -265,6 +268,10 @@ export const SenderId = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })} />
                 </Card>
             </Col>
+            <Modal width={800} key="recordEditor" visible={modalData}
+                   maskClosable={false} onCancel={handleCancel} closable={false}  footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
+                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })}/>
+            </Modal>
         </Row>
         <DataView senderId={senderIds} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
