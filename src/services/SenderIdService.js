@@ -30,7 +30,7 @@ export const SenderIdService = {
            const { data } = response;
            console.log(data)
 
-           if (data) {
+           if (data.senderIds) {
                return Promise.resolve(data);  //
            } else {
                return Promise.reject({ code: null, message: data.errorMessage });
