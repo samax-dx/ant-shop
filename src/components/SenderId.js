@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Form,
     Input,
@@ -12,14 +12,14 @@ import {
     Col,
     Modal, Typography, DatePicker, notification
 } from "antd";
-import {PartyService} from "../services/PartyService";
-import {countries} from "countries-list";
-import {PlusCircleFilled} from "@ant-design/icons";
+import { PartyService } from "../services/PartyService";
+import { countries } from "countries-list";
+import { PlusCircleFilled } from "@ant-design/icons";
 import dayjs from "dayjs";
-import {SenderIdService} from "../services/SenderIdService";
-import {Route} from "../services/Route";
-import {RouteService} from "../services/RouteService";
-import {DebounceSelect} from "./DebounceSelect";
+import { SenderIdService } from "../services/SenderIdService";
+import { Route } from "../services/Route";
+import { RouteService } from "../services/RouteService";
+import { DebounceSelect } from "./DebounceSelect";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -28,14 +28,14 @@ const SearchForm = ({ onSearch }) => {
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-      /*  ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
-            const date = formData[n];
-            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
-
-            if (formData[n] === null) {
-                delete formData[n];
-            }
-        });*/
+        /*  ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
+              const date = formData[n];
+              formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
+   
+              if (formData[n] === null) {
+                  delete formData[n];
+              }
+          });*/
 
         const queryData = ["senderId", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
             const field = v;
@@ -59,19 +59,19 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{span: 18}}
-            wrapperCol={{ span: 23}}
+            labelCol={{ span: 18 }}
+            wrapperCol={{ span: 23 }}
             labelAlign="left"
         >
-            <Form.Item name="senderId" label="Sender-ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
+            <Form.Item name="senderId" label="Sender-ID" children={<Input />} style={{ display: "inline-block", marginBottom: '0px' }} />
             <Form.Item name="senderId_op" initialValue={"contains"} hidden children={<Input />} />
 
             {/*<Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
-            <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
-            <Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
-            <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>*/}
+           <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
+           <Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
+           <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>*/}
 
-            <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
+            <Form.Item style={{ display: 'inline-block', marginBottom: 0 }} label=" " colon={false}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -89,12 +89,12 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
 
     const [routes, setRoutes] = useState([]);
     const ref = useRef();
-    useEffect(()=> {
+    useEffect(() => {
         RouteService.fetchRecords({})
-            .then(data=>{
+            .then(data => {
                 setRoutes(data.routes);
             })
-    },[])
+    }, [])
     useEffect(() => createForm.resetFields(), [record, createForm]);
 
     const transformRecordAtoS = r => {
@@ -105,8 +105,8 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
     };
     const transformRecordStoA = r => {
         const record = { ...r };
-        record.parties = record.parties?.split(",");
-        record.routes = record.routes?.split(",");
+        record.parties = record.parties?.map(party => party.partyId);
+        record.routes = record.routes?.map(route => route.routeId);
         return record;
     };
     return (<>
@@ -115,37 +115,34 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
-            initialValues={transformRecordStoA(record)}
+            initialValues={console.log(transformRecordStoA(record)) || transformRecordStoA(record)}
             style={{
-                padding:'15px'
+                padding: '15px'
             }}
             onFinish={() => createForm.resetFields()}
         >
-            {/*<Form.Item name="partyId" label="I333D" style={{ display: "none" }} children={<Input />} />*/}
-            <Form.Item name="senderIdId" label="Sender ID" hidden children={<Input />} />
             <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input />} />
-            <Form.Item name="type" id="selected" label="Type" initialValue={""} rules={[{required:true}]}>
+            <Form.Item name="type" id="selected" label="Type" rules={[{ required: true }]}>
                 <Select>
-                    <Option value="masking">Masking</Option>
-                    <Option value="non_masking">Non-Masking</Option>
+                    <Option key={"masking"} value="masking">Masking</Option>
+                    <Option key={"non-masking"} value="non-masking">Non-Masking</Option>
                 </Select>
             </Form.Item>
-            <Form.Item label="Parties" children={<DebounceSelect />} />
-            <Form.Item name="routes" label="Routes" rules={[{required:true}]}>
-            <Select
-                ref={ref}
-                mode="multiple"
-                placeholder="Please select"
-                style={{
-                    width: '100%',
-                }}
-                onChange={() => ref.current.blur()}
-
-            >
-                {routes.map(route => <Option key={route.routeId}>{route.routeId}</Option>)}
-            </Select>
+            <Form.Item name="parties" label="Parties" children={<DebounceSelect />} />
+            <Form.Item name="routes" label="Routes" rules={[{ required: true }]}>
+                <Select
+                    ref={ref}
+                    mode="multiple"
+                    placeholder="Please select"
+                    style={{
+                        width: '100%',
+                    }}
+                    onChange={() => ref.current.blur()}
+                >
+                    {routes.map(route => <Option key={route.routeId}>{route.routeId}</Option>)}
+                </Select>
             </Form.Item>
-            <Form.Item wrapperCol={{ offset: 0}} style={{marginLeft: 240}} >
+            <Form.Item wrapperCol={{ offset: 0 }} style={{ marginLeft: 240 }} >
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -153,18 +150,18 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
                         .validateFields()
                         .then(_ => SenderIdService.saveRecord(transformRecordAtoS(createForm.getFieldsValue())))
                         .then(data => {
-                            onRecordSaved(data.senderIdId);
+                            onRecordSaved(data.senderId);
                             notification.success({
-                                key: `cparty_${Date.now()}`,
+                                key: `csenderid_${Date.now()}`,
                                 message: "Task Complete",
-                                description: <>SenderId Saved: {data.senderIdId}</>,
+                                description: <>SenderId Saved: {data.senderId}</>,
                                 duration: 5
                             });
                         })
                         .catch(error => notification.error({
-                            key: `cparty_${Date.now()}`,
+                            key: `csenderid_${Date.now()}`,
                             message: "Task Failed",
-                            description: <>Error creating party.<br/>{error.message}</>,
+                            description: <>Error creating party.<br />{error.message}</>,
                             duration: 5
                         }))
                     }
@@ -178,7 +175,7 @@ const WriteForm = ({ form, record, onRecordSaved }) => {
 const DataView = ({ senderId, viewPage, viewLimit, onEdit }) => {
     return (<>
         <Table
-            style={{marginLeft:6}}
+            style={{ marginLeft: 6 }}
             size="small"
             dataSource={senderId}
             rowKey={"senderId"}
@@ -192,9 +189,8 @@ const DataView = ({ senderId, viewPage, viewLimit, onEdit }) => {
             />
             <Table.Column title="Sender ID" dataIndex={"senderId"} />
             <Table.Column title="Type" dataIndex={"type"} />
-            <Table.Column title="Parties" dataIndex={"parties"} render={value => value?value: "All"} />
-            <Table.Column title="Routes" dataIndex={"routes"} />
-            {/*<Table.Column title="Created On" dataIndex={"createdOn"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />*/}
+            <Table.Column title="Parties" dataIndex={"parties"} render={(v, r, i) => v.map(rv => rv.partyName).join(", ")} />
+            <Table.Column title="Routes" dataIndex={"routes"} render={(v, r, i) => v.map(rv => rv.routeId).join(", ")} />
             <Table.Column
                 title="Actions"
                 dataIndex={undefined}
@@ -229,7 +225,7 @@ export const SenderId = () => {
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
 
-    const {Title} = Typography;
+    const { Title } = Typography;
     const [writeForm] = Form.useForm();
 
     const [modalData, setModalData] = useState(null);
@@ -256,26 +252,26 @@ export const SenderId = () => {
     }, []);
 
     return (<>
-        <Row style={{marginLeft: 5}}>
+        <Row style={{ marginLeft: 5 }}>
             <Col md={24}>
                 <Card title={<Title level={5}>Sender ID</Title>}
-                      headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}}
-                      extra={
-                          <Button type="primary" style={{background: "#1890ff", borderColor: "#1890ff"}}
-                                  icon={<PlusCircleFilled/>} onClick={() => showModal({})}>
-                              Create Sender
-                          </Button>}
-                      style={{height: 135}} size="small">
-                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                    headStyle={{ backgroundColor: "#f0f2f5", border: 0, padding: '0px' }}
+                    extra={
+                        <Button type="primary" style={{ background: "#1890ff", borderColor: "#1890ff" }}
+                            icon={<PlusCircleFilled />} onClick={() => showModal({})}>
+                            Create Sender
+                        </Button>}
+                    style={{ height: 135 }} size="small">
+                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })} />
                 </Card>
             </Col>
-            <Modal width={800} key="recordEditor" visible={modalData}
-                   maskClosable={false} onCancel={handleCancel} closable={false}  footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
-                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })}/>
-            </Modal>
         </Row>
-        <DataView senderId={senderIds} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
+        <DataView senderId={senderIds} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
-                   onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+            onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+        <Modal width={800} key="recordEditor" visible={modalData}
+            maskClosable={false} onCancel={handleCancel} closable={false} footer={[<Button style={{ backgroundColor: '#FF0000', color: 'white', border: 'none' }} onClick={handleOk}>Close</Button>]}>
+            <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "createdStamp DESC", page: 1 })} />
+        </Modal>
     </>);
 };
