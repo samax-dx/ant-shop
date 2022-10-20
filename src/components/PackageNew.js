@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
     Form,
     Input,
@@ -80,10 +80,21 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record, onRecordSaved,close }) => {
-    const { Option } = Select;
-    const [createForm] = Form.useForm(form);
+const WriteForm = ({ recordArg, onRecordSaved, close }) => {
+    const [writeForm] = Form.useForm();
+    const [isCreateForm, setIsCreateForm] = useState(true);
+
+    const [products, setProducts] = useState([]);
     const [prefixes, setPrefixes] = useState([]);
+    const [lastWrite, setLastWrite] = useState(recordArg);
+
+    useEffect(()=> {
+        ProductService.fetchProductLineups({})
+            .then(data=>{
+                setProducts(data.lineups);
+            })
+    },[])
+
     useEffect(()=> {
         PrefixService.fetchRecords({})
             .then(data=>{
@@ -91,36 +102,35 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
             })
     },[])
 
-    const [productLineups, setProductLineups] = useState([]);
-    useEffect(()=> {
-        ProductService.fetchProductLineups({})
-            .then(data=>{
-                setProductLineups(data.lineups);
-            })
-    },[])
+    useEffect(() => {
+        setIsCreateForm(Object.keys(recordArg).length === 0);
+        writeForm.resetFields();
+        writeForm.setFieldsValue(recordArg);
+    }, [recordArg]);
 
-    useEffect(() => createForm.resetFields(), [record, createForm]);
+    useEffect( () => {
+        if (lastWrite === recordArg) return;
+        isCreateForm && writeForm.resetFields();
+    },[lastWrite]);
 
     return (<>
         <Form
-            form={createForm}
+            form={writeForm}
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
-            initialValues={record}
             style={{
                 padding:'15px'
             }}
-            onFinish={() => createForm.resetFields()}
         >
             <Form.Item name="packageId" label="Package" rules={[{ required: true }]}>
-                <Select showSearch allowClear style={{ minWidth: 150 }}>
-                    {productLineups.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName} ({v.productId})</Select.Option>)}
+                <Select showSearch allowClear disabled={!isCreateForm} style={{ minWidth: 150 }}>
+                    {products.map((v, i) => <Select.Option value={v.productId} key={i}>{v.productName} ({v.productId})</Select.Option>)}
                 </Select>
             </Form.Item>
 
             <Form.Item name="dialPlanId" label="DialPlan Prefix" rules={[{ required: true }]}>
-                <Select showSearch allowClear style={{ minWidth: 150 }}>
+                <Select showSearch allowClear disabled={!isCreateForm} style={{ minWidth: 150 }}>
                     {prefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
                 </Select>
             </Form.Item>
@@ -131,11 +141,11 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
                 <Button
                     type="primary"
                     htmlType="submit"
-                    onClick={() => createForm
+                    onClick={() => writeForm
                         .validateFields()
-                        .then(_ => PackageService.saveRecord(createForm.getFieldsValue()))
+                        .then(_ => PackageService.saveRecord(writeForm.getFieldsValue()))
                         .then(data => {
-                            // alert("Package Create Success!");
+                            setLastWrite(data.package);
                             onRecordSaved(data.package);
                             notification.success({
                                 key: `cpackage_${Date.now()}`,
@@ -144,7 +154,6 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
                                 duration: 5
                             });
                         })
-                        // .then(_=> createForm.resetFields())
                         .catch(error => notification.error({
                             key: `cpackage_${Date.now()}`,
                             message: "Task Failed",
@@ -214,7 +223,6 @@ export const PackageNew = () => {
     const [partyFetchError, setPartyFetchError] = useState(null);
 
     const {Title} = Typography;
-    const [writeForm] = Form.useForm();
 
     const [modalData, setModalData] = useState(null);
     const showModal = data => setModalData(data);
@@ -255,7 +263,7 @@ export const PackageNew = () => {
             </Col>
             <Modal closable={false} key="recordEditor" visible={modalData}
                    maskClosable={false} onCancel={handleCancel} footer={null}>
-                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "packageId DESC", page: 1 })} close={handleCancel}/>
+                <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "packageId DESC", page: 1 })} close={handleCancel}/>
             </Modal>
         </Row>
         <DataView packages={packages} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
