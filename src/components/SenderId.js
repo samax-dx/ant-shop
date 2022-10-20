@@ -268,17 +268,13 @@ export const SenderId = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })} />
                 </Card>
             </Col>
-            <Modal width={800} key="recordEditor" visible={modalData}
-                   maskClosable={false} onCancel={handleCancel} closable={false}  footer={[<Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none'}} onClick={handleOk}>Close</Button>]}>
-                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })}/>
-            </Modal>
         </Row>
         <DataView senderId={senderIds} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
             onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         <Modal width={800} key="recordEditor" visible={modalData}
-            maskClosable={false} onCancel={handleCancel} closable={false} footer={[<Button style={{ backgroundColor: '#FF0000', color: 'white', border: 'none' }} onClick={handleOk}>Close</Button>]}>
-            <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "createdStamp DESC", page: 1 })} />
+               maskClosable={false} onCancel={handleCancel} closable={false}  footer={null}>
+            <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })} close={handleCancel}/>
         </Modal>
     </>);
 };
