@@ -84,25 +84,37 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record, onRecordSaved,close }) => {
+const WriteForm = ({ recordArg, onRecordSaved,close }) => {
     const { Option } = Select;
-    const [createForm] = Form.useForm(form);
+    const [writeForm] = Form.useForm();
 
-    useEffect(() => createForm.resetFields(), [record, createForm]);
+    const [isCreateForm, setIsCreateForm] = useState(true);
+
+    const [lastWrite, setLastWrite] = useState(recordArg);
+
+    useEffect(() => {
+        setIsCreateForm(Object.keys(recordArg).length === 0);
+        writeForm.resetFields();
+        writeForm.setFieldsValue(recordArg);
+    }, [recordArg]);
+
+    useEffect( () => {
+        if (lastWrite === recordArg) return;
+        isCreateForm && writeForm.resetFields();
+    },[lastWrite]);
+
 
     return (<>
         <Form
-            form={createForm}
+            form={writeForm}
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
-            initialValues={record}
             style={{
                 padding:'15px'
             }}
-            onFinish={() => createForm.resetFields()}
         >
-            <Form.Item style={{marginBottom:'5px'}} name="prefixId" label="Prefix" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item style={{marginBottom:'5px'}} name="prefixId" label="Prefix" rules={[{ required: true }]} children={<Input disabled={!isCreateForm} />} />
 
             <Form.Item style={{marginBottom:'5px'}}
                        name="countryCode"
@@ -134,10 +146,11 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
                 <Button
                     type="primary"
                     htmlType="submit"
-                    onClick={() => createForm
+                    onClick={() => writeForm
                         .validateFields()
-                        .then(_ => PrefixService.saveRecord(createForm.getFieldsValue()))
+                        .then(_ => PrefixService.saveRecord(writeForm.getFieldsValue()))
                         .then(data => {
+                            setLastWrite(data.prefix)
                             onRecordSaved(data.prefix);
                             notification.success({
                                 key: `cprefix_${Date.now()}`,
@@ -209,7 +222,6 @@ export const PrefixNew  = () => {
     const [partyFetchError, setPartyFetchError] = useState(null);
 
     const {Title} = Typography;
-    const [writeForm] = Form.useForm();
 
     const [modalData, setModalData] = useState(null);
     const showModal = data => setModalData(data);
@@ -250,7 +262,7 @@ export const PrefixNew  = () => {
             </Col>
             <Modal closable={false} key="recordEditor" visible={modalData}
                    maskClosable={false} onCancel={handleCancel} footer={null}>
-                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "prefixId DESC", page: 1 })} close={handleCancel}/>
+                <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "prefixId DESC", page: 1 })} close={handleCancel}/>
             </Modal>
         </Row>
         <DataView prefixes={prefixes} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>

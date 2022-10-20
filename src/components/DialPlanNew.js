@@ -81,9 +81,23 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record, onRecordSaved,close }) => {
+const WriteForm = ({ recordArg, onRecordSaved,close }) => {
     const { Option } = Select;
-    const [writeForm] = Form.useForm(form);
+    const [writeForm] = Form.useForm();
+    const [isCreateForm, setIsCreateForm] = useState(true);
+
+    const [lastWrite, setLastWrite] = useState(recordArg);
+
+    useEffect(() => {
+        setIsCreateForm(Object.keys(recordArg).length === 0);
+        writeForm.resetFields();
+        writeForm.setFieldsValue(recordArg);
+    }, [recordArg]);
+
+    useEffect( () => {
+        if (lastWrite === recordArg) return;
+        isCreateForm && writeForm.resetFields();
+    },[lastWrite]);
 
     const [routes, setRoutes] = useState([]);
     useEffect(()=> {
@@ -100,7 +114,6 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
             })
     },[])
 
-    useEffect(() => writeForm.resetFields(), [record, writeForm]);
 
     return (<>
         <Form
@@ -109,20 +122,18 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
-            initialValues={record}
             style={{
                 padding:'15px'
             }}
-            onFinish={() => writeForm.resetFields()}
         >
             <Form.Item name="dialPlanId" label="Prefix" rules={[{ required: true }]}>
-                <Select showSearch allowClear style={{ minWidth: 150 }}>
+                <Select showSearch allowClear disabled={!isCreateForm} style={{ minWidth: 150 }}>
                     {prefixes.map((v, i) => <Select.Option value={v.prefixId} key={i}>{v.prefixId}</Select.Option>)}
                 </Select>
             </Form.Item>
 
             <Form.Item name="routeId" label="Route" rules={[{ required: true }]}>
-                <Select showSearch allowClear style={{ minWidth: 150 }}>
+                <Select showSearch allowClear disabled={!isCreateForm} style={{ minWidth: 150 }}>
                     {routes.map((v, i) => <Select.Option value={v.routeId} key={i}>{v.routeId}</Select.Option>)}
                 </Select>
             </Form.Item>
@@ -139,9 +150,10 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
                     htmlType="submit"
                     onClick={() => writeForm
                         .validateFields()
-                        .then(_ => DialPlanService.saveRecord(writeForm
-                            .getFieldsValue()))
-                        .then(data => {onRecordSaved(data.dialPlan);
+                        .then(_ => DialPlanService.saveRecord(writeForm.getFieldsValue()))
+                        .then(data => {
+                            setLastWrite(data.dialPlan);
+                            onRecordSaved(data.dialPlan);
                             notification.success({
                                 key: `cdialplan_${Math.random()+''}`,
                                 message: "Task Complete",
@@ -221,7 +233,6 @@ export const DialPlanNew = () => {
     const [partyFetchError, setPartyFetchError] = useState(null);
 
     const {Title} = Typography;
-    const [writeForm] = Form.useForm();
 
     const [modalData, setModalData] = useState(null);
     const showModal = data => setModalData(data);
@@ -262,7 +273,7 @@ export const DialPlanNew = () => {
             </Col>
             <Modal width={800} closable={false} key="recordEditor" visible={modalData}
                    maskClosable={false} onCancel={handleCancel} footer={null}>
-                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "dialPlanId ASC", page: 1 })} close={handleCancel}/>
+                <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "dialPlanId ASC", page: 1 })} close={handleCancel}/>
             </Modal>
         </Row>
         <DataView dialPlans={dialPlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>

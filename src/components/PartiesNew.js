@@ -79,27 +79,38 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ form, record, onRecordSaved,close }) => {
+const WriteForm = ({ recordArg, onRecordSaved,close }) => {
     const { Option } = Select;
-    const [createForm] = Form.useForm(form);
-    const ref = useRef();
+    const multiSelectRef = useRef();
 
-    useEffect(() => createForm.resetFields(), [record, createForm]);
+    const [writeForm] = Form.useForm();
+    const [isCreateForm, setIsCreateForm] = useState(true);
+
+    const [lastWrite, setLastWrite] = useState(recordArg);
+
+    useEffect(() => {
+        setIsCreateForm(Object.keys(recordArg).length === 0);
+        writeForm.resetFields();
+        writeForm.setFieldsValue(recordArg);
+    }, [recordArg]);
+
+    useEffect( () => {
+        if (lastWrite === recordArg) return;
+        isCreateForm && writeForm.resetFields();
+    },[lastWrite]);
 
     return (<>
         <Form
-            form={createForm}
+            form={writeForm}
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
-            initialValues={record}
             style={{
                 padding:'15px'
             }}
-            onFinish={() => createForm.resetFields()}
         >
-            <Form.Item name="partyId" label="ID" style={{ display: "none" }} children={<Input />} />
-            <Form.Item name="loginId" label="User ID" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="partyId" label="ID" hidden children={<Input />} />
+            <Form.Item name="loginId" label="User ID" rules={[{ required: true }]} children={<Input disabled={!isCreateForm} />} />
             <Form.Item name="name" label="Name" rules={[{ required: true }]} children={<Input />} />
 
             <Form.Item label="Contact Number" required>
@@ -133,19 +144,19 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
                 </Space>
             </Form.Item>
             <Form.Item name="roles" label="Roles" rules={[{ required: false }]} children={ <Select
-                ref={ref}
+                ref={multiSelectRef}
                 mode="multiple"
                 size={'middle'}
                 placeholder="Please select"
                 style={{
                     width: '100%',
                 }}
-                onChange={() => ref.current.blur()}
+                onChange={() => multiSelectRef.current.blur()}
             >
                 <Option key="admin">Admin</Option>
                 <Option key="user">User</Option>
             </Select>} />
-            {record.partyId && <Form.Item
+            {recordArg.partyId && <Form.Item
                 name="password_old"
                 label="Current Password"
                 rules={[{ required: true }]}
@@ -156,7 +167,7 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
 
             <Form.Item
                 name="password"
-                label={record.partyId ? "New password" : "Password"}
+                label={recordArg.partyId ? "New password" : "Password"}
                 rules={[{ required: true }]}
                 hasFeedback
             >
@@ -166,7 +177,7 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
             <Form.Item
                 name="passwordConfirm"
                 label="Confirm Password"
-                dependencies={record.partyId ? ['password_old', 'password'] : ["password"]}
+                dependencies={recordArg.partyId ? ['password_old', 'password'] : ["password"]}
                 hasFeedback
                 rules={[
                     { required: true },
@@ -188,10 +199,11 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
                 <Button
                     type="primary"
                     htmlType="submit"
-                    onClick={() => createForm
+                    onClick={() => writeForm
                         .validateFields()
-                        .then(_ => PartyService.saveRecord(createForm.getFieldsValue()))
+                        .then(_ => PartyService.saveRecord(writeForm.getFieldsValue()))
                         .then(data => {
+                            setLastWrite(data.party);
                             onRecordSaved(data.party);
                             notification.success({
                                 key: `cparty_${Date.now()}`,
@@ -271,8 +283,6 @@ export const PartiesNew = () => {
     const [partyFetchError, setPartyFetchError] = useState(null);
 
     const {Title} = Typography;
-    const [writeForm] = Form.useForm();
-
     const [modalData, setModalData] = useState(null);
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
@@ -312,7 +322,7 @@ export const PartiesNew = () => {
             </Col>
             <Modal width={800} closable={false} key="recordEditor" visible={modalData}
                    maskClosable={false} onCancel={handleCancel} style={{ top: 20 }} footer={null}>
-                <WriteForm form={writeForm} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "partyId DESC", page: 1 })} close={handleCancel}/>
+                <WriteForm recordArg={modalData} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "partyId DESC", page: 1 })} close={handleCancel}/>
             </Modal>
         </Row>
         <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
