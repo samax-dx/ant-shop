@@ -83,7 +83,7 @@ const SearchForm = ({ onSearch }) => {
 
 const WriteForm = ({ form, record, onRecordSaved,close }) => {
     const { Option } = Select;
-    const [createForm] = Form.useForm(form);
+    const [writeForm] = Form.useForm(form);
 
     const [routes, setRoutes] = useState([]);
     useEffect(()=> {
@@ -100,11 +100,12 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
             })
     },[])
 
-    useEffect(() => createForm.resetFields(), [record, createForm]);
+    useEffect(() => writeForm.resetFields(), [record, writeForm]);
 
     return (<>
         <Form
-            form={createForm}
+            form={writeForm
+        }
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
@@ -112,7 +113,7 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
             style={{
                 padding:'15px'
             }}
-            onFinish={() => createForm.resetFields()}
+            onFinish={() => writeForm.resetFields()}
         >
             <Form.Item name="dialPlanId" label="Prefix" rules={[{ required: true }]}>
                 <Select showSearch allowClear style={{ minWidth: 150 }}>
@@ -136,12 +137,11 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
                 <Button
                     type="primary"
                     htmlType="submit"
-                    onClick={() => createForm
+                    onClick={() => writeForm
                         .validateFields()
-                        .then(_ => DialPlanService.saveRecord(createForm.getFieldsValue()))
-                        .then(data => {
-                            // alert("DialPlan Create Success!");
-                            onRecordSaved(data.dialPlan);
+                        .then(_ => DialPlanService.saveRecord(writeForm
+                            .getFieldsValue()))
+                        .then(data => {onRecordSaved(data.dialPlan);
                             notification.success({
                                 key: `cdialplan_${Math.random()+''}`,
                                 message: "Task Complete",
