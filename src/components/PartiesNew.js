@@ -210,7 +210,7 @@ const WriteForm = ({ form, record, onRecordSaved,close }) => {
                     }
                     children={"Submit"}
                 />
-                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none', marginLeft: 8}} >Close</Button>
+                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none', marginLeft: 8}} onClick={close}>Close</Button>
             </Form.Item>
         </Form>
     </>);
