@@ -144,7 +144,7 @@ const WriteForm = ({ recordArg, onRecordSaved, close }) => {
 
             <Form.Item name="digitCut" label="Digit Cut" children={<Input />} />
 
-            <Form.Item wrapperCol={{ offset: 19 }}>
+            <Form.Item wrapperCol={{ offset: 16 }}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -301,8 +301,8 @@ export const DialPlanNew = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })} />
                 </Card>
             </Col>
-            <Modal width={800} closable={false} key="recordEditor" visible={modalData}
-                maskClosable={false} onCancel={handleCancel} footer={null}>
+            <Modal closable={false} key="recordEditor" visible={modalData}
+                maskClosable={false} onCancel={handleCancel} footer={null} bodyStyle={{height:"60vh"}}>
                 <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "lastUpdatedStamp DESC", page: 1 })} close={handleCancel} />
             </Modal>
         </Row>

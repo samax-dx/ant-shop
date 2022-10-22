@@ -283,8 +283,7 @@ export const SenderId = () => {
         <DataView senderId={senderIds} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
             onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
-        <Modal width={800} key="recordEditor" visible={modalData}
-               maskClosable={false} onCancel={handleCancel} closable={false}  footer={null}>
+        <Modal width={800} key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false}  footer={null} bodyStyle={{height:"55vh"}}>
             <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })} close={handleCancel}/>
         </Modal>
     </>);
