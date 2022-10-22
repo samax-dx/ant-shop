@@ -302,7 +302,7 @@ export const DialPlanNew = () => {
                 </Card>
             </Col>
             <Modal closable={false} key="recordEditor" visible={modalData}
-                maskClosable={false} onCancel={handleCancel} footer={null} bodyStyle={{height:"60vh"}}>
+                maskClosable={false} onCancel={handleCancel} footer={null} bodyStyle={{height:"23rem"}}>
                 <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "lastUpdatedStamp DESC", page: 1 })} close={handleCancel} />
             </Modal>
         </Row>

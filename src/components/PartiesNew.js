@@ -321,7 +321,7 @@ export const PartiesNew = () => {
                 </Card>
             </Col>
             <Modal width={800} closable={false} key="recordEditor" visible={modalData}
-                   maskClosable={false} onCancel={handleCancel} style={{ top: 20 }} footer={null} bodyStyle={{height:"72vh"}}>
+                   maskClosable={false} onCancel={handleCancel} style={{ top: 20 }} footer={null} bodyStyle={{height:"28rem"}}>
                 <WriteForm recordArg={modalData} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "partyId DESC", page: 1 })} close={handleCancel}/>
             </Modal>
         </Row>
