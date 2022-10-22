@@ -12,12 +12,12 @@ import {
     Col,
     Modal, Typography, DatePicker, notification
 } from "antd";
-import {countries} from "countries-list";
-import {PlusCircleFilled} from "@ant-design/icons";
+import { countries } from "countries-list";
+import { ExclamationCircleOutlined, PlusCircleFilled } from "@ant-design/icons";
 import dayjs from "dayjs";
-import {DialPlanService} from "../services/DialPlanService";
-import {RouteService} from "../services/RouteService";
-import {PrefixService} from "../services/PrefixService";
+import { DialPlanService } from "../services/DialPlanService";
+import { RouteService } from "../services/RouteService";
+import { PrefixService } from "../services/PrefixService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -57,19 +57,19 @@ const SearchForm = ({ onSearch }) => {
     return (<>
         <Form
             form={searchForm}
-            labelCol={{span: 18}}
-            wrapperCol={{ span: 23}}
+            labelCol={{ span: 18 }}
+            wrapperCol={{ span: 23 }}
             labelAlign="left"
         >
-            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="dialPlanId" label="Prefix" children={<Input />} />
+            <Form.Item style={{ display: "inline-block", marginBottom: '0px' }} name="dialPlanId" label="Prefix" children={<Input />} />
             <Form.Item name="dialPlanId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="routeId" label="Route" children={<Input />} />
+            <Form.Item style={{ display: "inline-block", marginBottom: '0px' }} name="routeId" label="Route" children={<Input />} />
             <Form.Item name="routeId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="egressPrefix" label="Egress Prefix" children={<Input />} />
+            <Form.Item style={{ display: "inline-block", marginBottom: '0px' }} name="egressPrefix" label="Egress Prefix" children={<Input />} />
             <Form.Item name="egressPrefix_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{display:"inline-block",marginBottom:'0px'}} name="digitCut" label="Digit Cut" children={<Input />} />
+            <Form.Item style={{ display: "inline-block", marginBottom: '0px' }} name="digitCut" label="Digit Cut" children={<Input />} />
             <Form.Item name="digitCut_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
+            <Form.Item style={{ display: 'inline-block', marginBottom: 0 }} label=" " colon={false}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -81,7 +81,7 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ recordArg, onRecordSaved,close }) => {
+const WriteForm = ({ recordArg, onRecordSaved, close }) => {
     const { Option } = Select;
     const [writeForm] = Form.useForm();
     const [isCreateForm, setIsCreateForm] = useState(true);
@@ -94,36 +94,36 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
         writeForm.setFieldsValue(recordArg);
     }, [recordArg]);
 
-    useEffect( () => {
+    useEffect(() => {
         if (lastWrite === recordArg) return;
         isCreateForm && writeForm.resetFields();
-    },[lastWrite]);
+    }, [lastWrite]);
 
     const [routes, setRoutes] = useState([]);
-    useEffect(()=> {
+    useEffect(() => {
         RouteService.fetchRecords({})
-            .then(data=>{
+            .then(data => {
                 setRoutes(data.routes);
             })
-    },[])
+    }, [])
     const [prefixes, setPrefixes] = useState([]);
-    useEffect(()=> {
+    useEffect(() => {
         PrefixService.fetchRecords({})
-            .then(data=>{
+            .then(data => {
                 setPrefixes(data.prefixes);
             })
-    },[])
+    }, [])
 
 
     return (<>
         <Form
             form={writeForm
-        }
+            }
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 20 }}
             labelAlign={"left"}
             style={{
-                padding:'15px'
+                padding: '15px'
             }}
         >
             <Form.Item name="dialPlanId" label="Prefix" rules={[{ required: true }]}>
@@ -144,7 +144,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
 
             <Form.Item name="digitCut" label="Digit Cut" children={<Input />} />
 
-            <Form.Item wrapperCol={{ offset: 19}}>
+            <Form.Item wrapperCol={{ offset: 19 }}>
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -155,7 +155,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                             setLastWrite(data.dialPlan);
                             onRecordSaved(data.dialPlan);
                             notification.success({
-                                key: `cdialplan_${Math.random()+''}`,
+                                key: `cdialplan_${Math.random() + ''}`,
                                 message: "Task Complete",
                                 description: <>DialPlan Created: {data.dialPlan.dialPlanId}</>,
                                 duration: 5
@@ -170,20 +170,28 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                     }
                     children={"Submit"}
                 />
-                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none',marginLeft:4}} onClick={close}>Close</Button>
+                <Button style={{ backgroundColor: '#FF0000', color: 'white', border: 'none', marginLeft: 4 }} onClick={close}>Close</Button>
             </Form.Item>
         </Form>
     </>);
 };
 
-const DataView = ({ dialPlans, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ dialPlans, viewPage, viewLimit, onEdit, onDelete }) => {
+    const confirmDelete = dialPlan => Modal.confirm({
+        title: 'Confirm delete dial-plan?',
+        icon: <ExclamationCircleOutlined />,
+        content: <>Deleting dial-plan: <strong>{dialPlan.dialPlanId} {dialPlan.routeId}</strong></>,
+        onOk() {
+            onDelete(dialPlan);
+        }
+    });
 
     return (<>
         <Table
-            style={{marginLeft:6}}
+            style={{ marginLeft: 6 }}
             size="small"
             dataSource={dialPlans}
-            rowKey={(dialPlan)=> dialPlan.dialPlanId+'_'+dialPlan.routeId}
+            rowKey={(dialPlan) => dialPlan.dialPlanId + '_' + dialPlan.routeId}
             locale={{ emptyText: dialPlans === null ? "E" : "No Data" }}
             pagination={false}
         >
@@ -192,7 +200,7 @@ const DataView = ({ dialPlans, viewPage, viewLimit, onEdit }) => {
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="Prefix" dataIndex={"dialPlanId"}/>
+            <Table.Column title="Prefix" dataIndex={"dialPlanId"} />
             <Table.Column title="Route" dataIndex={"routeId"} />
             <Table.Column title="Priority" dataIndex={"priority"} />
             <Table.Column title="Egress Prefix" dataIndex={"egressPrefix"} />
@@ -202,9 +210,10 @@ const DataView = ({ dialPlans, viewPage, viewLimit, onEdit }) => {
                 title="Actions"
                 dataIndex={undefined}
                 render={(value, record, index) => {
-                    return (
+                    return (<>
                         <Button onClick={() => onEdit(record)} type="link">Edit</Button>
-                    );
+                        <Button onClick={() => confirmDelete(record)} type="link">Delete</Button>
+                    </>);
                 }}
             />
         </Table>
@@ -232,12 +241,33 @@ export const DialPlanNew = () => {
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
 
-    const {Title} = Typography;
+    const { Title } = Typography;
 
     const [modalData, setModalData] = useState(null);
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
+
+    const removeDialPlan = dialPlan => {
+        DialPlanService.removeRecord(dialPlan)
+            .then(data => {
+                setLastQuery({ ...lastQuery, page: 1 });
+                notification.success({
+                    key: `rDialPlan_${Date.now()}`,
+                    message: "Task Finished",
+                    description: `Dial-plan deleted: ${dialPlan.dialPlanId} ${dialPlan.routeId}`,
+                    duration: 15
+                });
+            })
+            .catch(error => {
+                notification.error({
+                    key: `rDialPlan_${Date.now()}`,
+                    message: "Task Failed",
+                    description: `Error Deleting dial-plan: ${dialPlan.dialPlanId} ${dialPlan.routeId}`,
+                    duration: 15
+                });
+            });
+    };
 
     useEffect(() => {
         DialPlanService.fetchRecords(lastQuery)
@@ -258,26 +288,26 @@ export const DialPlanNew = () => {
     }, []);
 
     return (<>
-        <Row style={{marginLeft: 5}}>
+        <Row style={{ marginLeft: 5 }}>
             <Col md={24}>
                 <Card title={<Title level={5}>Dial Plan</Title>}
-                      headStyle={{backgroundColor: "#f0f2f5", border: 0, padding: '0px'}}
-                      extra={
-                          <Button type="primary" style={{background: "#1890ff", borderColor: "#1890ff"}}
-                                  icon={<PlusCircleFilled/>} onClick={() => showModal({})}>
-                              Create DialPlan
-                          </Button>}
-                      style={{height: 135}} size="small">
-                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                    headStyle={{ backgroundColor: "#f0f2f5", border: 0, padding: '0px' }}
+                    extra={
+                        <Button type="primary" style={{ background: "#1890ff", borderColor: "#1890ff" }}
+                            icon={<PlusCircleFilled />} onClick={() => showModal({})}>
+                            Create DialPlan
+                        </Button>}
+                    style={{ height: 135 }} size="small">
+                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })} />
                 </Card>
             </Col>
             <Modal width={800} closable={false} key="recordEditor" visible={modalData}
-                   maskClosable={false} onCancel={handleCancel} footer={null}>
-                <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "dialPlanId ASC", page: 1 })} close={handleCancel}/>
+                maskClosable={false} onCancel={handleCancel} footer={null}>
+                <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "lastUpdatedStamp DESC", page: 1 })} close={handleCancel} />
             </Modal>
         </Row>
-        <DataView dialPlans={dialPlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
+        <DataView dialPlans={dialPlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeDialPlan} />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
-                   onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+            onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);
 };

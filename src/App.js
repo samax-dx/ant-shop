@@ -16,13 +16,11 @@ import { Payments } from './components/Payments';
 import { Prefix } from './components/Prefix';
 import { Route } from "./components/Route";
 import { DialPlan } from './components/DialPlan';
-import { Package } from './components/Package';
 import { BrowserRouter as Router, Route as ReactRoute } from "react-router-dom";
 import {Topup} from "./components/Topup";
 import {DialPlanNew} from "./components/DialPlanNew";
 import {RouteNew} from "./components/RouteNew";
 import {PrefixNew} from "./components/PrefixNew";
-import {PackageNew} from "./components/PackageNew";
 import {SenderId} from "./components/SenderId";
 import {PartiesNew} from "./components/PartiesNew";
 
@@ -33,7 +31,7 @@ export const App = ({ actor }) => {
     const createRouteComponent = rc => <AppLayout
         render={{
             Home, Product, Category, Partner, Rateplan, Parties,
-            Payments, PaymentList, Prefix, Route, DialPlan, Package, Login
+            Payments, PaymentList, Prefix, Route, DialPlan, Login
         }[component]}
         actor={actor}
         routeComponent={rc}
@@ -49,7 +47,6 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/Settings/prefix" element={createRouteComponent(<PrefixNew />)} />
                 <ReactRoute path="/Settings/route" element={createRouteComponent(<RouteNew />)} />
                 <ReactRoute path="/Settings/dialplan" element={createRouteComponent(<DialPlanNew />)} />
-                <ReactRoute path="/Settings/packagePrefix" element={createRouteComponent(<PackageNew />)} />
             </Routes>
         </BrowserRouter>
     </>);

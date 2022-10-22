@@ -262,7 +262,7 @@ export const PrefixNew  = () => {
             </Col>
             <Modal closable={false} key="recordEditor" visible={modalData}
                    maskClosable={false} onCancel={handleCancel} footer={null}>
-                <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "prefixId DESC", page: 1 })} close={handleCancel}/>
+                <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "lastUpdatedStamp DESC", page: 1 })} close={handleCancel}/>
             </Modal>
         </Row>
         <DataView prefixes={prefixes} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>

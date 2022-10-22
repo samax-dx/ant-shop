@@ -11,7 +11,6 @@ import { Party } from "../services/Party";
 import { Prefix } from "../services/Prefix";
 import { DialPlan } from "../services/DialPlan";
 import { Route } from "../services/Route";
-import { Package } from "../services/Package";
 import {PartyService} from "../services/PartyService";
 
 
@@ -52,7 +51,6 @@ export const AppMachine = createMachine({
         "NAV_PREFIX": { target: "prefix", actions: ["assignPrefixActor"] },
         "NAV_ROUTE": { target: "route", actions: ["assignRouteActor"] },
         "NAV_DIAL_PLAN": { target: "dialPlan", actions: ["assignDialPlanActor"] },
-        "NAV_PACKAGE": { target: "package", actions: ["assignPackageActor"] },
         // "NAV_SENDER_ID_MANAGER": { target: "senderIdManager", actions: ["assignSenderIdManagerActor"] },
         "LOGIN": { target: "login", actions: ["assignLoginActor"] },
         "LOGOUT": { target: "logout", actions: ["assignLogoutActor"] },
@@ -177,22 +175,6 @@ export const AppMachine = createMachine({
         })),
         assignSenderIdManagerActor: assign((ctx, ev) => ({
             actor: null
-        })),
-        assignPackageActor: assign((ctx, ev) => ({
-            actor: [
-                spawnFetcher(
-                    Package.fetchRecords,
-                    { data: { page: 1, limit: 10 } },
-                    { packages: [], count: 0 },
-                    { message: "Waiting for PackagePrefix Search" }
-                ),
-                spawnFetcher(
-                    Package.saveRecord,
-                    { data: {} },
-                    { packageId: null },
-                    { message: "Waiting for PackagePrefix Save" }
-                )
-            ]
         })),
         assignLoginActor: assign((ctx, ev) => ({
             actor: spawn(LoginMachine)

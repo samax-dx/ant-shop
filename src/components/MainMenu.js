@@ -16,7 +16,7 @@ import {Link, NavLink, useLocation } from "react-router-dom";
 
 export const MainMenu = ({ actor }) => {
     const [appState, sendApp] = [actor.getSnapshot(), actor.send];
-    const location = useLocation();console.log(location.pathname.replace("/", ""))
+    const location = useLocation();
     const paths = location.pathname.split("/").slice(1);
     return (
         <Menu
@@ -38,7 +38,6 @@ export const MainMenu = ({ actor }) => {
             {/*    <Menu.Item key="prefix" icon={<InteractionTwoTone />} onClick={() => sendApp({ type: 'NAV_PREFIX' })}>Prefix</Menu.Item>*/}
             {/*    <Menu.Item key="route" icon={<InteractionTwoTone />} onClick={() => sendApp({ type: 'NAV_ROUTE' })}>Route</Menu.Item>*/}
             {/*    <Menu.Item key="dialPlan" icon={<InteractionTwoTone />} onClick={() => sendApp({ type: 'NAV_DIAL_PLAN' })}>Dial Plan</Menu.Item>*/}
-            {/*    <Menu.Item key="package" icon={<InteractionTwoTone />} onClick={() => sendApp({ type: 'NAV_PACKAGE' })}>Package Prefix</Menu.Item>*/}
             {/*</Menu.SubMenu>*/}
             {/*<Menu.SubMenu key="sub5" icon={<UserOutlined />} title="..." disabled>*/}
             {/*    <Menu.Item key="partners">Partners</Menu.Item>*/}
@@ -63,7 +62,6 @@ export const MainMenu = ({ actor }) => {
                 <Menu.Item key="prefix" icon={<InteractionTwoTone />} ><Link to="/Settings/prefix">Prefix</Link></Menu.Item>
                 <Menu.Item key="route" icon={<InteractionTwoTone />}><Link to="/Settings/route">Route</Link></Menu.Item>
                 <Menu.Item key="dialplan" icon={<InteractionTwoTone />} ><Link to="/Settings/dialplan">Dial Plan</Link></Menu.Item>
-                <Menu.Item key="packagePrefix" icon={<InteractionTwoTone />} ><Link to="/Settings/packagePrefix">Package Prefix</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="sub5" icon={<UserOutlined />} title="..." disabled>
                 <Menu.Item ><Link to="partners">Partners</Link></Menu.Item>
