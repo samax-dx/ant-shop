@@ -273,7 +273,7 @@ export const SenderId = () => {
                     extra={
                         <Button type="primary" style={{ background: "#1890ff", borderColor: "#1890ff" }}
                             icon={<PlusCircleFilled />} onClick={() => showModal({})}>
-                            Create Sender
+                            Create Sender Id
                         </Button>}
                     style={{ height: 135 }} size="small">
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })} />
