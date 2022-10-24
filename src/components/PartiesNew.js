@@ -26,7 +26,7 @@ const SearchForm = ({ onSearch }) => {
 
         ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
             const date = formData[n];
-            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
+            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD HH:mm:ss") : null;
 
             if (formData[n] === null) {
                 delete formData[n];
@@ -62,9 +62,9 @@ const SearchForm = ({ onSearch }) => {
             <Form.Item name="name" label="Name" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
             <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
 
-            <Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
+            <Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>
             <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
-            <Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
+            <Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>
             <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>
 
             <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
@@ -317,7 +317,7 @@ export const PartiesNew = () => {
                               Create Party
                           </Button>}
                       style={{height: 135}} size="small">
-                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
                 </Card>
             </Col>
             <Modal width={800} closable={false} key="recordEditor" visible={modalData}

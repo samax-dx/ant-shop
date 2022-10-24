@@ -28,16 +28,16 @@ const SearchForm = ({ onSearch }) => {
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
-        ["createdOn_fld0_value", "createdOn_fld1_value"].forEach((n, i) => {
+        ["date_fld0_value", "date_fld1_value"].forEach((n, i) => {
             const date = formData[n];
-            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD") : null;
+            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD HH:mm:ss") : null;
 
             if (formData[n] === null) {
                 delete formData[n];
             }
         });
 
-        const queryData = ["partyLoginId", "partyName", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
+        const queryData = ["partyLoginId", "partyName", "date_fld0_value", "date_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -68,10 +68,10 @@ const SearchForm = ({ onSearch }) => {
             <Form.Item name="partyName" label="Party Name" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
             <Form.Item name="partyName_op" initialValue={"contains"} hidden children={<Input />} />
 
-            <Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
-            <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
-            <Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
-            <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>
+            <Form.Item name="date_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>
+            <Form.Item name="date_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
+            <Form.Item name="date_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>
+            <Form.Item name="date_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>
 
             <Form.Item style={{display:'inline-block', marginBottom:0}} label=" " colon={false}>
                 <Button
@@ -168,7 +168,7 @@ export const Topup = () => {
                               TopUp / Make Payment
                           </Button>}
                       style={{height: 135}} size="small">
-                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                    <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
                 </Card>
             </Col>
             <Modal bodyStyle={{padding: 0}} width={"90vw"} closable={false} key="recordEditor" visible={modalData}
