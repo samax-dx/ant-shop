@@ -243,6 +243,7 @@ const DataView = ({ parties, viewPage, viewLimit, onEdit }) => {
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
+            <Table.Column title="Party ID" dataIndex={"partyId"} />
             <Table.Column title="User ID" dataIndex={"loginId"} />
             <Table.Column title="Name" dataIndex={"name"} />
             <Table.Column title="Contact Number" dataIndex={"contactNumber"} />
