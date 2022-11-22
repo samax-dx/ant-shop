@@ -143,6 +143,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                     <Form.Item name="contactMech.contactNumber" rules={[{ required: true }]} children={<Input placeholder="Phone Number" />} />
                 </Space>
             </Form.Item>
+            <Form.Item name="emailAddress" label="Email" rules={[{ required: true }]} children={<Input />} />
             <Form.Item name="roles" label="Roles" rules={[{ required: false }]} children={ <Select
                 ref={multiSelectRef}
                 mode="multiple"
@@ -161,6 +162,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                 label="Current Password"
                 rules={[{ required: true }]}
                 hasFeedback
+                hidden={!isCreateForm}
             >
                 <Input.Password />
             </Form.Item>}
@@ -170,6 +172,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                 label={recordArg.partyId ? "New password" : "Password"}
                 rules={[{ required: true }]}
                 hasFeedback
+                hidden={!isCreateForm}
             >
                 <Input.Password />
             </Form.Item>
@@ -179,6 +182,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                 label="Confirm Password"
                 dependencies={recordArg.partyId ? ['password_old', 'password'] : ["password"]}
                 hasFeedback
+                hidden={!isCreateForm}
                 rules={[
                     { required: true },
                     ({ getFieldValue }) => ({
@@ -247,6 +251,7 @@ const DataView = ({ parties, viewPage, viewLimit, onEdit }) => {
             <Table.Column title="User ID" dataIndex={"loginId"} />
             <Table.Column title="Name" dataIndex={"name"} />
             <Table.Column title="Contact Number" dataIndex={"contactNumber"} />
+            <Table.Column title="Email" dataIndex={"emailAddress"} />
             <Table.Column title="Created On" dataIndex={"createdOn"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />
 
             <Table.Column
@@ -292,6 +297,7 @@ export const PartiesNew = () => {
     useEffect(() => {
         PartyService.fetchRecords(lastQuery)
             .then((data) => {
+                console.log(data);
                 setParties(data.parties);
                 setPartyFetchResultCount(data.count);
                 setPartyFetchError(null);
@@ -322,7 +328,7 @@ export const PartiesNew = () => {
                 </Card>
             </Col>
             <Modal width={800} closable={false} key="recordEditor" visible={modalData}
-                   maskClosable={false} onCancel={handleCancel} style={{ top: 20 }} footer={null} bodyStyle={{height:"29rem"}}>
+                   maskClosable={false} onCancel={handleCancel} style={{ top: 20 }} footer={null}>
                 <WriteForm recordArg={modalData} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "partyId DESC", page: 1 })} close={handleCancel}/>
             </Modal>
         </Row>
