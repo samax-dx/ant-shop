@@ -59,6 +59,7 @@ export const MainMenu = ({ actor }) => {
                 <Menu.Item key="senderId" icon={<IdcardOutlined />}><Link to="/PartyManagement/senderId">Sender-ID</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="Package" icon={<SettingOutlined />} title="Package">
+                <Menu.Item key="ratePlanAssignments" icon={<InteractionTwoTone />} ><Link to="/Package/ratePlanAssignments">Rate-Plan Assignment</Link></Menu.Item>
                 <Menu.Item key="rateplans" icon={<InteractionTwoTone />} ><Link to="/Package/rateplans">Rate-Plan</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="Settings" icon={<SettingOutlined />} title="Settings">

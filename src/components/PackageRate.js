@@ -12,14 +12,13 @@ import {
     Col,
     Modal, Typography, DatePicker, notification
 } from "antd";
-import { PartyService } from "../services/PartyService";
-import { countries } from "countries-list";
 import { PlusCircleFilled } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { SenderIdService } from "../services/SenderIdService";
-import { Route } from "../services/Route";
 import { RouteService } from "../services/RouteService";
 import { DebounceSelect } from "./DebounceSelect";
+import {Link, useParams} from "react-router-dom";
+import {RatePlanService} from "../services/RatePlanService";
+import {RateService} from "../services/RateService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -63,8 +62,8 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 23 }}
             labelAlign="left"
         >
-            <Form.Item name="senderId" label="Search Prefix" children={<Input />} style={{ display: "inline-block", marginBottom: '0px' }} />
-            <Form.Item name="senderId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="rateId" label="Rate ID" children={<Input />} style={{ display: "inline-block", marginBottom: '0px' }} />
+            <Form.Item name="rateId_op" initialValue={"contains"} hidden children={<Input />} />
 
             {/*<Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
             <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
@@ -83,40 +82,19 @@ const SearchForm = ({ onSearch }) => {
     </>);
 };
 
-const WriteForm = ({ recordArg, onRecordSaved,close }) => {
+const WriteForm = ({ recordArg, onRecordSaved,ratePlanId,close }) => {
     const { Option } = Select;
-    const multiSelectRef = useRef();
 
     const [writeForm] = Form.useForm();
     const [isCreateForm, setIsCreateForm] = useState(true);
 
-    const [routes, setRoutes] = useState([]);
     const [lastWrite, setLastWrite] = useState(recordArg);
 
-    const transformRecordAtoS = r => {
-        const record = { ...r };
-        record.parties = record.parties?.join(",");
-        record.routes = record.routes?.join(",");
-        return record;
-    };
-    const transformRecordStoA = r => {
-        const record = { ...r };
-        record.parties = record.parties?.map(party => party.partyId);
-        record.routes = record.routes?.map(route => route.routeId);
-        return record;
-    };
-
-    useEffect(() => {
-        RouteService.fetchRecords({})
-            .then(data => {
-                setRoutes(data.routes);
-            })
-    }, [])
 
     useEffect(() => {
         setIsCreateForm(Object.keys(recordArg).length === 0);
         writeForm.resetFields();
-        writeForm.setFieldsValue(transformRecordStoA(recordArg));
+        writeForm.setFieldsValue(recordArg);
     }, [recordArg]);
 
     useEffect( () => {
@@ -134,46 +112,35 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                 padding: '15px'
             }}
         >
-            <Form.Item name="senderId" label="Sender ID" rules={[{ required: true }]} children={<Input disabled={!isCreateForm} />} />
-            <Form.Item name="type" id="selected" label="Type" rules={[{ required: true }]}>
-                <Select>
-                    <Option key={"masking"} value="masking">Masking</Option>
-                    <Option key={"non-masking"} value="non-masking">Non-Masking</Option>
-                </Select>
-            </Form.Item>
-            <Form.Item name="parties" label="Parties" children={<DebounceSelect />} />
-            <Form.Item name="routes" label="Routes" rules={[{ required: true }]}>
-                <Select
-                    ref={multiSelectRef}
-                    mode="multiple"
-                    placeholder="Please select"
-                    style={{
-                        width: '100%',
-                    }}
-                    onChange={() => multiSelectRef.current.blur()}
-                >
-                    {routes.map(route => <Option key={route.routeId}>{route.routeId}</Option>)}
-                </Select>
-            </Form.Item>
+            <Form.Item name="rateId" label="Rate ID" hidden rules={[{ required: false }]} children={<Input disabled={!isCreateForm} />} />
+            <Form.Item name="prefixId" label="Prefix" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="rate" label="Rate" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="description" label="Description" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="ratePlanId" label="Rate Plan ID" initialValue={ratePlanId} hidden children={<Input />} />
             <Form.Item wrapperCol={{ offset: 19}} >
                 <Button
                     type="primary"
                     htmlType="submit"
                     onClick={() => writeForm
                         .validateFields()
-                        .then(_ => SenderIdService.saveRecord(transformRecordAtoS(writeForm.getFieldsValue())))
+                        .then(_ =>{
+                            const formData = writeForm.getFieldsValue();
+                            formData.rate = parseFloat(formData.rate);
+                            return RateService.saveRecord(formData);
+                        })
                         .then(data => {
-                            setLastWrite(data.senderId);
-                            onRecordSaved(data.senderId);
+                            console.log(data);
+                            setLastWrite(data);
+                            onRecordSaved(data);
                             notification.success({
-                                key: `csenderid_${Date.now()}`,
+                                key: `crate_${Date.now()}`,
                                 message: "Task Complete",
-                                description: <>SenderId Saved: {data.senderId}</>,
+                                description: <>RateId Saved: {data.rate}</>,
                                 duration: 5
                             });
                         })
                         .catch(error => notification.error({
-                            key: `csenderid_${Date.now()}`,
+                            key: `crate_${Date.now()}`,
                             message: "Task Failed",
                             description: <>Error creating party.<br />{error.message}</>,
                             duration: 5
@@ -187,14 +154,14 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
     </>);
 };
 
-const DataView = ({ senderId, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ rate, viewPage, viewLimit, onEdit }) => {
     return (<>
         <Table
             style={{ marginLeft: 6 }}
             size="small"
-            dataSource={senderId}
-            rowKey={"senderId"}
-            locale={{ emptyText: senderId === null ? "E" : "No Data" }}
+            dataSource={rate}
+            rowKey={"rateId"}
+            locale={{ emptyText: rate === null ? "E" : "No Data" }}
             pagination={false}
         >
             <Table.Column
@@ -202,19 +169,10 @@ const DataView = ({ senderId, viewPage, viewLimit, onEdit }) => {
                 title={"#"}
                 render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
             />
-            <Table.Column title="Prefix" dataIndex={"senderId"} />
-            <Table.Column title="Description" dataIndex={"type"} />
-            <Table.Column title="Rate" dataIndex={"parties"} render={(v, r, i) => v.map(rv => rv.partyName).join(", ")} />
-            <Table.Column title="Currency" dataIndex={"routes"} render={(v, r, i) => v.map(rv => rv.routeId).join(", ")} />
-            <Table.Column
-                title="Actions"
-                dataIndex={undefined}
-                render={(value, record, index) => {
-                    return (
-                        <Button onClick={() => onEdit(record)} type="link">Edit</Button>
-                    );
-                }}
-            />
+            <Table.Column title="Rate Id" dataIndex={"rateId"} />
+            <Table.Column title="Prefix" dataIndex={"prefixId"} />
+            <Table.Column title="Rate" dataIndex={"rate"} />
+            <Table.Column title="Description" dataIndex={"description"} />
         </Table>
     </>);
 };
@@ -235,8 +193,9 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
 };
 
 export const PackageRate = () => {
+    const {ratePlanId} = useParams();
     const [lastQuery, setLastQuery] = useState({});
-    const [senderIds, setSenderIds] = useState([]);
+    const [rate, setRate] = useState([]);
     const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
 
@@ -248,14 +207,15 @@ export const PackageRate = () => {
     const handleCancel = () => setModalData(null);
 
     useEffect(() => {
-        SenderIdService.fetchRecords(lastQuery)
-            .then((data) => {
-                setSenderIds(data.senderIds);
+        RateService.fetchRecords({...lastQuery, ratePlanId})
+            .then(data => {
+
+                setRate(data.rates);
                 setPartyFetchResultCount(data.count);
                 setPartyFetchError(null);
             })
             .catch(error => {
-                setSenderIds([]);
+                setRate([]);
                 setPartyFetchResultCount(0);
                 setPartyFetchError(error);
             });
@@ -268,23 +228,23 @@ export const PackageRate = () => {
     return (<>
         <Row style={{ marginLeft: 5 }}>
             <Col md={24}>
-                <Card title={<Title level={5}>Package Rate</Title>}
+                <Card title={<Title level={5}>Rate</Title>}
                       headStyle={{ backgroundColor: "#f0f2f5", border: 0, padding: '0px' }}
                       extra={
                           <Button type="primary" style={{ background: "#1890ff", borderColor: "#1890ff" }}
                                   icon={<PlusCircleFilled />} onClick={() => showModal({})}>
-                              Create Sender Id
+                              Create Rate
                           </Button>}
                       style={{ height: 135 }} size="small">
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })} />
                 </Card>
             </Col>
         </Row>
-        <DataView senderId={senderIds} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} />
+        <DataView rate={rate} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
-        <Modal width={800} key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false}  footer={null} bodyStyle={{height:"21rem"}}>
-            <WriteForm recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })} close={handleCancel}/>
+        <Modal width={800} key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false}  footer={null} bodyStyle={{height:"20rem"}}>
+            <WriteForm ratePlanId={ratePlanId} recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "rateId DESC", page: 1 })} close={handleCancel}/>
         </Modal>
     </>);
 };

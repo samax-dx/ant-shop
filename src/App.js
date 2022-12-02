@@ -25,6 +25,7 @@ import {SenderId} from "./components/SenderId";
 import {PartiesNew} from "./components/PartiesNew";
 import {RatePlans} from "./components/RatePlans";
 import {PackageRate} from "./components/PackageRate";
+import {RatePlanAssignment} from "./components/RatePlanAssign";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
@@ -47,7 +48,8 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/PartyManagement/senderId" element={createRouteComponent(<SenderId />)} />
                 <ReactRoute path="/Accounting/payment" element={createRouteComponent(<Topup />)} />
                 <ReactRoute path="/Package/rateplans" element={createRouteComponent(<RatePlans />)} />
-                <ReactRoute path="/Package/rates" element={createRouteComponent(<PackageRate />)} />
+                <ReactRoute path="/Package/ratePlanAssignments" element={createRouteComponent(<RatePlanAssignment />)} />
+                <ReactRoute path="/Package/rates/:ratePlanId" element={createRouteComponent(<PackageRate />)} />
                 <ReactRoute path="/Settings/prefix" element={createRouteComponent(<PrefixNew />)} />
                 <ReactRoute path="/Settings/route" element={createRouteComponent(<RouteNew />)} />
                 <ReactRoute path="/Settings/dialplan" element={createRouteComponent(<DialPlanNew />)} />
