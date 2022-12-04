@@ -117,7 +117,7 @@ const WriteForm = ({ recordArg, onRecordSaved,ratePlanId,close }) => {
             <Form.Item name="rate" label="Rate" rules={[{ required: true }]} children={<Input />} />
             <Form.Item name="description" label="Description" rules={[{ required: true }]} children={<Input />} />
             <Form.Item name="ratePlanId" label="Rate Plan ID" initialValue={ratePlanId} hidden children={<Input />} />
-            <Form.Item wrapperCol={{ offset: 19}} >
+            <Form.Item wrapperCol={{ offset: 16}} >
                 <Button
                     type="primary"
                     htmlType="submit"
@@ -148,7 +148,7 @@ const WriteForm = ({ recordArg, onRecordSaved,ratePlanId,close }) => {
                     }
                     children={"Submit"}
                 />
-                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none',marginLeft:6}} onClick={close}>Close</Button>
+                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none',marginLeft:4}} onClick={close}>Close</Button>
             </Form.Item>
         </Form>
     </>);
@@ -243,7 +243,7 @@ export const PackageRate = () => {
         <DataView rate={rate} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
-        <Modal width={800} key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false}  footer={null} bodyStyle={{height:"20rem"}}>
+        <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false}  footer={null} bodyStyle={{height:"17rem"}}>
             <WriteForm ratePlanId={ratePlanId} recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "rateId DESC", page: 1 })} close={handleCancel}/>
         </Modal>
     </>);

@@ -137,18 +137,13 @@ const WriteForm = ({currency, recordArg, onRecordSaved,close }) => {
                     options={currency.map(data=>{return {value:data.code,label:data.code + " - " + data.name}})}
                 />
                 } />
-            <Form.Item name="effectiveDate" label="Effective Date" rules={[{ required: true }]}  children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
-            <Form.Item wrapperCol={{ offset: 19}} >
+            <Form.Item wrapperCol={{ offset: 16}} >
                 <Button
                     type="primary"
                     htmlType="submit"
                     onClick={() => writeForm
                         .validateFields()
-                        .then(_ =>{
-                            const formData = transformRecordAtoS(writeForm.getFieldsValue());
-                            formData.effectiveDate = formData.effectiveDate.format("YYYY-MM-DD HH:mm:ss");
-                            return RatePlanService.saveRecord(formData);
-                        })
+                        .then(_ => RatePlanService.saveRecord(writeForm.getFieldsValue()))
                         .then(data => {
                             console.log(data);
                             setLastWrite(data);
@@ -169,7 +164,7 @@ const WriteForm = ({currency, recordArg, onRecordSaved,close }) => {
                     }
                     children={"Submit"}
                 />
-                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none',marginLeft:6}} onClick={close}>Close</Button>
+                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none',marginLeft:4}} onClick={close}>Close</Button>
             </Form.Item>
         </Form>
     </>);
@@ -199,10 +194,9 @@ const DataView = ({ ratePlans, viewPage, viewLimit, onEdit }) => {
                     );
                 }}
             />
-            <Table.Column title="Effective Date" dataIndex={"effectiveDate"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />
-            <Table.Column title="Name" dataIndex={"name"} />
-            <Table.Column title="Description" dataIndex={"description"} />
+            <Table.Column title="Rate-Plan Name" dataIndex={"name"} />
             <Table.Column title="Currency" dataIndex={"currencyCode"} />
+            <Table.Column title="Description" dataIndex={"description"} />
         </Table>
     </>);
 };
@@ -238,7 +232,7 @@ export const RatePlans = () => {
     const handleCancel = () => setModalData(null);
 
     useEffect(() => {
-        RatePlanService.fetchRecords(lastQuery)
+        RatePlanService.fetchRecords({...lastQuery})
             .then((data) => {
                 setRatePlans(data.ratePlans);
                 setPartyFetchResultCount(data.count);
@@ -280,7 +274,7 @@ export const RatePlans = () => {
         <DataView ratePlans={ratePlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
-        <Modal width={800} key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false}  footer={null} bodyStyle={{height:"25rem"}}>
+        <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false}  footer={null} bodyStyle={{height:"17rem"}}>
             <WriteForm recordArg={modalData} currency={currency} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })} close={handleCancel}/>
         </Modal>
     </>);

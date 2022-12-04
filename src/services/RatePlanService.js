@@ -49,7 +49,7 @@ export const RatePlanService = {
            const { data } = response;
            console.log(data)
 
-           if (data.ratePlanId) {
+           if (data) {
                return Promise.resolve(data);
            } else {
                return Promise.reject({ code: null, message: data.errorMessage });

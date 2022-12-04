@@ -123,7 +123,7 @@ const WriteForm = ({ parties, recordArg, onRecordSaved, close }) => {
                     filterOption={(input, option) =>
                         (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                     }
-                    options={parties.map(data=>{return {value:data.partyId}})}
+                    options={parties.map(data=>{return {value:data.partyId, label: data.partyId + '-' + data.name}})}
                 />
             } />
             <Form.Item name="effectiveDate" label="Effective Date" rules={[{ required: true }]}  children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
