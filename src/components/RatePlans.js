@@ -90,7 +90,6 @@ const WriteForm = ({currency, recordArg, onRecordSaved,close }) => {
     const [writeForm] = Form.useForm();
     const [isCreateForm, setIsCreateForm] = useState(true);
     const [lastWrite, setLastWrite] = useState(recordArg);
-
     const transformRecordAtoS = r => {
         const record = { ...r };
         record.parties = record.parties?.join(",");

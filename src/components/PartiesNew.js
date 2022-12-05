@@ -143,7 +143,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                     <Form.Item name="contactMech.contactNumber" rules={[{ required: true }]} children={<Input placeholder="Phone Number" />} />
                 </Space>
             </Form.Item>
-            <Form.Item name="emailAddress" label="Email" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="emailAddress" label="Email" rules={[{ required: false }]} children={<Input />} />
             <Form.Item name="roles" label="Roles" rules={[{ required: false }]} children={ <Select
                 ref={multiSelectRef}
                 mode="multiple"
@@ -157,32 +157,29 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                 <Option key="admin">Admin</Option>
                 <Option key="user">User</Option>
             </Select>} />
-            {recordArg.partyId && <Form.Item
+           {/* {recordArg.partyId && <Form.Item
                 name="password_old"
                 label="Current Password"
                 rules={[{ required: true }]}
                 hasFeedback
-                hidden={!isCreateForm}
             >
                 <Input.Password />
-            </Form.Item>}
+            </Form.Item>}*/}
 
-            <Form.Item
+            {recordArg.partyId? null : <Form.Item
                 name="password"
                 label={recordArg.partyId ? "New password" : "Password"}
-                rules={[{ required: true }]}
+                rules={[{required: true}]}
                 hasFeedback
-                hidden={!isCreateForm}
             >
-                <Input.Password />
-            </Form.Item>
+                <Input.Password/>
+            </Form.Item> }
 
-            <Form.Item
+            {recordArg.partyId? null : <Form.Item
                 name="passwordConfirm"
                 label="Confirm Password"
                 dependencies={recordArg.partyId ? ['password_old', 'password'] : ["password"]}
                 hasFeedback
-                hidden={!isCreateForm}
                 rules={[
                     { required: true },
                     ({ getFieldValue }) => ({
@@ -198,12 +195,12 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                 ]}
             >
                 <Input.Password />
-            </Form.Item>
+            </Form.Item>}
             <Form.Item wrapperCol={{ offset: 19}} >
                 <Button
                     type="primary"
                     htmlType="submit"
-                    onClick={() => writeForm
+                    onClick={() =>console.log("clicked") || writeForm
                         .validateFields()
                         .then(_ => PartyService.saveRecord(writeForm.getFieldsValue()))
                         .then(data => {
@@ -216,7 +213,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                                 duration: 5
                             })
                         })
-                        .catch(error => notification.error({
+                        .catch(error =>console.log(error)|| notification.error({
                             key: `cparty_${Date.now()}`,
                             message: "Task Failed",
                             description: <>Error creating party.<br/>{error.message}</>,

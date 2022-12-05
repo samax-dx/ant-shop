@@ -159,7 +159,13 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                                 duration: 5
                             });
                         })
-                        .catch(error => {alert(error.message)})
+                        .catch(error =>notification.error({
+                                key: `cparty_${Date.now()}`,
+                                message: "Task Failed",
+                                description: <>Error creating prefix.<br/>{error.message}</>,
+                                duration: 5
+                            })
+                        )
                     }
                     children={"Submit"}
                 />
