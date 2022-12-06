@@ -54,6 +54,9 @@ export const MainMenu = ({ actor }) => {
             <Menu.SubMenu key="Accounting" icon={<BankOutlined />} title="Accounting">
                 <Menu.Item key="payment" icon={<WalletTwoTone/>}><NavLink to="/Accounting/payment" >TopUp / Payments</NavLink></Menu.Item>
             </Menu.SubMenu>
+            <Menu.SubMenu key="SmsTask" icon={<BankOutlined />} title="Sms Task">
+                <Menu.Item key="SmsHistory" icon={<WalletTwoTone/>}><NavLink to="/SmsTask/SmsHistory" >Sms History</NavLink></Menu.Item>
+            </Menu.SubMenu>
             <Menu.SubMenu key="PartyManagement" icon={<ProfileOutlined />} title="Party Management">
                 <Menu.Item key="parties" icon={<IdcardTwoTone />}><Link to="/PartyManagement/parties">Parties</Link></Menu.Item>
                 <Menu.Item key="senderId" icon={<IdcardOutlined />}><Link to="/PartyManagement/senderId">Sender-ID</Link></Menu.Item>

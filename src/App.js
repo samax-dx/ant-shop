@@ -26,6 +26,7 @@ import {PartiesNew} from "./components/PartiesNew";
 import {RatePlans} from "./components/RatePlans";
 import {PackageRate} from "./components/PackageRate";
 import {RatePlanAssignment} from "./components/RatePlanAssign";
+import {SmsHistory} from "./components/SmsHistory";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
@@ -53,6 +54,7 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/Settings/prefix" element={createRouteComponent(<PrefixNew />)} />
                 <ReactRoute path="/Settings/route" element={createRouteComponent(<RouteNew />)} />
                 <ReactRoute path="/Settings/dialplan" element={createRouteComponent(<DialPlanNew />)} />
+                <ReactRoute path="/SmsTask/SmsHistory" element={createRouteComponent(<SmsHistory />)} />
             </Routes>
         </BrowserRouter>
     </>);
