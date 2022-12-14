@@ -12,13 +12,14 @@ import {
     Col,
     Modal, Typography, DatePicker, notification
 } from "antd";
-import { PlusCircleFilled } from "@ant-design/icons";
+import {ExclamationCircleOutlined, PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 import { RouteService } from "../services/RouteService";
 import { DebounceSelect } from "./DebounceSelect";
 import {Link, useParams} from "react-router-dom";
 import {RatePlanService} from "../services/RatePlanService";
 import {RateService} from "../services/RateService";
+import {DialPlanService} from "../services/DialPlanService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -36,7 +37,7 @@ const SearchForm = ({ onSearch }) => {
               }
           });*/
 
-        const queryData = ["senderId", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
+        const queryData = ["rateId", "prefixId", "createdOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -64,11 +65,8 @@ const SearchForm = ({ onSearch }) => {
         >
             <Form.Item name="rateId" label="Rate ID" children={<Input />} style={{ display: "inline-block", marginBottom: '0px' }} />
             <Form.Item name="rateId_op" initialValue={"contains"} hidden children={<Input />} />
-
-            {/*<Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
-            <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
-            <Form.Item name="createdOn_fld1_value" label="To Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
-            <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input/>}/>*/}
+            <Form.Item name="prefixId" label="Prefix ID" children={<Input />} style={{ display: "inline-block", marginBottom: '0px' }} />
+            <Form.Item name="prefixId_op" initialValue={"contains"} hidden children={<Input />} />
 
             <Form.Item style={{ display: 'inline-block', marginBottom: 0 }} label=" " colon={false}>
                 <Button
@@ -113,7 +111,7 @@ const WriteForm = ({ recordArg, onRecordSaved,ratePlanId,close }) => {
             }}
         >
             <Form.Item name="rateId" label="Rate ID" hidden rules={[{ required: false }]} children={<Input disabled={!isCreateForm} />} />
-            <Form.Item name="prefixId" label="Prefix" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="prefixId" label="Prefix" rules={[{ required: true }]} children={<Input disabled={!isCreateForm}/>} />
             <Form.Item name="rate" label="Rate" rules={[{ required: true }]} children={<Input />} />
             <Form.Item name="description" label="Description" rules={[{ required: true }]} children={<Input />} />
             <Form.Item name="ratePlanId" label="Rate Plan ID" initialValue={ratePlanId} hidden children={<Input />} />
@@ -154,7 +152,16 @@ const WriteForm = ({ recordArg, onRecordSaved,ratePlanId,close }) => {
     </>);
 };
 
-const DataView = ({ rate, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ rate, viewPage, viewLimit, onEdit, onDelete }) => {
+    const confirmDelete = rate => Modal.confirm({
+        title: 'Confirm delete rate?',
+        icon: <ExclamationCircleOutlined />,
+        content: <>Deleting rate: <strong>{rate.rateId} {rate.prefixId}</strong></>,
+        onOk() {
+            onDelete(rate);
+            console.log("Clicked");
+        }
+    });
     return (<>
         <Table
             style={{ marginLeft: 6 }}
@@ -173,6 +180,16 @@ const DataView = ({ rate, viewPage, viewLimit, onEdit }) => {
             <Table.Column title="Prefix" dataIndex={"prefixId"} />
             <Table.Column title="Rate" dataIndex={"rate"} />
             <Table.Column title="Description" dataIndex={"description"} />
+            <Table.Column
+                title="Actions"
+                dataIndex={undefined}
+                render={(value, record, index) => {
+                    return (<>
+                        <Button onClick={() => onEdit(record)} type="link">Edit</Button>
+                        <Button onClick={() => confirmDelete(record)} type="link">Delete</Button>
+                    </>);
+                }}
+            />
         </Table>
     </>);
 };
@@ -205,6 +222,27 @@ export const PackageRate = () => {
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
+
+    const removeRate = rate => {
+        RateService.removeRecord(rate)
+            .then(data => {
+                setLastQuery({ ...lastQuery, page: 1 });
+                notification.success({
+                    key: `rRate_${Date.now()}`,
+                    message: "Task Finished",
+                    description: `Rate deleted: ${rate.rateId} ${rate.prefixId}`,
+                    duration: 15
+                });
+            })
+            .catch(error => {
+                notification.error({
+                    key: `rRate_${Date.now()}`,
+                    message: "Task Failed",
+                    description: `Error Deleting dial-plan: ${rate.rateId} ${rate.prefixId}`,
+                    duration: 15
+                });
+            });
+    };
 
     useEffect(() => {
         RateService.fetchRecords({...lastQuery, ratePlanId})
@@ -240,7 +278,7 @@ export const PackageRate = () => {
                 </Card>
             </Col>
         </Row>
-        <DataView rate={rate} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} />
+        <DataView rate={rate} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeRate} />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false}  footer={null} bodyStyle={{height:"17rem"}}>

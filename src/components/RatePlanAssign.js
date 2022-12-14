@@ -12,10 +12,11 @@ import {
     Col,
     Modal, Typography, DatePicker, notification
 } from "antd";
-import {PlusCircleFilled} from "@ant-design/icons";
+import {ExclamationCircleOutlined, PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 import {RatePlanAssignService} from "../services/RatePlanAssignService";
 import {PartyService} from "../services/PartyService";
+import {RateService} from "../services/RateService";
 
 
 
@@ -83,12 +84,11 @@ const SearchForm = ({ onSearch }) => {
 };
 
 const WriteForm = ({ parties, recordArg, onRecordSaved, close }) => {
-    console.log(parties);
+
     const { Option } = Select;
+
     const [writeForm] = Form.useForm();
-
     const [isCreateForm, setIsCreateForm] = useState(true);
-
     const [lastWrite, setLastWrite] = useState(recordArg);
 
     useEffect(() => {
@@ -114,7 +114,7 @@ const WriteForm = ({ parties, recordArg, onRecordSaved, close }) => {
             }}
         >
             <Form.Item style={{marginBottom:'5px'}} name="ratePlanAssignmentId" label="Rate-Plan Assignment ID" rules={[{ required: false }]} hidden children={<Input disabled={!isCreateForm} />} />
-            <Form.Item name="ratePlanId" label="Rate-Plan ID" rules={[{ required: true }]}  children={<Input />} />
+            <Form.Item name="ratePlanId" label="Rate-Plan ID" rules={[{ required: true }]}  children={<Input disabled={!isCreateForm}/>} />
             <Form.Item name="partyId" label="Party ID" rules={[{ required: true }]} children={
                 <Select
                     showSearch
@@ -160,7 +160,15 @@ const WriteForm = ({ parties, recordArg, onRecordSaved, close }) => {
     </>);
 };
 
-const DataView = ({ ratePlanAssignments, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ ratePlanAssignments, viewPage, viewLimit, onEdit, onDelete }) => {
+    const confirmDelete = ratePlanAssignment => Modal.confirm({
+        title: 'Confirm delete rate-plan assignment?',
+        icon: <ExclamationCircleOutlined />,
+        content: <>Deleting rate-plan assignment: <strong>{ratePlanAssignment.ratePlanAssignmentId} {ratePlanAssignment.ratePlanId}</strong></>,
+        onOk() {
+            onDelete(ratePlanAssignment);
+        }
+    });
     return (<>
         <Table
             style={{marginLeft:6}}
@@ -170,10 +178,25 @@ const DataView = ({ ratePlanAssignments, viewPage, viewLimit, onEdit }) => {
             locale={{ emptyText: ratePlanAssignments === null ? "E" : "No Data" }}
             pagination={false}
         >
+            <Table.Column
+                dataIndex={undefined}
+                title={"#"}
+                render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
+            />
             <Table.Column title="Rate-Plan Id" dataIndex={"ratePlanId"} />
             <Table.Column title="Rate-Plan Name" dataIndex={"ratePlanName"} />
             <Table.Column title="Party Name" dataIndex={"partyName"} />
             <Table.Column title="Effective Date" dataIndex={"effectiveDate"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")}/>
+            <Table.Column
+                title="Actions"
+                dataIndex={undefined}
+                render={(value, record, index) => {
+                    return (<>
+                        <Button onClick={() => onEdit(record)} type="link">Edit</Button>
+                        <Button onClick={() => confirmDelete(record)} type="link">Delete</Button>
+                    </>);
+                }}
+            />
         </Table>
     </>);
 };
@@ -207,12 +230,33 @@ export const RatePlanAssignment  = () => {
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
 
+    const removeRatePlanAssign = ratePlanAssignment => {
+        RatePlanAssignService.removeRecord(ratePlanAssignment)
+            .then(data => {
+                setLastQuery({ ...lastQuery, page: 1 });
+                notification.success({
+                    key: `rRatePlanAssign_${Date.now()}`,
+                    message: "Task Finished",
+                    description: `Rate-plan Assignment deleted: ${ratePlanAssignment.ratePlanAssignmentId} ${ratePlanAssignment.partyId}`,
+                    duration: 15
+                });
+            })
+            .catch(error => {
+                notification.error({
+                    key: `rRatePlanAssign_${Date.now()}`,
+                    message: "Task Failed",
+                    description: `Error Deleting rate-plan assignment: ${ratePlanAssignment.ratePlanAssignmentId} ${ratePlanAssignment.partyId}`,
+                    duration: 15
+                });
+            });
+    };
+
     useEffect(() => {
         RatePlanAssignService.fetchRecords(lastQuery)
             .then((data) => {
                 console.log(data);
                 setRatePlanAssignments(data);
-                setPartyFetchResultCount(data.count);
+                setPartyFetchResultCount(data);
                 setPartyFetchError(null);
             })
             .catch(error => {
@@ -233,9 +277,6 @@ export const RatePlanAssignment  = () => {
         setLastQuery({ page: 1, limit: 10 })
     }, []);
 
-    // useEffect(() => {
-    //     setLastQuery({ page: 1, limit: 10 })
-    // }, []);
 
     return (<>
         <Row style={{marginLeft: 5}}>
@@ -251,13 +292,12 @@ export const RatePlanAssignment  = () => {
                     <SearchForm onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
                 </Card>
             </Col>
-            <Modal closable={false} key="recordEditor" visible={modalData}
-                   maskClosable={false} onCancel={handleCancel} footer={null} bodyStyle={{height:"17rem"}}>
-                <WriteForm recordArg={modalData} parties={parties} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "lastUpdatedStamp DESC", page: 1 })} close={handleCancel}/>
-            </Modal>
         </Row>
-        <DataView ratePlanAssignments={ratePlanAssignments} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
+        <DataView ratePlanAssignments={ratePlanAssignments} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeRatePlanAssign}/>
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+        <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false} footer={null} bodyStyle={{height:"17rem"}}>
+            <WriteForm recordArg={modalData} parties={parties} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })} close={handleCancel}/>
+        </Modal>
     </>);
 };

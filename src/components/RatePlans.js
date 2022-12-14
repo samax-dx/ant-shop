@@ -12,7 +12,7 @@ import {
     Col,
     Modal, Typography, DatePicker, notification
 } from "antd";
-import { PlusCircleFilled } from "@ant-design/icons";
+import {ExclamationCircleOutlined, PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 import { RouteService } from "../services/RouteService";
 import { DebounceSelect } from "./DebounceSelect";
@@ -20,6 +20,7 @@ import {Link} from "react-router-dom";
 import {RatePlanService} from "../services/RatePlanService";
 import {DebounceCurrency} from "./DebounceCurrency";
 import {CurrencyService} from "../services/CurrencyService";
+import {RateService} from "../services/RateService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -37,7 +38,7 @@ const SearchForm = ({ onSearch }) => {
               }
           });*/
 
-        const queryData = ["ratePlanId", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
+        const queryData = ["name", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -63,8 +64,8 @@ const SearchForm = ({ onSearch }) => {
             wrapperCol={{ span: 23 }}
             labelAlign="left"
         >
-            <Form.Item name="ratePlanId" label="Rate Plan" children={<Input />} style={{ display: "inline-block", marginBottom: '0px' }} />
-            <Form.Item name="ratePlanId_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="name" label="Rate-Plan Name" children={<Input />} style={{ display: "inline-block", marginBottom: '0px' }} />
+            <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
 
             {/*<Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
             <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>
@@ -123,7 +124,7 @@ const WriteForm = ({currency, recordArg, onRecordSaved,close }) => {
             }}
         >
             <Form.Item name="ratePlanId" label="Rate Plan ID" hidden rules={[{ required: false }]} children={<Input disabled={!isCreateForm} />} />
-            <Form.Item name="name" label="Name" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="name" label="Name" rules={[{ required: true }]} children={<Input disabled={!isCreateForm}/>} />
             <Form.Item name="description" label="Description" rules={[{ required: true }]} children={<Input />} />
             <Form.Item name="currencyCode" label="Currency" rules={[{ required: true }]} children={
                 <Select
@@ -169,7 +170,15 @@ const WriteForm = ({currency, recordArg, onRecordSaved,close }) => {
     </>);
 };
 
-const DataView = ({ ratePlans, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ ratePlans, viewPage, viewLimit, onEdit, onDelete }) => {
+    const confirmDelete = ratePlan => Modal.confirm({
+        title: 'Confirm delete rate-plan?',
+        icon: <ExclamationCircleOutlined />,
+        content: <>Deleting rate-plan: <strong>{ratePlan.ratePlanId}</strong></>,
+        onOk() {
+            onDelete(ratePlan);
+        }
+    });
     return (<>
         <Table
             style={{ marginLeft: 6 }}
@@ -196,6 +205,16 @@ const DataView = ({ ratePlans, viewPage, viewLimit, onEdit }) => {
             <Table.Column title="Rate-Plan Name" dataIndex={"name"} />
             <Table.Column title="Currency" dataIndex={"currencyCode"} />
             <Table.Column title="Description" dataIndex={"description"} />
+            <Table.Column
+                title="Actions"
+                dataIndex={undefined}
+                render={(value, record, index) => {
+                    return (<>
+                        <Button onClick={() => onEdit(record)} type="link">Edit</Button>
+                        <Button onClick={() => confirmDelete(record)} type="link">Delete</Button>
+                    </>);
+                }}
+            />
         </Table>
     </>);
 };
@@ -229,6 +248,27 @@ export const RatePlans = () => {
     const showModal = data => setModalData(data);
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
+
+    const removeRatePlan = ratePlan => {
+        RatePlanService.removeRecord(ratePlan)
+            .then(data => {
+                setLastQuery({ ...lastQuery, page: 1 });
+                notification.success({
+                    key: `rRatePlan_${Date.now()}`,
+                    message: "Task Finished",
+                    description: `Rate-plan deleted: ${ratePlan.ratePlanId}`,
+                    duration: 15
+                });
+            })
+            .catch(error => {
+                notification.error({
+                    key: `rRatePlan_${Date.now()}`,
+                    message: "Task Failed",
+                    description: `Error Deleting dial-plan: ${ratePlan.ratePlanId}`,
+                    duration: 15
+                });
+            });
+    };
 
     useEffect(() => {
         RatePlanService.fetchRecords({...lastQuery})
@@ -270,10 +310,10 @@ export const RatePlans = () => {
                 </Card>
             </Col>
         </Row>
-        <DataView ratePlans={ratePlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} />
+        <DataView ratePlans={ratePlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeRatePlan}    />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
-        <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false}  footer={null} bodyStyle={{height:"17rem"}}>
+        <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false} footer={null} bodyStyle={{height:"17rem"}}>
             <WriteForm recordArg={modalData} currency={currency} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })} close={handleCancel}/>
         </Modal>
     </>);

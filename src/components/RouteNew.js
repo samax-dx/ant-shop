@@ -119,7 +119,6 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
             }}
         >
             <Form.Item name="routeId" label="Route ID" rules={[{ required: true }]} children={<Input disabled={!isCreateForm} />} />
-
             <Form.Item name="description" label="Description" children={<Input />} />
             <Form.Item name="disabled" label="Disabled" valuePropName="checked" children={<Checkbox />} />
             <Form.Item wrapperCol={{ offset: 16}} >

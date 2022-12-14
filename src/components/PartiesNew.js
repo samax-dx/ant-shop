@@ -14,7 +14,7 @@ import {
 } from "antd";
 import {PartyService} from "../services/PartyService";
 import {countries} from "countries-list";
-import {PlusCircleFilled} from "@ant-design/icons";
+import {ExclamationCircleOutlined, PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 
 
@@ -229,7 +229,15 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
     </>);
 };
 
-const DataView = ({ parties, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ parties, viewPage, viewLimit, onEdit, onDelete }) => {
+    const confirmDelete = ratePlanAssignment => Modal.confirm({
+        title: 'Confirm delete party?',
+        icon: <ExclamationCircleOutlined />,
+        content: <>Deleting party: <strong>{parties.partyId} {parties.loginId}</strong></>,
+        onOk() {
+            onDelete(ratePlanAssignment);
+        }
+    });
     return (<>
         <Table
             style={{marginLeft:6}}
@@ -254,10 +262,11 @@ const DataView = ({ parties, viewPage, viewLimit, onEdit }) => {
             <Table.Column
                 title="Actions"
                 dataIndex={undefined}
-                render={(value,record, index) => {
-                    return (
+                render={(value, record, index) => {
+                    return (<>
                         <Button onClick={() => onEdit(record)} type="link">Edit</Button>
-                    );
+                        <Button onClick={() => confirmDelete(record)} type="link">Delete</Button>
+                    </>);
                 }}
             />
         </Table>
