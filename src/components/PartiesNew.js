@@ -16,6 +16,7 @@ import {PartyService} from "../services/PartyService";
 import {countries} from "countries-list";
 import {ExclamationCircleOutlined, PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
+import {RateService} from "../services/RateService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -230,12 +231,12 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
 };
 
 const DataView = ({ parties, viewPage, viewLimit, onEdit, onDelete }) => {
-    const confirmDelete = ratePlanAssignment => Modal.confirm({
+    const confirmDelete = party => Modal.confirm({
         title: 'Confirm delete party?',
         icon: <ExclamationCircleOutlined />,
-        content: <>Deleting party: <strong>{parties.partyId} {parties.loginId}</strong></>,
+        content: <>Deleting party: <strong>{party.partyId} {parties.loginId}</strong></>,
         onOk() {
-            onDelete(ratePlanAssignment);
+            onDelete(party );
         }
     });
     return (<>
@@ -300,6 +301,27 @@ export const PartiesNew = () => {
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
 
+    const removeParty = party => {
+        PartyService.removeRecord(party)
+            .then(data => {
+                setLastQuery({ ...lastQuery, page: 1 });
+                notification.success({
+                    key: `rParty_${Date.now()}`,
+                    message: "Task Finished",
+                    description: `Rate deleted: ${party.partyId} ${party.loginId}`,
+                    duration: 15
+                });
+            })
+            .catch(error => {
+                notification.error({
+                    key: `rParty_${Date.now()}`,
+                    message: "Task Failed",
+                    description: `Error Deleting party: ${party.partyId} ${party.loginId}`,
+                    duration: 15
+                });
+            });
+    };
+
     useEffect(() => {
         PartyService.fetchRecords(lastQuery)
             .then((data) => {
@@ -338,7 +360,7 @@ export const PartiesNew = () => {
                 <WriteForm recordArg={modalData} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "partyId DESC", page: 1 })} close={handleCancel}/>
             </Modal>
         </Row>
-        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal}/>
+        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeParty}/>
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);
