@@ -140,7 +140,7 @@ const WriteForm = ({ recordArg, onRecordSaved,ratePlanId,close }) => {
                         .catch(error => notification.error({
                             key: `crate_${Date.now()}`,
                             message: "Task Failed",
-                            description: <>Error creating party.<br />{error.message}</>,
+                            description: <>{error.message}</>,
                             duration: 5
                         }))
                     }

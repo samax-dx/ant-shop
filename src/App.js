@@ -27,6 +27,7 @@ import {RatePlans} from "./components/RatePlans";
 import {PackageRate} from "./components/PackageRate";
 import {RatePlanAssignment} from "./components/RatePlanAssign";
 import {SmsHistory} from "./components/SmsHistory";
+import {HomeNew} from "./components/HomeNew";
 
 export const App = ({ actor }) => {
     const [current, send] = useActor(actor);
@@ -44,7 +45,7 @@ export const App = ({ actor }) => {
     return (<>
         <BrowserRouter>
             <Routes>
-                <ReactRoute path="/" element={createRouteComponent(null)} />
+                <ReactRoute path="/" element={createRouteComponent(<HomeNew/> )} />
                 <ReactRoute path="/PartyManagement/parties" element={createRouteComponent(<PartiesNew/>)} />
                 <ReactRoute path="/PartyManagement/senderId" element={createRouteComponent(<SenderId />)} />
                 <ReactRoute path="/Accounting/payment" element={createRouteComponent(<Topup />)} />
