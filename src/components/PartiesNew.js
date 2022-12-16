@@ -203,7 +203,10 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                     htmlType="submit"
                     onClick={() =>console.log("clicked") || writeForm
                         .validateFields()
-                        .then(_ => PartyService.saveRecord(writeForm.getFieldsValue()))
+                        .then(_ => {
+                            const formData = writeForm.getFieldsValue();
+                            return formData.partyId ? PartyService.updatePartyProfile(formData) : PartyService.saveRecord(formData);
+                        })
                         .then(data => {
                             setLastWrite(data.party);
                             onRecordSaved(data.party);
