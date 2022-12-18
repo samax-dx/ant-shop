@@ -90,8 +90,9 @@ const WriteForm = ({ parties, recordArg, onRecordSaved, close }) => {
     const [writeForm] = Form.useForm();
     const [isCreateForm, setIsCreateForm] = useState(true);
     const [lastWrite, setLastWrite] = useState(recordArg);
-
+    const [isAdmin,setIsAdmin] = useState(false);
     useEffect(() => {
+        recordArg.partyId ==="admin"?setIsAdmin(true):setIsAdmin(false);
         setIsCreateForm(Object.keys(recordArg).length === 0);
         writeForm.resetFields();
         writeForm.setFieldsValue(recordArg);
@@ -117,6 +118,7 @@ const WriteForm = ({ parties, recordArg, onRecordSaved, close }) => {
             <Form.Item name="ratePlanId" label="Rate-Plan ID" rules={[{ required: true }]}  children={<Input disabled={!isCreateForm}/>} />
             <Form.Item name="partyId" label="Party ID" rules={[{ required: true }]} children={
                 <Select
+                    disabled={isAdmin}
                     showSearch
                     placeholder="Select a party"
                     optionFilterProp="children"
@@ -126,7 +128,7 @@ const WriteForm = ({ parties, recordArg, onRecordSaved, close }) => {
                     options={parties.map(data=>{return {value:data.partyId, label: data.partyId + '-' + data.name}})}
                 />
             } />
-            <Form.Item name="effectiveDate" label="Effective Date" rules={[{ required: true }]}  children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
+            <Form.Item valuePropName='date' name="effectiveDate" label="Effective Date" rules={[{ required: true }]}  children={<DatePicker  defaultValue={dayjs()} showTime use12Hours={true}  format="YYYY-MM-DD HH:mm:ss" />} />
 
             <Form.Item wrapperCol={{ offset: 16}}>
                 <Button
@@ -134,10 +136,10 @@ const WriteForm = ({ parties, recordArg, onRecordSaved, close }) => {
                     htmlType="submit"
                     onClick={() => writeForm
                         .validateFields()
-                        .then(_ =>{
+                        .then(_ => {
                             const formData = writeForm.getFieldsValue();
-                            formData.effectiveDate = formData.effectiveDate.format("YYYY-MM-DD HH:mm:ss");
-                            return RatePlanAssignService.saveRecord(formData);
+                            // formData.effectiveDate = formData.effectiveDate.format("YYYY-MM-DD HH:mm:ss");
+                            // return RatePlanAssignService.saveRecord(formData);
                         })
                         .then(data => {
                             console.log(data);
@@ -150,7 +152,14 @@ const WriteForm = ({ parties, recordArg, onRecordSaved, close }) => {
                                 duration: 5
                             });
                         })
-                        .catch(error => {alert(error.message)})
+                        .catch(error => {
+                            notification.error({
+                                key: `crateplanassign_${Date.now()}`,
+                                message: "Task Task",
+                                description: <>{error.message}</>,
+                                duration: 5
+                            });
+                        })
                     }
                     children={"Submit"}
                 />
