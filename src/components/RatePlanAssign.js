@@ -306,7 +306,7 @@ export const RatePlanAssignment  = () => {
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false} footer={null} bodyStyle={{height:"17rem"}}>
-            <WriteForm recordArg={modalData} parties={parties} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "senderIdId DESC", page: 1 })} close={handleCancel}/>
+            <WriteForm recordArg={modalData} parties={parties} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "ratePlanAssignmentId ASC", page: 1 })} close={handleCancel}/>
         </Modal>
     </>);
 };
