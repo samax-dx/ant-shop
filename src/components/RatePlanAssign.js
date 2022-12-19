@@ -128,7 +128,7 @@ const WriteForm = ({ parties, recordArg, onRecordSaved, close }) => {
                     options={parties.map(data=>{return {value:data.partyId, label: data.partyId + '-' + data.name}})}
                 />
             } />
-            <Form.Item valuePropName='date' name="effectiveDate" label="Effective Date" rules={[{ required: true }]}  children={<DatePicker  defaultValue={dayjs()} showTime use12Hours={true}  format="YYYY-MM-DD HH:mm:ss" />} />
+            <Form.Item valuePropName='date' name="effectiveDate" label="Effective Date" rules={[{ required: true }]}  children={<DatePicker showTime use12Hours={true}  format="YYYY-MM-DD HH:mm:ss" />} />
 
             <Form.Item wrapperCol={{ offset: 16}}>
                 <Button
@@ -138,8 +138,8 @@ const WriteForm = ({ parties, recordArg, onRecordSaved, close }) => {
                         .validateFields()
                         .then(_ => {
                             const formData = writeForm.getFieldsValue();
-                            // formData.effectiveDate = formData.effectiveDate.format("YYYY-MM-DD HH:mm:ss");
-                            // return RatePlanAssignService.saveRecord(formData);
+                            formData.effectiveDate = formData.effectiveDate.format("YYYY-MM-DD HH:mm:ss");
+                            return RatePlanAssignService.saveRecord(formData);
                         })
                         .then(data => {
                             console.log(data);
@@ -254,7 +254,7 @@ export const RatePlanAssignment  = () => {
                 notification.error({
                     key: `rRatePlanAssign_${Date.now()}`,
                     message: "Task Failed",
-                    description: `Error Deleting rate-plan assignment: ${ratePlanAssignment.ratePlanAssignmentId} ${ratePlanAssignment.partyId}`,
+                    description: `Error Deleting rate-plan assignment: ${ratePlanAssignment.ratePlanAssignmentId} ${ratePlanAssignment.partyId} ${error.message}`,
                     duration: 15
                 });
             });
