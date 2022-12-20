@@ -172,12 +172,14 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                                 duration: 5
                             });
                         })
-                        .catch(error => notification.error({
+                        .catch(error =>{
+                            notification.error({
                             key: `csenderid_${Date.now()}`,
                             message: "Task Failed",
-                            description: <>Error creating party.<br />{error.message}</>,
+                            description: <>Error creating SenderId.<br />{error.message}</>,
                             duration: 5
-                        }))
+                        });
+                      })
                     }
                     children={"Submit"}
                 />

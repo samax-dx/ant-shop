@@ -3,15 +3,7 @@ import axios from "axios";
 import {SERVER_URL} from "../config";
 import {XAuth} from "./XAuth";
 
-const senderIds = [
-   { senderIdId: "111", senderId: "8801717590383", type: "non-masking", parties: null, routes: "banglalink,grameenphone" },
-   { senderIdId: "222", senderId: "8801887590323", type: "non-masking", parties: null, routes: "robi,grameenphone" },
-   { senderIdId: "333", senderId: "Pran Muri", type: "masking", parties: "10040", routes: "grameenphone" },
-   { senderIdId: "444", senderId: "Cosco Saban", type: "masking", parties: "10040", routes: "teletalk,grameenphone" },
-   { senderIdId: "555", senderId: "Pocha Saban", type: "masking", parties: "10212", routes: "grameenphone" },
-   { senderIdId: "666", senderId: "Telcobright", type: "masking", parties: "", routes: "banglalink" },
-   { senderIdId: "777", senderId: "8801783590629", type: "non-masking", parties: "", routes: "banglalink,grameenphone" },
-];
+
 
 export const SenderIdService = {
    fetchRecords: (payload) =>  console.log(payload) || axios
@@ -39,7 +31,7 @@ export const SenderIdService = {
        .catch(error => {
            const response = error.response || { data: { error: error.message } };
            const { status: code, statusText: text, data } = response;
-           const errorEx = { code, message: data.error || text };
+           const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
            console.log(errorEx);
 
            return Promise.reject(errorEx);
@@ -69,7 +61,7 @@ export const SenderIdService = {
        .catch(error => {
            const response = error.response || { data: { error: error.message } };
            const { status: code, statusText: text, data } = response;
-           const errorEx = { code, message: data.error || text };
+           const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
            console.log(errorEx);
 
            return Promise.reject(errorEx);
