@@ -59,7 +59,6 @@ export const MainMenu = ({ actor }) => {
             </Menu.SubMenu>
             <Menu.SubMenu key="PartyManagement" icon={<ProfileOutlined />} title="Party Management">
                 <Menu.Item key="parties" icon={<IdcardTwoTone />}><Link to="/PartyManagement/parties">Parties</Link></Menu.Item>
-                <Menu.Item key="senderId" icon={<IdcardOutlined />}><Link to="/PartyManagement/senderId">Sender-ID</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="Package" icon={<SettingOutlined />} title="Package">
                 <Menu.Item key="ratePlanAssignments" icon={<InteractionTwoTone />} ><Link to="/Package/ratePlanAssignments">Rate-Plan Assignment</Link></Menu.Item>
@@ -69,6 +68,7 @@ export const MainMenu = ({ actor }) => {
                 <Menu.Item key="prefix" icon={<InteractionTwoTone />} ><Link to="/Settings/prefix">Prefix</Link></Menu.Item>
                 <Menu.Item key="route" icon={<InteractionTwoTone />}><Link to="/Settings/route">Route</Link></Menu.Item>
                 <Menu.Item key="dialplan" icon={<InteractionTwoTone />} ><Link to="/Settings/dialplan">Dial Plan</Link></Menu.Item>
+                <Menu.Item key="senderId" icon={<IdcardTwoTone />}><Link to="/Settings/senderId">Sender-ID</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="sub5" icon={<UserOutlined />} title="..." disabled>
                 <Menu.Item ><Link to="partners">Partners</Link></Menu.Item>

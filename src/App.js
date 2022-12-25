@@ -47,7 +47,6 @@ export const App = ({ actor }) => {
             <Routes>
                 <ReactRoute path="/" element={createRouteComponent(<HomeNew/> )} />
                 <ReactRoute path="/PartyManagement/parties" element={createRouteComponent(<PartiesNew/>)} />
-                <ReactRoute path="/PartyManagement/senderId" element={createRouteComponent(<SenderId />)} />
                 <ReactRoute path="/Accounting/payment" element={createRouteComponent(<Topup />)} />
                 <ReactRoute path="/Package/rateplans" element={createRouteComponent(<RatePlans />)} />
                 <ReactRoute path="/Package/ratePlanAssignments" element={createRouteComponent(<RatePlanAssignment />)} />
@@ -55,6 +54,7 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/Settings/prefix" element={createRouteComponent(<PrefixNew />)} />
                 <ReactRoute path="/Settings/route" element={createRouteComponent(<RouteNew />)} />
                 <ReactRoute path="/Settings/dialplan" element={createRouteComponent(<DialPlanNew />)} />
+                <ReactRoute path="/Settings/senderId" element={createRouteComponent(<SenderId />)} />
                 <ReactRoute path="/SmsTask/SmsHistory" element={createRouteComponent(<SmsHistory />)} />
             </Routes>
         </BrowserRouter>
