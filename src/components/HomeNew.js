@@ -244,6 +244,9 @@ export const HomeNew = () => {
                 console.log(data);
                 setWeekCampaignTaskCount(data);
             })
+            .catch(error=>{
+                console.log(error);
+            })
     },[])
 
     useEffect(()=>{
