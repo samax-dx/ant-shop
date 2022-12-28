@@ -14,7 +14,10 @@ import {CampaignReportService} from "../services/CampaignReportService";
 import {AccountingService} from "../services/AccountingService";
 import {InventoryService} from "../services/InventoryService";
 import {SmsReportService} from "../services/SmsReportService";
-import {RouteReportService} from "../services/RouteReportService";
+import {RouteReportService} from "../services/DashBoardServices/RouteReportService";
+import {CampaignCountService} from "../services/DashBoardServices/CampaignCountService";
+import {CampaignSuccessCountService} from "../services/DashBoardServices/CampaignSuccessCountService";
+import {CampaignTaskCountService} from "../services/DashBoardServices/CampaignTaskCountService";
 
 
 const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
@@ -129,9 +132,17 @@ export const HomeNew = () => {
     const [paymentsFetchCount, setPaymentsFetchCount] = useState(0);
     const [paymentsFetchError, setPaymentsFetchError] = useState(null);
 
-    const [campaignStatistics, setCampaignStatistics] = useState('');
+    const [todayCampaignCount, setTodayCampaignCount] = useState('');
+    const [weekCampaignCount, setWeekCampaignCount] = useState('');
+    const [rtCampaignCount, setRtCampaignCount] = useState('');
+    const [todayCampaignSuccessCount, setTodayCampaignSuccessCount] = useState('');
+    const [weekCampaignSuccessCount, setWeekCampaignSuccessCount] = useState('');
+    const [rtCampaignSuccessCount, setRtCampaignSuccessCount] = useState('');
+    const [todayCampaignTaskCount, setTodayCampaignTaskCount] = useState('');
+    const [weekCampaignTaskCount, setWeekCampaignTaskCount] = useState('');
+    const [rtCampaignTaskCount, setRtCampaignTaskCount] = useState('');
     const [smsStatistics, setSmsStatistics] = useState('');
-    const [routeStatistics, setRouteStatistics] = useState('');
+    const [routeStatistics, setRouteStatistics] = useState([0]);
 
 
     useEffect(() => {
@@ -179,12 +190,77 @@ export const HomeNew = () => {
             });
     }, [lastTaskReportQuery]);
 
-    useEffect((()=>{
-        CampaignReportService.getCampaignStatistics()
+    useEffect(()=>{
+        CampaignCountService.getTodayCampaignCount()
             .then(data=>{
-                setCampaignStatistics(data);
+                console.log(data);
+                setTodayCampaignCount(data);
             })
-    }),[])
+    },[])
+
+    useEffect(()=>{
+        CampaignCountService.getWeekCampaignCount()
+            .then(data=>{
+                console.log(data);
+                setWeekCampaignCount(data);
+            })
+    },[])
+
+    useEffect(()=>{
+        CampaignCountService.getRtCampaignCount()
+            .then(data=>{
+                console.log(data);
+                setRtCampaignCount(data);
+            })
+    },[])
+
+    useEffect(()=>{
+        CampaignSuccessCountService.getTodayCampaignSuccessCount()
+            .then(data=>{
+                console.log(data);
+                setTodayCampaignSuccessCount(data);
+            })
+    },[])
+
+    useEffect(()=>{
+        CampaignSuccessCountService.getWeekCampaignSuccessCount()
+            .then(data=>{
+                console.log(data);
+                setWeekCampaignSuccessCount(data);
+            })
+    },[])
+
+    useEffect(()=>{
+        CampaignSuccessCountService.getRtCampaignSuccessCount()
+            .then(data=>{
+                console.log(data);
+                setRtCampaignSuccessCount(data);
+            })
+    },[])
+
+    useEffect(()=>{
+        CampaignTaskCountService.getWeekCampaignTaskCount()
+            .then(data=>{
+                console.log(data);
+                setWeekCampaignTaskCount(data);
+            })
+    },[])
+
+    useEffect(()=>{
+        CampaignTaskCountService.getTodayCampaignTaskCount()
+            .then(data=>{
+                console.log(data);
+                setTodayCampaignTaskCount(data);
+            })
+    },[])
+
+    useEffect(()=>{
+        CampaignTaskCountService.getRtCampaignTaskCount()
+            .then(data=>{
+                console.log(data);
+                setRtCampaignTaskCount(data);
+            })
+    },[])
 
     useEffect((()=>{
         SmsReportService.getSmsStatistics()
@@ -193,12 +269,13 @@ export const HomeNew = () => {
             })
     }),[])
 
-    useEffect((()=>{
+    useEffect(()=>{
         RouteReportService.getRouteStatistics()
             .then(data=>{
+                console.log(data);
                 setRouteStatistics(data);
             })
-    }),[])
+    },[])
 
     useEffect(()=>{
         ProfileService.fetchProfile()
@@ -274,7 +351,7 @@ export const HomeNew = () => {
                         <Statistic
                             key={1}
                             title={'Campaigns Total'}
-                            value={campaignStatistics.campaignCount}
+                            value={todayCampaignCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
                     </Card>
@@ -282,7 +359,7 @@ export const HomeNew = () => {
                         <Statistic
                             key={1}
                             title={'Campaigns Total'}
-                            value={campaignStatistics.campaignCount}
+                            value={weekCampaignCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
                     </Card>
@@ -291,23 +368,17 @@ export const HomeNew = () => {
                     <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)'}}>
                         <Statistic
                             key={2}
-                            title={"Success Rate"}
-                            value={campaignStatistics.avgSuccessRate}
+                            title={"SMS Attempt"}
+                            value={todayCampaignTaskCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                            precision={2}
-                            prefix={<ArrowUpOutlined />}
-                            suffix="%"
                         />
                     </Card>
                     <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)', marginTop: 10}}>
                         <Statistic
                             key={2}
-                            title={"Success Rate"}
-                            value={campaignStatistics.avgSuccessRate}
+                            title={"SMS Attempt"}
+                            value={weekCampaignTaskCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                            precision={2}
-                            prefix={<ArrowUpOutlined />}
-                            suffix="%"
                         />
                     </Card>
                 </Col>
@@ -315,23 +386,17 @@ export const HomeNew = () => {
                     <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)'}}>
                         <Statistic
                             key={3}
-                            title={"Failure Rate"}
-                            value={campaignStatistics.avgFailureRate}
+                            title={"Successful SMS"}
+                            value={todayCampaignSuccessCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                            precision={2}
-                            prefix={<ArrowDownOutlined />}
-                            suffix="%"
                         />
                     </Card>
                     <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)', marginTop: 10}}>
                         <Statistic
                             key={3}
-                            title={"Failure Rate"}
-                            value={campaignStatistics.avgFailureRate}
+                            title={"Successful SMS"}
+                            value={weekCampaignSuccessCount}
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
-                            precision={2}
-                            prefix={<ArrowDownOutlined />}
-                            suffix="%"
                         />
                     </Card>
                 </Col>
@@ -341,28 +406,29 @@ export const HomeNew = () => {
         <Card>
             <Row gutter={16}>
                 <Col md={8}>
-                    <Title level={5}> SMS History </Title>
+                    <Title level={5}> Real Time Performance (20 minutes) </Title>
                     <Space direction="vertical">
-                        <Progress type="circle" width={100}  percent={smsStatistics.smsCount} strokeColor={"#689dc4"}/>
-                        <Badge color="#689dc4" status="processing" text="Pending" style={{paddingLeft: 10}}/>
+                        <Progress type="circle" width={100}  percent={rtCampaignCount} format={(percent) => `${percent}`} strokeColor={"#689dc4"}/>
+                        <Badge color="#689dc4" status="processing" text="Total" style={{paddingLeft: 10}}/>
                     </Space>
                     <Space direction="vertical" style={{padding: 5}}>
-                        <Progress type="circle" width={100}  percent={smsStatistics.avgSuccessRate} strokeColor={"Green"} />
-                        <Badge color="Green" status="success" text="Sent" style={{paddingLeft: 10}} />
+                        <Progress type="circle" width={100}  percent={rtCampaignTaskCount} format={(percent) => `${percent}`} strokeColor={"Red"} />
+                        <Badge color="Red" status="error" text="Attempt" style={{paddingLeft: 10}} />
                     </Space>
                     <Space direction="vertical">
-                        <Progress type="circle" width={100}  percent={smsStatistics.avgFailureRate} strokeColor={"Red"}/>
-                        <Badge color="Red" status="error" text="Failed" style={{paddingLeft: 10}} />
+                        <Progress type="circle" width={100}  percent={rtCampaignSuccessCount} format={(percent) => `${percent}`} strokeColor={"Green"}/>
+                        <Badge color="Green" status="success" text="Success" style={{paddingLeft: 10}} />
                     </Space>
 
                 </Col>
                 <Col md={8}>
                     <Title level={5}> Route Uses </Title>
-                    <Progress size="medium" strokeColor={'#EE0000'} percent={routeStatistics.robi} />
-                    <Progress size="medium" strokeColor={'#19AAF8'} percent={routeStatistics.grameenphone} />
-                    <Progress size="medium" strokeColor={'#F26522'} percent={routeStatistics.banglalink} />
-                    <Progress size="medium" strokeColor={'#6AC537'} percent={routeStatistics.teletalk} />
-                    <Progress size="medium" strokeColor={'#ED3D7F'} percent={routeStatistics.others} />
+                    {/*<Progress size="medium" strokeColor={'#EE0000'} percent={routeStatistics.map(v=>v.robi?parseInt(v.robi):0)}/>*/}
+                    <Progress size="medium" strokeColor={'#EE0000'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="robi")?.robi)} format={(percent) => `${percent}`} />
+                    <Progress size="medium" strokeColor={'#19AAF8'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="grameenphone")?.grameenphone)} format={(percent) => `${percent}`} />
+                    <Progress size="medium" strokeColor={'#F26522'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="banglalink")?.banglalink)} format={(percent) => `${percent}`} />
+                    <Progress size="medium" strokeColor={'#6AC537'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="teletalk")?.teletalk)} format={(percent) => `${percent}`} />
+                    <Progress size="medium" strokeColor={'#ED3D7F'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="null")?.null)} format={(percent) => `${percent}`} />
                     <Space direction="vertical">
                         <Badge color="#EE0000" status="success" text="Robi" />
                         <Badge color="#19AAF8" status="success" text="Grameenphone" />
