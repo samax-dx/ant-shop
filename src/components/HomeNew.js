@@ -194,6 +194,9 @@ export const HomeNew = () => {
                 console.log(data);
                 setTodayCampaignCount(data);
             })
+            .catch(error=>{
+                console.log(error);
+            })
     },[])
 
     useEffect(()=>{
@@ -201,6 +204,9 @@ export const HomeNew = () => {
             .then(data=>{
                 console.log(data);
                 setWeekCampaignCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
             })
     },[])
 
@@ -210,6 +216,9 @@ export const HomeNew = () => {
                 console.log(data);
                 setRtCampaignCount(data);
             })
+            .catch(error=>{
+                console.log(error);
+            })
     },[])
 
     useEffect(()=>{
@@ -217,6 +226,9 @@ export const HomeNew = () => {
             .then(data=>{
                 console.log(data);
                 setTodayCampaignSuccessCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
             })
     },[])
 
@@ -226,6 +238,9 @@ export const HomeNew = () => {
                 console.log(data);
                 setWeekCampaignSuccessCount(data);
             })
+            .catch(error=>{
+                console.log(error);
+            })
     },[])
 
     useEffect(()=>{
@@ -233,6 +248,9 @@ export const HomeNew = () => {
             .then(data=>{
                 console.log(data);
                 setRtCampaignSuccessCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
             })
     },[])
 
@@ -253,6 +271,9 @@ export const HomeNew = () => {
                 console.log(data);
                 setTodayCampaignTaskCount(data);
             })
+            .catch(error=>{
+                console.log(error);
+            })
     },[])
 
     useEffect(()=>{
@@ -261,12 +282,18 @@ export const HomeNew = () => {
                 console.log(data);
                 setRtCampaignTaskCount(data);
             })
+            .catch(error=>{
+                console.log(error);
+            })
     },[])
 
     useEffect((()=>{
         SmsReportService.getSmsStatistics()
             .then(data=>{
                 setSmsStatistics(data);
+            })
+            .catch(error=>{
+                console.log(error);
             })
     }),[])
 
@@ -276,6 +303,9 @@ export const HomeNew = () => {
                 console.log(data);
                 setRouteStatistics(data);
             })
+            .catch(error=>{
+                console.log(error);
+            })
     },[])
 
     useEffect(()=>{
@@ -283,6 +313,9 @@ export const HomeNew = () => {
             .then(data=>{
                 setProfile(data.profile);
                 setAccountBalance(data.balance);
+            })
+            .catch(error=>{
+                console.log(error);
             })
     },[])
 
