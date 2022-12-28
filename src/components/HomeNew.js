@@ -56,17 +56,12 @@ const PackageView = ({ products, viewPage, viewLimit, onView}) => {
             rowKey={"productId"}
             locale={{ emptyText: products ===null? "E": "NO DATA" }}
             pagination={false}
-            style={{ minWidth: "30vw" }}
+            style={{ minWidth: "24vw" }}
         >
-            <Table.Column
-                dataIndex={undefined}
-                title={"#"}
-                render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
-            />
 
-            <Table.Column title="Package" dataIndex={"productName"} />
+            <Table.Column title="Party ID" dataIndex={"partyId"} />
+            <Table.Column title="Product Name" dataIndex={"productName"} />
             <Table.Column title="Balance" dataIndex={"stock"} render={v => <Tag color={getBalanceColor(v)}>{v}</Tag>} />
-            <Table.Column title="Prefixes" dataIndex={"dialPrefixes"} />
         </Table>
     </>);
 };
@@ -75,12 +70,11 @@ const PaymentView = ({ payments, viewPage, viewLimit, onView, onEdit, onDelete }
 
     return (<>
         <Table
-            size="small"
+            size="large"
             dataSource={payments}
             rowKey={"paymentId"}
             locale={{ emptyText: payments ===null? "E": "NO DATA" }}
             pagination={false}
-            style={{ minWidth: "30vw" }}
         >
             <Table.Column
                 dataIndex={undefined}
@@ -89,8 +83,12 @@ const PaymentView = ({ payments, viewPage, viewLimit, onView, onEdit, onDelete }
             />
 
             <Table.Column title="Payment ID" dataIndex={"paymentId"} />
+            <Table.Column title="User ID" dataIndex={"partyLoginId"} />
+            <Table.Column title="Party ID" dataIndex={"partyId"} />
+            <Table.Column title="Party Name" dataIndex={"partyName"} />
+            <Table.Column title="Billing Type" dataIndex={"billingType"}/>
+            <Table.Column title="Date" dataIndex={"date"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")}/>
             <Table.Column title="Amount" dataIndex={"amount"} render={v => v.toFixed(2)} />
-            <Table.Column title="Date" dataIndex={"date"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
         </Table>
     </>);
 };
@@ -301,33 +299,6 @@ export const HomeNew = () => {
         setLastPaymentQuery({ page: 1, limit: 10 })
     }, []);
 
-    const tableData = [
-        {
-            key:'1',
-            name: 'Jhone Dew',
-            paymentId: 17001,
-            amount: 1540,
-            city: 'Dhaka',
-            status: 'Pending'
-        },
-        {
-            key:'2',
-            name: 'Jhone Dew',
-            paymentId: 17002,
-            amount: 1540,
-            city: 'Khulna',
-            status: 'Failed'
-        },
-        {
-            key:'3',
-            name: 'Jhone Dew',
-            paymentId: 17003,
-            amount: 1540,
-            city: 'Rajshahi',
-            status: 'Sent'
-        }
-    ]
-
 
     return (<>
         <Card>
@@ -337,7 +308,7 @@ export const HomeNew = () => {
                         <Space direction="vertical" size={"small"}>
                             <Statistic title="Account Code No." value={profile.partyId} groupSeparator="" />
                             <Statistic title="Account Balance (BDT)" value={accountBalance} precision={2} />
-                            <Statistic title="Balance [Package]" value={partyProducts.map(data=>data.stock +'['+data.productId)+']'} precision={2} />
+                            {/*<Statistic title="Balance [Package]" value={partyProducts.map(data=>data.stock +'['+data.productId)+']'} precision={2} />*/}
                         </Space>
                     </Space>
                 </Col>
@@ -368,7 +339,7 @@ export const HomeNew = () => {
                     </Card>
                 </Col>
                 <Col md={5}>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)'}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)'}}>
                         <Statistic
                             key={2}
                             title={"SMS Attempt"}
@@ -376,7 +347,7 @@ export const HomeNew = () => {
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
                     </Card>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)', marginTop: 10}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)', marginTop: 10}}>
                         <Statistic
                             key={2}
                             title={"SMS Attempt"}
@@ -386,7 +357,7 @@ export const HomeNew = () => {
                     </Card>
                 </Col>
                 <Col md={5}>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)'}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)'}}>
                         <Statistic
                             key={3}
                             title={"Successful SMS"}
@@ -394,7 +365,7 @@ export const HomeNew = () => {
                             valueStyle={{ color: '#ffffff', fontWeight: 900 }}
                         />
                     </Card>
-                    <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)', marginTop: 10}}>
+                    <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)', marginTop: 10}}>
                         <Statistic
                             key={3}
                             title={"Successful SMS"}
@@ -445,38 +416,22 @@ export const HomeNew = () => {
                     </Space>
                 </Col>
                 <Col md={8}>
-                    <Table
-                        size="small"
-                        dataSource={tableData}
-                        rowKey={"paymentId"}
-                    >
-                        <Table.Column title="Payment ID" dataIndex={"paymentId"}/>
-                        <Table.Column title="Customers" dataIndex={"name"}/>
-                        <Table.Column title="From" dataIndex={"city"}/>
-                        <Table.Column title="Amount" dataIndex={"amount"}/>
-                        <Table.Column title="Status" dataIndex={"status"} render={v => [
-                            <Tag color={"#108ee9"}>Pending</Tag>,
-                            <Tag color={"#87d068"}>Sent</Tag>,
-                            <Tag color={"#f50"}>Failed</Tag>][[v === "Pending", v === "Sent", v === "Failed"].indexOf(!0)]} />
-                    </Table>
+                    <Card title={<><Typography.Text style={{fontWeight: "bold", fontSize: 16}}>Active Packages</Typography.Text>&nbsp;&nbsp;<Tag color={"blue"}>{partyProductsFetchCount}</Tag></>} size="small">
+                        <PackageView products={partyProducts} viewPage={lastProductQuery.page} viewLimit={lastProductQuery.limit} />
+                        <Space children={<><p /><p /></>} />
+                        <DataPager totalPagingItems={partyProductsFetchCount} currentPage={lastProductQuery.page}
+                                   onPagingChange={(page, limit) => setLastProfileQuery({ ...lastProductQuery, page, limit })} />
+                    </Card>
                 </Col>
             </Row>
         </Card>
         <Space children={<><p /><p /></>} />
-        <Space size={"large"} align="baseline">
-            <Card title="Recent TopUp / Recharges" size="small">
-                <PaymentView payments={payments} viewPage={lastPaymentQuery.page} viewLimit={lastPaymentQuery.limit} />
-                <Space children={<><p /><p /></>} />
-                <DataPager totalPagingItems={paymentsFetchCount} currentPage={lastPaymentQuery.page}
-                           onPagingChange={(page, limit) => setLastProfileQuery({ ...lastPaymentQuery, page, limit })} />
-            </Card>
-            <Card title={<><Typography.Text>Active Packages</Typography.Text>&nbsp;&nbsp;<Tag color={"blue"}>{partyProductsFetchCount}</Tag></>} size="small">
-                <PackageView products={partyProducts} viewPage={lastProductQuery.page} viewLimit={lastProductQuery.limit} />
-                <Space children={<><p /><p /></>} />
-                <DataPager totalPagingItems={partyProductsFetchCount} currentPage={lastProductQuery.page}
-                           onPagingChange={(page, limit) => setLastProfileQuery({ ...lastProductQuery, page, limit })} />
-            </Card>
-        </Space>
+        <Card title={<Typography.Text style={{fontWeight: "bold", fontSize: 16}}>Recent TopUp / Recharges</Typography.Text>} size="small">
+            <PaymentView payments={payments} viewPage={lastPaymentQuery.page} viewLimit={lastPaymentQuery.limit} />
+            <Space children={<><p /><p /></>} />
+            <DataPager totalPagingItems={paymentsFetchCount} currentPage={lastPaymentQuery.page}
+                       onPagingChange={(page, limit) => setLastProfileQuery({ ...lastPaymentQuery, page, limit })} />
+        </Card>
         <Space children={<><p /><p /></>} />
         <Card title="Sent Messages" size="small">
             <CompleteTaskView taskReports={taskReports} viewPage={lastTaskReportQuery.page} viewLimit={lastTaskReportQuery.limit} />

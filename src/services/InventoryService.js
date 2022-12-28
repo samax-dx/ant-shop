@@ -5,7 +5,7 @@ import { XAuth } from "./XAuth";
 export const InventoryService = {
     fetchProducts: (payload) => console.log(payload) || axios
         .post(
-            `${SERVER_URL}/Inventory/listPartyProducts`,
+            `${SERVER_URL}/Inventory/listProducts`,
             { ...payload },
             {
                 headers: {
