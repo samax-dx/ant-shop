@@ -18,6 +18,7 @@ import {RouteReportService} from "../services/DashBoardServices/RouteReportServi
 import {CampaignCountService} from "../services/DashBoardServices/CampaignCountService";
 import {CampaignSuccessCountService} from "../services/DashBoardServices/CampaignSuccessCountService";
 import {CampaignTaskCountService} from "../services/DashBoardServices/CampaignTaskCountService";
+import {PartyCountDashService} from "../services/DashBoardServices/PartyCountDashService";
 
 
 const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
@@ -59,7 +60,7 @@ const PackageView = ({ products, viewPage, viewLimit, onView}) => {
             style={{ minWidth: "24vw" }}
         >
 
-            <Table.Column title="Party ID" dataIndex={"partyId"} />
+            <Table.Column title="Party Name" dataIndex={"partyName"} />
             <Table.Column title="Product Name" dataIndex={"productName"} />
             <Table.Column title="Balance" dataIndex={"stock"} render={v => <Tag color={getBalanceColor(v)}>{v}</Tag>} />
         </Table>
@@ -70,7 +71,7 @@ const PaymentView = ({ payments, viewPage, viewLimit, onView, onEdit, onDelete }
 
     return (<>
         <Table
-            size="large"
+            size="small"
             dataSource={payments}
             rowKey={"paymentId"}
             locale={{ emptyText: payments ===null? "E": "NO DATA" }}
@@ -140,6 +141,9 @@ export const HomeNew = () => {
     const [weekCampaignTaskCount, setWeekCampaignTaskCount] = useState('');
     const [rtCampaignTaskCount, setRtCampaignTaskCount] = useState('');
     const [smsStatistics, setSmsStatistics] = useState('');
+    const [partyTotalCount, setPartyTotalCount] = useState('');
+    const [partyActiveCount, setPartyActiveCount] = useState('');
+    const [todayPartyActiveCount, setTodayPartyActiveCount] = useState(0);
     const [routeStatistics, setRouteStatistics] = useState([0]);
 
 
@@ -287,6 +291,39 @@ export const HomeNew = () => {
             })
     },[])
 
+    useEffect(()=>{
+        PartyCountDashService.getTotalPartyCount()
+            .then(data=>{
+                console.log(data);
+                setPartyTotalCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+    },[])
+
+    useEffect(()=>{
+        PartyCountDashService.getActivePartyCount()
+            .then(data=>{
+                console.log(data);
+                setPartyActiveCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+    },[])
+
+    useEffect(()=>{
+        PartyCountDashService.getTodayActivePartyCount()
+            .then(data=>{
+                console.log(data);
+                setTodayPartyActiveCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+    },[])
+
     useEffect((()=>{
         SmsReportService.getSmsStatistics()
             .then(data=>{
@@ -339,9 +376,16 @@ export const HomeNew = () => {
                 <Col md={5}>
                     <Space direction="vertical" size={"small"}>
                         <Space direction="vertical" size={"small"}>
-                            <Statistic title="Account Code No." value={profile.partyId} groupSeparator="" />
-                            <Statistic title="Account Balance (BDT)" value={accountBalance} precision={2} />
+                            <Title level={4} style={{color: "#492D3A"}}>Total Party : {partyTotalCount}</Title>
+                            <Title level={4} style={{color: "#492D3A"}}>Active Party : {partyActiveCount}</Title>
+                            <Title level={4} style={{color: "#492D3A"}}>Today Active Party : {todayPartyActiveCount}</Title>
+                            {/*<Typography.Text style={{fontWeight: "bold", fontSize: 25}}>Total Party : {partyTotalCount}</Typography.Text>*/}
+                            {/*<Typography.Text style={{fontWeight: "bold", fontSize: 25}}>Active Party : {partyActiveCount}</Typography.Text>*/}
+                            {/*<Statistic title="Total Party :" value={partyTotalCount} />*/}
+                            {/*<Statistic title="Active Party :" value={partyActiveCount} />*/}
                             {/*<Statistic title="Balance [Package]" value={partyProducts.map(data=>data.stock +'['+data.productId)+']'} precision={2} />*/}
+                            <Space children={<><p /><p /></>} />
+                            <Space children={<><p /><p /></>} />
                         </Space>
                     </Space>
                 </Col>
@@ -349,7 +393,7 @@ export const HomeNew = () => {
                 <Col md={3}>
                     <Title level={3} style={{color: "#492D3A", marginLeft: 20}}>Today</Title>
                     <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#689dc4", marginLeft: 35}} /></Space>
-                    <Title level={3} style={{color: "#492D3A", marginTop: 48}}>This Week</Title>
+                    <Title level={3} style={{color: "#492D3A", marginTop: 25}}>This Week</Title>
                     <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#4F995B", marginLeft: 35}} /></Space>
                 </Col>
 
@@ -428,7 +472,7 @@ export const HomeNew = () => {
                     </Space>
 
                 </Col>
-                <Col md={8}>
+                <Col md={7}>
                     <Title level={5}> Route Uses </Title>
                     {/*<Progress size="medium" strokeColor={'#EE0000'} percent={routeStatistics.map(v=>v.robi?parseInt(v.robi):0)}/>*/}
                     <Progress size="medium" strokeColor={'#EE0000'} percent={parseInt(routeStatistics.find(v=>Object.keys(v)=="robi")?.robi)} format={(percent) => `${percent}`} />
@@ -448,7 +492,7 @@ export const HomeNew = () => {
                         <Badge color="#ED3D7F" status="success" text="Others" />
                     </Space>
                 </Col>
-                <Col md={8}>
+                <Col md={9}>
                     <Card title={<><Typography.Text style={{fontWeight: "bold", fontSize: 16}}>Active Packages</Typography.Text>&nbsp;&nbsp;<Tag color={"blue"}>{partyProductsFetchCount}</Tag></>} size="small">
                         <PackageView products={partyProducts} viewPage={lastProductQuery.page} viewLimit={lastProductQuery.limit} />
                         <Space children={<><p /><p /></>} />
