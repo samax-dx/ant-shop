@@ -121,7 +121,7 @@ export const CampaignService = {
         }),
     fetchCampaignTaskReports: (payload) => console.log(payload) || axios
         .post(
-            `${SERVER_URL}/Campaign/getPartyCampaignTaskReports`,
+            `${SERVER_URL}/Campaign/getPartyCampaignTaskReportsAdmin`,
             { ...payload, orderBy: "updatedOn DESC" },
             {
                 headers: {

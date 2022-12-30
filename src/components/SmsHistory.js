@@ -26,8 +26,8 @@ import {Option} from "antd/es/mentions";
 
 
 const SearchForm = ({ onSearch, parties }) => {
-    console.log(parties);
     const [searchForm] = Form.useForm();
+
     const performSearch = () => {
         const formData = searchForm.getFieldsValue();
 
@@ -40,7 +40,7 @@ const SearchForm = ({ onSearch, parties }) => {
             }
         });
 
-        const queryData = ["phoneNumber", "campaignName", "packageId", "updatedOn_fld0_value", "updatedOn_fld1_value"].reduce((acc, v) => {
+        const queryData = ["partyId", "terminatingCalledNumber", "campaignName", "packageId", "updatedOn_fld0_value", "updatedOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -54,7 +54,7 @@ const SearchForm = ({ onSearch, parties }) => {
 
             return acc;
         }, formData);
-        onSearch(queryData);
+        onSearch(Object.keys(queryData).length ? queryData : null);
     };
 
     return (<>
@@ -63,9 +63,9 @@ const SearchForm = ({ onSearch, parties }) => {
             labelCol={{ span: 15}}
             wrapperCol={{span:23}}
             labelAlign="left"
-            initialValues={{ updatedOn_fld0_value: moment().subtract(3, 'days'),updatedOn_fld1_value:moment(new Date()) }}
+            initialValues={{ updatedOn_fld0_value: moment().subtract(1, 'days'),updatedOn_fld1_value:moment(new Date()) }}
         >
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="selectedParty" label="Select Party" children={  <Select
+            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="partyId" label="Select Party" children={  <Select
                 showSearch
                 placeholder="Select a party"
                 optionFilterProp="children"
@@ -75,18 +75,20 @@ const SearchForm = ({ onSearch, parties }) => {
                 }
                 style={{width:"190px",marginRight:7}}
             >
+                <Option key={0}>{"All"}</Option>
                 {parties.map(party => <Option key={party.partyId}>{party.name}</Option>)}
             </Select>
             } />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="phoneNumber" label="Phone Number" children={<Input />} />
-            <Form.Item name="phoneNumber_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="partyId_op" initialValue={"contains"} hidden  children={  <Select></Select>} />
+            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="terminatingCalledNumber" label="Phone Number" children={<Input />} />
+            <Form.Item name="terminatingCalledNumber_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="campaignName" label="Campaign" children={<Input />} />
             <Form.Item name="campaignName_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="packageId" label="Package" children={<Input />} />
             <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>
+            <Form.Item required name="updatedOn_fld0_value" label="From Date" style={{ display:'inline-block', margin:'0px'}} children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>
             <Form.Item name="updatedOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format={"YYYY-MM-DD HH:mm:ss"} />} />
+            <Form.Item required name="updatedOn_fld1_value" label="To Date" style={{ display:'inline-block', margin:'0px'}} children={<DatePicker showTime use12Hours={true} format={"YYYY-MM-DD HH:mm:ss"} />} />
             <Form.Item name="updatedOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
             <Form.Item style={{display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 1 }} colon={false} label=' '>
                 <Button
@@ -277,7 +279,7 @@ export const SmsHistory = () => {
     useEffect(()=>{
         PartyService.fetchRecords({})
             .then(data=>{
-                console.log(data.parties);
+                console.log(data);
                 setParties(data.parties);
             })
             .catch(error=> console.log(error))
@@ -285,7 +287,7 @@ export const SmsHistory = () => {
     useEffect(() => {
         CampaignService.fetchCampaignTaskReports(lastQuery)
             .then(data => {
-                console.log(data)
+                console.log(data.taskReports);
                 setTaskReports(data.taskReports);
                 setTaskReportsFetchCount(data.count);
                 setTaskReportsFetchError(null);
@@ -309,7 +311,7 @@ export const SmsHistory = () => {
                       headStyle={{backgroundColor:"#f0f2f5", border: 0,padding:'0px'}}
                       size="small"
                 >
-                    <SearchForm parties ={parties} onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit })}/>
+                    <SearchForm parties ={parties} onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
                 </Card>
             </Col>
         </Row>
