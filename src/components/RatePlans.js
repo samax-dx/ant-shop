@@ -290,6 +290,9 @@ export const RatePlans = () => {
                 console.log(data);
                 setCurrency(data.currency);
             })
+            .catch(error =>{
+                console.log(error);
+            })
     },[])
     useEffect(() => {
         setLastQuery({ page: 1, limit: 10 })
