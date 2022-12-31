@@ -1,5 +1,4 @@
 import React, {useRef} from 'react';
-import { useActor } from '@xstate/react';
 import { Col, Row, Layout, Breadcrumb, Space, Button,Avatar } from 'antd';
 import { TopMenu } from "./TopMenu";
 import { MainMenu } from './MainMenu';
@@ -16,7 +15,7 @@ export const AppLayout = ({ render: PageContent, actor, routeComponent }) => {
         {appState.matches("login") || <Header className="header" style={{paddingLeft:'5px', paddingRight:'5px'}}>
             <Row>
                 <Col xs={10} sm={4} className="logo" >
-                    <Link to='/'><img height={45} width={45} src={getAllConfig.logo} style={{ marginBottom: "4px"}} /></Link>
+                    <Link to='/'><img src={getAllConfig.logo} style={{ marginBottom: "4px"}} /></Link>
                     &nbsp;
                     <Link to='/' style={{color:"white"}}>SMS-Portal Admin</Link>
                 </Col>

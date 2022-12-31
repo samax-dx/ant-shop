@@ -1,36 +1,35 @@
 import royalGreen from './royalGreen'
 import bdCom from "./bdCom";
 
-const configFileName = "royalGreen"
+const configFileName = "royalgreen"
 function getAllConfig(configFileName){
-    switch (configFileName){
-        case 'royalGreen':
+    switch (configFileName.toLowerCase()){
+        case 'royalgreen':
             return royalGreen;
-        case 'bdCom':
+        case 'bdcom':
             return bdCom;
     }
 }
 export default getAllConfig(configFileName)
 
 
-/*
 
-#bdcom
-export const config= {
-    logo: bdcom.png
-}
+//#bdcom
+// export const config= {
+//     logo: bdcom.png
+// }
+//
+// //#royal Green
+// export const config= {
+//     logo: royalGreen.png
+// }
 
-#royal Green
-export const config= {
-    logo: royalGreen.png
-}
 
-
-#main
-import bdcomConfig, royalGreen;
-export function getConfig(){
-    switch 'bdcom'
-        return bdcomConfig.config;
-            switch 'royalGreen'
-                return royalGreen.config;
-}*/
+// #main
+// import bdcomConfig, royalGreen;
+// export function getConfig(){
+//     switch 'bdcom'
+//         return bdcomConfig.config;
+//             switch 'royalGreen'
+//                 return royalGreen.config;
+// }

@@ -28,8 +28,19 @@ import {PackageRate} from "./components/PackageRate";
 import {RatePlanAssignment} from "./components/RatePlanAssign";
 import {SmsHistory} from "./components/SmsHistory";
 import {HomeNew} from "./components/HomeNew";
+import getAllConfig from "../src/config/main";
+
+function setFavicon (){
+    return document.getElementById("favicon");
+}
 
 export const App = ({ actor }) => {
+
+    (function(){
+        const favicon = setFavicon();
+        favicon.href = getAllConfig.ficon;
+    })();
+
     const [current, send] = useActor(actor);
     const component = capitalize(current.value);
 
