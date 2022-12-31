@@ -497,7 +497,7 @@ export const HomeNew = () => {
                         <PackageView products={partyProducts} viewPage={lastProductQuery.page} viewLimit={lastProductQuery.limit} />
                         <Space children={<><p /><p /></>} />
                         <DataPager totalPagingItems={partyProductsFetchCount} currentPage={lastProductQuery.page}
-                                   onPagingChange={(page, limit) => setLastProfileQuery({ ...lastProductQuery, page, limit })} />
+                                   onPagingChange={(page, limit) => setLastProductQuery({ ...lastProductQuery, page, limit })} />
                     </Card>
                 </Col>
             </Row>
@@ -507,14 +507,14 @@ export const HomeNew = () => {
             <PaymentView payments={payments} viewPage={lastPaymentQuery.page} viewLimit={lastPaymentQuery.limit} />
             <Space children={<><p /><p /></>} />
             <DataPager totalPagingItems={paymentsFetchCount} currentPage={lastPaymentQuery.page}
-                       onPagingChange={(page, limit) => setLastProfileQuery({ ...lastPaymentQuery, page, limit })} />
+                       onPagingChange={(page, limit) => setLastPaymentQuery({ ...lastPaymentQuery, page, limit })} />
         </Card>
         <Space children={<><p /><p /></>} />
         <Card title="Sent Messages" size="small">
             <CompleteTaskView taskReports={taskReports} viewPage={lastTaskReportQuery.page} viewLimit={lastTaskReportQuery.limit} />
             <Space children={<><p /><p /></>} />
             <DataPager totalPagingItems={taskReportsFetchCount} currentPage={lastTaskReportQuery.page}
-                       onPagingChange={(page, limit) => setLastProfileQuery({ ...lastTaskReportQuery, page, limit })} />
+                       onPagingChange={(page, limit) => setLastTaskReportQuery({ ...lastTaskReportQuery, page, limit })} />
         </Card>
     </>);
 };

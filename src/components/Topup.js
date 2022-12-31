@@ -20,6 +20,7 @@ import {PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 import {TopupParty} from "./TopupParty";
 import {ModalTitleBar} from "./ModalTitleBar";
+import moment from "moment";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -62,6 +63,7 @@ const SearchForm = ({ onSearch }) => {
             labelCol={{span: 18}}
             wrapperCol={{ span: 23}}
             labelAlign="left"
+            initialValues={{ date_fld0_value: moment().subtract(1, 'days'), date_fld1_value:moment(new Date()) }}
         >
             <Form.Item name="partyLoginId" label="User-ID" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
             <Form.Item name="partyLoginId_op" initialValue={"contains"} hidden children={<Input />} />

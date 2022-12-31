@@ -17,6 +17,7 @@ import {countries} from "countries-list";
 import {ExclamationCircleOutlined, PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 import {RateService} from "../services/RateService";
+import moment from "moment";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -59,6 +60,7 @@ const SearchForm = ({ onSearch }) => {
             labelCol={{span: 18}}
             wrapperCol={{ span: 23}}
             labelAlign="left"
+            initialValues={{ createdOn_fld0_value: moment().subtract(1, 'days'),createdOn_fld1_value:moment(new Date()) }}
         >
             <Form.Item name="name" label="Name" children={<Input />} style={{display:"inline-block",marginBottom:'0px'}} />
             <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
