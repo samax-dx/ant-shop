@@ -374,20 +374,30 @@ export const HomeNew = () => {
         <Card>
             <Row gutter={8}>
                 <Col md={5}>
-                    <Space direction="vertical" size={"small"}>
-                        <Space direction="vertical" size={"small"}>
-                            <Title level={4} style={{color: "#492D3A"}}>Total Party : {partyTotalCount}</Title>
-                            <Title level={4} style={{color: "#492D3A"}}>Active Party : {partyActiveCount}</Title>
-                            <Title level={4} style={{color: "#492D3A"}}>Today Active Party : {todayPartyActiveCount}</Title>
-                            {/*<Typography.Text style={{fontWeight: "bold", fontSize: 25}}>Total Party : {partyTotalCount}</Typography.Text>*/}
-                            {/*<Typography.Text style={{fontWeight: "bold", fontSize: 25}}>Active Party : {partyActiveCount}</Typography.Text>*/}
-                            {/*<Statistic title="Total Party :" value={partyTotalCount} />*/}
-                            {/*<Statistic title="Active Party :" value={partyActiveCount} />*/}
-                            {/*<Statistic title="Balance [Package]" value={partyProducts.map(data=>data.stock +'['+data.productId)+']'} precision={2} />*/}
-                            <Space children={<><p /><p /></>} />
-                            <Space children={<><p /><p /></>} />
-                        </Space>
-                    </Space>
+                    {/*<Space direction="vertical" size={"small"}>*/}
+                    {/*    <Space direction="vertical" size={"small"}>*/}
+                    {/*        <Title level={4} style={{color: "#492D3A"}}>Total Party : {partyTotalCount}</Title>*/}
+                    {/*        <Title level={4} style={{color: "#492D3A"}}>Active Party : {partyActiveCount}</Title>*/}
+                    {/*        <Title level={4} style={{color: "#492D3A"}}>Today Active Party : {todayPartyActiveCount}</Title>*/}
+                    {/*        /!*<Typography.Text style={{fontWeight: "bold", fontSize: 25}}>Total Party : {partyTotalCount}</Typography.Text>*!/*/}
+                    {/*        /!*<Typography.Text style={{fontWeight: "bold", fontSize: 25}}>Active Party : {partyActiveCount}</Typography.Text>*!/*/}
+                    {/*        /!*<Statistic title="Total Party :" value={partyTotalCount} />*!/*/}
+                    {/*        /!*<Statistic title="Active Party :" value={partyActiveCount} />*!/*/}
+                    {/*        /!*<Statistic title="Balance [Package]" value={partyProducts.map(data=>data.stock +'['+data.productId)+']'} precision={2} />*!/*/}
+                    {/*        <Space children={<><p /><p /></>} />*/}
+                    {/*        <Space children={<><p /><p /></>} />*/}
+                    {/*    </Space>*/}
+                    {/*</Space>*/}
+                    <Card
+                        title={<Title level={4}>Parties</Title>}
+                        bordered={true}
+                        headStyle={{background: '#b8def9' , borderRadius: '20px 20px 0 0', padding: '0 8px 0 10px'}}
+                        style={{borderRadius: '20px', boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px'}}
+                    >
+                        <Title level={4} style={{color: "#492D3A"}}>Total : {partyTotalCount}</Title>
+                        <Title level={4} style={{color: "#492D3A"}}>Active : {partyActiveCount}</Title>
+                        <Title level={4} style={{color: "#492D3A"}}>Active Today : {todayPartyActiveCount}</Title>
+                    </Card>
                 </Col>
                 <Divider type="vertical" style={{ height: "inherit", marginRight: "24px" }} />
                 <Col md={3}>
@@ -510,7 +520,7 @@ export const HomeNew = () => {
                        onPagingChange={(page, limit) => setLastPaymentQuery({ ...lastPaymentQuery, page, limit })} />
         </Card>
         <Space children={<><p /><p /></>} />
-        <Card title="Sent Messages" size="small">
+        <Card title={<Typography.Text style={{fontWeight: "bold", fontSize: 16}}>Sent Messages</Typography.Text>} size="small">
             <CompleteTaskView taskReports={taskReports} viewPage={lastTaskReportQuery.page} viewLimit={lastTaskReportQuery.limit} />
             <Space children={<><p /><p /></>} />
             <DataPager totalPagingItems={taskReportsFetchCount} currentPage={lastTaskReportQuery.page}
