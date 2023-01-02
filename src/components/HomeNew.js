@@ -389,14 +389,14 @@ export const HomeNew = () => {
                     {/*    </Space>*/}
                     {/*</Space>*/}
                     <Card
-                        title={<Title level={4}>Parties</Title>}
+                        title={<Title level={4} style={{color:'white'}}>Parties</Title>}
                         bordered={true}
-                        headStyle={{background: '#b8def9' , borderRadius: '20px 20px 0 0', padding: '0 8px 0 10px'}}
-                        style={{borderRadius: '20px', boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px'}}
+                        headStyle={{background: '#2193b0' , padding: '0 8px 0 10px'}}
+                        style={{ boxShadow: 'rgba(0, 0, 0, 0.1) 4px 4px 5px',background:'#F2F1F0'}}
                     >
-                        <Title level={4} style={{color: "#492D3A"}}>Total : {partyTotalCount}</Title>
-                        <Title level={4} style={{color: "#492D3A"}}>Active : {partyActiveCount}</Title>
-                        <Title level={4} style={{color: "#492D3A"}}>Active Today : {todayPartyActiveCount}</Title>
+                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Total : {partyTotalCount}</Title>
+                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Active : {partyActiveCount}</Title>
+                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Active Today : {todayPartyActiveCount}</Title>
                     </Card>
                 </Col>
                 <Divider type="vertical" style={{ height: "inherit", marginRight: "24px" }} />
