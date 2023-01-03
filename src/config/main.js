@@ -2,7 +2,7 @@ import royalGreen from './royalGreen'
 import bdCom from "./bdCom";
 
 const configFileName = process.env["REACT_APP_CONFIGFILENAME_FORLOGO"];
-console.log(configFileName.toString());
+console.log(configFileName.toString() );
 function getAllConfig(configFileName){
     switch (configFileName.toLowerCase()){
         case 'royalgreen':
