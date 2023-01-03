@@ -12,14 +12,14 @@ export const AppLayout = ({ render: PageContent, actor, routeComponent }) => {
     const [appState, sendApp] = [actor.getSnapshot(), actor.send];
 
     return <Layout>
-        {appState.matches("login") || <Header className="header" style={{paddingLeft:'5px', paddingRight:'5px'}}>
-            <Row>
-                <Col xs={10} sm={4} className="logo" >
-                    <Link to='/'><img src={getAllConfig.logo} style={{ marginBottom: "4px"}} /></Link>
+        {appState.matches("login") || <Header className="header" style={{paddingLeft:'7px', paddingRight:'5px'}}>
+            <Row style={{marginBottom:10}}>
+                <Col xs={10} sm={12} className="logo">
+                    <Link to='/'><img src={getAllConfig.logo}/></Link>
                     &nbsp;
                     <Link to='/' style={{color:"white"}}>SMS-Portal Admin</Link>
                 </Col>
-                <Col xs={14} sm={20} className="menu"><TopMenu actor={actor} /></Col>
+                <Col xs={14} sm={12} className="menu"><TopMenu actor={actor} /></Col>
             </Row>
         </Header>}
         <Layout>
