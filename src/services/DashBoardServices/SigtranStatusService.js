@@ -4,7 +4,7 @@ import {XAuth} from "../XAuth";
 
 export const SigtranStatusService = {
     getGp1Status: (payload) =>  console.log(payload) || axios
-        .post(
+        .get(
             `${GP1_SIGTRAN_STATUS}`,
             { ...payload },
             {
@@ -33,7 +33,7 @@ export const SigtranStatusService = {
             return Promise.reject(errorEx);
         }),
     getGp2Status: (payload) =>  console.log(payload) || axios
-        .post(
+        .get(
             `${GP2_SIGTRAN_STATUS}`,
             { ...payload },
             {
@@ -62,7 +62,7 @@ export const SigtranStatusService = {
             return Promise.reject(errorEx);
         }),
     getBL1Status: (payload) =>  console.log(payload) || axios
-        .post(
+        .get(
             `${BL1_SIGTRAN_STATUS}`,
             { ...payload },
             {
