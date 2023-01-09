@@ -19,6 +19,7 @@ import {CampaignCountService} from "../services/DashBoardServices/CampaignCountS
 import {CampaignSuccessCountService} from "../services/DashBoardServices/CampaignSuccessCountService";
 import {CampaignTaskCountService} from "../services/DashBoardServices/CampaignTaskCountService";
 import {PartyCountDashService} from "../services/DashBoardServices/PartyCountDashService";
+import {SigtranStatusService} from "../services/DashBoardServices/SigtranStatusService";
 
 
 const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
@@ -145,6 +146,7 @@ export const HomeNew = () => {
     const [partyActiveCount, setPartyActiveCount] = useState('');
     const [todayPartyActiveCount, setTodayPartyActiveCount] = useState(0);
     const [routeStatistics, setRouteStatistics] = useState([0]);
+    const [gp1Status, setGp1Status] = useState("");
 
 
     useEffect(() => {
@@ -364,6 +366,14 @@ export const HomeNew = () => {
     },[])
 
     const repetitiveApiCaller = () => {
+        SigtranStatusService.getGp1Status()
+            .then(data=>{
+                console.log(data);
+                setGp1Status(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
         CampaignCountService.getTodayCampaignCount()
             .then(data=>{
                 console.log(data);
@@ -584,7 +594,7 @@ export const HomeNew = () => {
                         headStyle={{background: '#2193b0' , padding: '0 8px 0 10px'}}
                         style={{ boxShadow: 'rgba(0, 0, 0, 0.1) 4px 4px 5px',background:'#F2F1F0'}}
                     >
-                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Total : {partyTotalCount}</Title>
+                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>GP-1 : {gp1Status}</Title>
                         <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Active : {partyActiveCount}</Title>
                         <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Active Today : {todayPartyActiveCount}</Title>
                     </Card>

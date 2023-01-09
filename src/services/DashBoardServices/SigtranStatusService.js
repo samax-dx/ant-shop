@@ -1,6 +1,6 @@
 import {BL1_Sigtran, CONTACT_BOOK_EP, GP1_Sigtran, GP2_Sigtran, OFBIZ_EP} from "../../config";
 import axios from "axios";
-import {XAuth} from "./XAuth";
+import {XAuth} from "../XAuth";
 
 export const SigtranStatusService = {
     getGp1Status: (payload) =>  console.log(payload) || axios
