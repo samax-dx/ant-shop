@@ -193,157 +193,164 @@ export const HomeNew = () => {
     }, [lastTaskReportQuery]);
 
     useEffect(()=>{
-        CampaignCountService.getTodayCampaignCount()
-            .then(data=>{
-                console.log(data);
-                setTodayCampaignCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
+        repetitiveApiCaller();
+        setInterval(()=>{
+            repetitiveApiCaller();
+        },30000)
     },[])
 
-    useEffect(()=>{
-        CampaignCountService.getWeekCampaignCount()
-            .then(data=>{
-                console.log(data);
-                setWeekCampaignCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect(()=>{
+    //     CampaignCountService.getTodayCampaignCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setTodayCampaignCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect(()=>{
-        CampaignCountService.getRtCampaignCount()
-            .then(data=>{
-                console.log(data);
-                setRtCampaignCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect(()=>{
+    //     CampaignCountService.getWeekCampaignCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setWeekCampaignCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect(()=>{
-        CampaignSuccessCountService.getTodayCampaignSuccessCount()
-            .then(data=>{
-                console.log(data);
-                setTodayCampaignSuccessCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect(()=>{
+    //     CampaignCountService.getRtCampaignCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setRtCampaignCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect(()=>{
-        CampaignSuccessCountService.getWeekCampaignSuccessCount()
-            .then(data=>{
-                console.log(data);
-                setWeekCampaignSuccessCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect(()=>{
+    //     CampaignSuccessCountService.getTodayCampaignSuccessCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setTodayCampaignSuccessCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect(()=>{
-        CampaignSuccessCountService.getRtCampaignSuccessCount()
-            .then(data=>{
-                console.log(data);
-                setRtCampaignSuccessCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect(()=>{
+    //     CampaignSuccessCountService.getWeekCampaignSuccessCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setWeekCampaignSuccessCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect(()=>{
-        CampaignTaskCountService.getWeekCampaignTaskCount()
-            .then(data=>{
-                console.log(data);
-                setWeekCampaignTaskCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect(()=>{
+    //     CampaignSuccessCountService.getRtCampaignSuccessCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setRtCampaignSuccessCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect(()=>{
-        CampaignTaskCountService.getTodayCampaignTaskCount()
-            .then(data=>{
-                console.log(data);
-                setTodayCampaignTaskCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect(()=>{
+    //     CampaignTaskCountService.getWeekCampaignTaskCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setWeekCampaignTaskCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect(()=>{
-        CampaignTaskCountService.getRtCampaignTaskCount()
-            .then(data=>{
-                console.log(data);
-                setRtCampaignTaskCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect(()=>{
+    //     CampaignTaskCountService.getTodayCampaignTaskCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setTodayCampaignTaskCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect(()=>{
-        PartyCountDashService.getTotalPartyCount()
-            .then(data=>{
-                console.log(data);
-                setPartyTotalCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect(()=>{
+    //     CampaignTaskCountService.getRtCampaignTaskCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setRtCampaignTaskCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect(()=>{
-        PartyCountDashService.getActivePartyCount()
-            .then(data=>{
-                console.log(data);
-                setPartyActiveCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect(()=>{
+    //     PartyCountDashService.getTotalPartyCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setPartyTotalCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect(()=>{
-        PartyCountDashService.getTodayActivePartyCount()
-            .then(data=>{
-                console.log(data);
-                setTodayPartyActiveCount(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect(()=>{
+    //     PartyCountDashService.getActivePartyCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setPartyActiveCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect((()=>{
-        SmsReportService.getSmsStatistics()
-            .then(data=>{
-                setSmsStatistics(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    }),[])
+    // useEffect(()=>{
+    //     PartyCountDashService.getTodayActivePartyCount()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setTodayPartyActiveCount(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
-    useEffect(()=>{
-        RouteReportService.getRouteStatistics()
-            .then(data=>{
-                console.log(data);
-                setRouteStatistics(data);
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-    },[])
+    // useEffect((()=>{
+    //     SmsReportService.getSmsStatistics()
+    //         .then(data=>{
+    //             setSmsStatistics(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // }),[])
+
+    // useEffect(()=>{
+    //     RouteReportService.getRouteStatistics()
+    //         .then(data=>{
+    //             console.log(data);
+    //             setRouteStatistics(data);
+    //         })
+    //         .catch(error=>{
+    //             console.log(error);
+    //         })
+    // },[])
 
     useEffect(()=>{
         ProfileService.fetchProfile()
@@ -355,6 +362,128 @@ export const HomeNew = () => {
                 console.log(error);
             })
     },[])
+
+    const repetitiveApiCaller = () => {
+        CampaignCountService.getTodayCampaignCount()
+            .then(data=>{
+                console.log(data);
+                setTodayCampaignCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        CampaignCountService.getWeekCampaignCount()
+            .then(data=>{
+                console.log(data);
+                setWeekCampaignCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        CampaignCountService.getRtCampaignCount()
+            .then(data=>{
+                console.log(data);
+                setRtCampaignCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        CampaignSuccessCountService.getTodayCampaignSuccessCount()
+            .then(data=>{
+                console.log(data);
+                setTodayCampaignSuccessCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        CampaignSuccessCountService.getWeekCampaignSuccessCount()
+            .then(data=>{
+                console.log(data);
+                setWeekCampaignSuccessCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        CampaignSuccessCountService.getWeekCampaignSuccessCount()
+            .then(data=>{
+                console.log(data);
+                setWeekCampaignSuccessCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        CampaignSuccessCountService.getRtCampaignSuccessCount()
+            .then(data=>{
+                console.log(data);
+                setRtCampaignSuccessCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        CampaignTaskCountService.getWeekCampaignTaskCount()
+            .then(data=>{
+                console.log(data);
+                setWeekCampaignTaskCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        CampaignTaskCountService.getTodayCampaignTaskCount()
+            .then(data=>{
+                console.log(data);
+                setTodayCampaignTaskCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        CampaignTaskCountService.getRtCampaignTaskCount()
+            .then(data=>{
+                console.log(data);
+                setRtCampaignTaskCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        PartyCountDashService.getTotalPartyCount()
+            .then(data=>{
+                console.log(data);
+                setPartyTotalCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        PartyCountDashService.getActivePartyCount()
+            .then(data=>{
+                console.log(data);
+                setPartyActiveCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        PartyCountDashService.getTodayActivePartyCount()
+            .then(data=>{
+                console.log(data);
+                setTodayPartyActiveCount(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        SmsReportService.getSmsStatistics()
+            .then(data=>{
+                setSmsStatistics(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        RouteReportService.getRouteStatistics()
+            .then(data=>{
+                console.log(data);
+                setRouteStatistics(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+    }
 
     useEffect(() => {
         setLastProfileQuery({ page: 1, limit: 10 })
@@ -374,20 +503,6 @@ export const HomeNew = () => {
         <Card>
             <Row gutter={8}>
                 <Col md={5}>
-                    {/*<Space direction="vertical" size={"small"}>*/}
-                    {/*    <Space direction="vertical" size={"small"}>*/}
-                    {/*        <Title level={4} style={{color: "#492D3A"}}>Total Party : {partyTotalCount}</Title>*/}
-                    {/*        <Title level={4} style={{color: "#492D3A"}}>Active Party : {partyActiveCount}</Title>*/}
-                    {/*        <Title level={4} style={{color: "#492D3A"}}>Today Active Party : {todayPartyActiveCount}</Title>*/}
-                    {/*        /!*<Typography.Text style={{fontWeight: "bold", fontSize: 25}}>Total Party : {partyTotalCount}</Typography.Text>*!/*/}
-                    {/*        /!*<Typography.Text style={{fontWeight: "bold", fontSize: 25}}>Active Party : {partyActiveCount}</Typography.Text>*!/*/}
-                    {/*        /!*<Statistic title="Total Party :" value={partyTotalCount} />*!/*/}
-                    {/*        /!*<Statistic title="Active Party :" value={partyActiveCount} />*!/*/}
-                    {/*        /!*<Statistic title="Balance [Package]" value={partyProducts.map(data=>data.stock +'['+data.productId)+']'} precision={2} />*!/*/}
-                    {/*        <Space children={<><p /><p /></>} />*/}
-                    {/*        <Space children={<><p /><p /></>} />*/}
-                    {/*    </Space>*/}
-                    {/*</Space>*/}
                     <Card
                         title={<Title level={4} style={{color:'white'}}>Parties</Title>}
                         bordered={true}
@@ -399,15 +514,15 @@ export const HomeNew = () => {
                         <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Active Today : {todayPartyActiveCount}</Title>
                     </Card>
                 </Col>
-                <Divider type="vertical" style={{ height: "inherit", marginRight: "24px" }} />
-                <Col md={3}>
-                    <Title level={3} style={{color: "#492D3A", marginLeft: 20}}>Today</Title>
-                    <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#689dc4", marginLeft: 35}} /></Space>
-                    <Title level={3} style={{color: "#492D3A", marginTop: 25}}>This Week</Title>
-                    <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 30, color: "#4F995B", marginLeft: 35}} /></Space>
+                {/*<Divider type="vertical" style={{ height: "inherit", marginRight: "24px" }} />*/}
+                <Col md={2}>
+                    <Title level={5} style={{color: "#492D3A", marginLeft: 20}}>Today</Title>
+                    <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 25, color: "#689dc4", marginLeft: 35}} /></Space>
+                    <Title level={5} style={{color: "#492D3A", marginTop: 40}}>This Week</Title>
+                    <Space style={{marginTop: 5}}><ArrowRightOutlined style={{fontSize: 25, color: "#4F995B", marginLeft: 35}} /></Space>
                 </Col>
 
-                <Col md={5}>
+                <Col md={4}>
                     <Card style={{backgroundImage:'linear-gradient(to right, #2193b0 ,  #6dd5ed)'}}>
                         <Statistic
                             key={1}
@@ -425,7 +540,7 @@ export const HomeNew = () => {
                         />
                     </Card>
                 </Col>
-                <Col md={5}>
+                <Col md={4}>
                     <Card style={{backgroundImage:'linear-gradient(to right, #de6262,  #ffb88c)'}}>
                         <Statistic
                             key={2}
@@ -443,7 +558,7 @@ export const HomeNew = () => {
                         />
                     </Card>
                 </Col>
-                <Col md={5}>
+                <Col md={4}>
                     <Card style={{backgroundImage:'linear-gradient(to right, #56ab2f, #a8e063)'}}>
                         <Statistic
                             key={3}
@@ -461,9 +576,21 @@ export const HomeNew = () => {
                         />
                     </Card>
                 </Col>
+
+                <Col md={5}>
+                    <Card
+                        title={<Title level={4} style={{color:'white'}}>Sigtran Status</Title>}
+                        bordered={true}
+                        headStyle={{background: '#2193b0' , padding: '0 8px 0 10px'}}
+                        style={{ boxShadow: 'rgba(0, 0, 0, 0.1) 4px 4px 5px',background:'#F2F1F0'}}
+                    >
+                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Total : {partyTotalCount}</Title>
+                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Active : {partyActiveCount}</Title>
+                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Active Today : {todayPartyActiveCount}</Title>
+                    </Card>
+                </Col>
             </Row>
         </Card>
-        {/*<Space children={<><p /><p /></>} />*/}
         <Card>
             <Row gutter={16}>
                 <Col md={8}>
