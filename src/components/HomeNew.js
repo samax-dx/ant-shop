@@ -146,7 +146,7 @@ export const HomeNew = () => {
     const [partyActiveCount, setPartyActiveCount] = useState('');
     const [todayPartyActiveCount, setTodayPartyActiveCount] = useState(0);
     const [routeStatistics, setRouteStatistics] = useState([0]);
-    const [gp1Status, setGp1Status] = useState({});
+    const [gp1Status, setGp1Status] = useState({"status":"Down"});
 
 
     useEffect(() => {
@@ -369,7 +369,7 @@ export const HomeNew = () => {
         SigtranStatusService.getGp1Status()
             .then(data=>{
                 console.log(data);
-                setGp1Status(data.status);
+                setGp1Status(data);
             })
             .catch(error=>{
                 console.log(error);
@@ -594,7 +594,7 @@ export const HomeNew = () => {
                         headStyle={{background: '#2193b0' , padding: '0 8px 0 10px'}}
                         style={{ boxShadow: 'rgba(0, 0, 0, 0.1) 4px 4px 5px',background:'#F2F1F0'}}
                     >
-                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>GP-1 : {gp1Status}</Title>
+                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>GP-1 : {gp1Status.status}</Title>
                         <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Active : {partyActiveCount}</Title>
                         <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Active Today : {todayPartyActiveCount}</Title>
                     </Card>
