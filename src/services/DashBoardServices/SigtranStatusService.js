@@ -1,11 +1,11 @@
-import {BL1_Sigtran, CONTACT_BOOK_EP, GP1_Sigtran, GP2_Sigtran, OFBIZ_EP} from "../../config";
+import {BL1_SIGTRAN_STATUS, CONTACT_BOOK_EP, GP1_SIGTRAN_STATUS, GP2_SIGTRAN_STATUS, OFBIZ_EP} from "../../config";
 import axios from "axios";
 import {XAuth} from "../XAuth";
 
 export const SigtranStatusService = {
     getGp1Status: (payload) =>  console.log(payload) || axios
         .post(
-            `${GP1_Sigtran}`,
+            `${GP1_SIGTRAN_STATUS}`,
             { ...payload },
             {
                 headers: {
@@ -34,7 +34,7 @@ export const SigtranStatusService = {
         }),
     getGp2Status: (payload) =>  console.log(payload) || axios
         .post(
-            `${GP2_Sigtran}`,
+            `${GP2_SIGTRAN_STATUS}`,
             { ...payload },
             {
                 headers: {
@@ -63,7 +63,7 @@ export const SigtranStatusService = {
         }),
     getBL1Status: (payload) =>  console.log(payload) || axios
         .post(
-            `${BL1_Sigtran}`,
+            `${BL1_SIGTRAN_STATUS}`,
             { ...payload },
             {
                 headers: {

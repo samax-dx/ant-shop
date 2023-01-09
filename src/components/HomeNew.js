@@ -146,7 +146,7 @@ export const HomeNew = () => {
     const [partyActiveCount, setPartyActiveCount] = useState('');
     const [todayPartyActiveCount, setTodayPartyActiveCount] = useState(0);
     const [routeStatistics, setRouteStatistics] = useState([0]);
-    const [gp1Status, setGp1Status] = useState("");
+    const [gp1Status, setGp1Status] = useState({});
 
 
     useEffect(() => {
@@ -369,7 +369,7 @@ export const HomeNew = () => {
         SigtranStatusService.getGp1Status()
             .then(data=>{
                 console.log(data);
-                setGp1Status(data);
+                setGp1Status(data.status);
             })
             .catch(error=>{
                 console.log(error);
