@@ -63,6 +63,41 @@ export const RatePlanService = {
 
            return Promise.reject(errorEx);
        }),
+
+
+    saveDuplicate: (payload) => console.log(payload) || axios
+        .post(
+            `${SERVER_URL}/RatePlan/duplicateRatePlan`,
+            { ...payload },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XAuth.token()}`,
+                }
+            }
+        )
+        .then(response => {
+            const { data } = response;
+            console.log(data)
+
+            if (data) {
+                return Promise.resolve(data);
+            } else {
+                return Promise.reject({ code: null, message: data.errorMessage });
+            }
+        })
+        .catch(error => {
+            const response = error.response || { data: { error: error.message } };
+            const { status: code, statusText: text, data } = response;
+            const errorEx = { code, message: (typeof data === "string" ? data : data.error) || text };
+            console.log(errorEx);
+
+            return Promise.reject(errorEx);
+        }),
+
+
+
+
     removeRecord: (payload) => console.log(payload) || axios
         .post(
             `${SERVER_URL}/RatePlan/removeRatePlan`,
@@ -92,4 +127,7 @@ export const RatePlanService = {
 
             return Promise.reject(errorEx);
         })
+
+
+
 };

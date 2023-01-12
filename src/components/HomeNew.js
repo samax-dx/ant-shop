@@ -188,6 +188,8 @@ export const HomeNew = () => {
     const [todayPartyActiveCount, setTodayPartyActiveCount] = useState(0);
     const [routeStatistics, setRouteStatistics] = useState([0]);
     const [gp1Status, setGp1Status] = useState({"status":"Down"});
+    const [gp2Status, setGp2Status] = useState({"status":"Down"});
+    const [bl1Status, setBl1Status] = useState({"status":"Down"});
 
 
     useEffect(() => {
@@ -415,6 +417,22 @@ export const HomeNew = () => {
             .catch(error=>{
                 console.log(error);
             })
+        SigtranStatusService.getGp2Status()
+            .then(data=>{
+                console.log(data);
+                setGp2Status(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        SigtranStatusService.getBL1Status()
+            .then(data=>{
+                console.log(data);
+                setBl1Status(data);
+            })
+            .catch(error=>{
+                console.log(error);
+            })
         CampaignCountService.getTodayCampaignCount()
             .then(data=>{
                 console.log(data);
@@ -636,8 +654,8 @@ export const HomeNew = () => {
                         style={{ boxShadow: 'rgba(0, 0, 0, 0.1) 4px 4px 5px',background:'#F2F1F0'}}
                     >
                         <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>GP-1 : {gp1Status.status}</Title>
-                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Active : {partyActiveCount}</Title>
-                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>Active Today : {todayPartyActiveCount}</Title>
+                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>GP-2 : {gp2Status.status}</Title>
+                        <Title level={4} style={{color: "#492D3A", lineHeight: '0.95'}}>BL-1 : {bl1Status.status}</Title>
                     </Card>
                 </Col>
             </Row>

@@ -170,13 +170,21 @@ const WriteForm = ({currency, recordArg, onRecordSaved,close }) => {
     </>);
 };
 
-const DataView = ({ ratePlans, viewPage, viewLimit, onEdit, onDelete }) => {
+const DataView = ({ ratePlans, viewPage, viewLimit, onEdit, onDelete,onDuplicate }) => {
     const confirmDelete = ratePlan => Modal.confirm({
         title: 'Confirm delete rate-plan?',
         icon: <ExclamationCircleOutlined />,
         content: <>Deleting rate-plan: <strong>{ratePlan.ratePlanId}</strong></>,
         onOk() {
             onDelete(ratePlan);
+        }
+    });
+    const confirmDuplicate = ratePlan => Modal.confirm({
+        title: 'Confirm delete rate-plan?',
+        icon: <ExclamationCircleOutlined />,
+        content: <>Deleting rate-plan: <strong>{ratePlan.ratePlanId}</strong></>,
+        onOk() {
+            onDuplicate(ratePlan);
         }
     });
     return (<>
@@ -212,6 +220,7 @@ const DataView = ({ ratePlans, viewPage, viewLimit, onEdit, onDelete }) => {
                     return (<>
                         <Button onClick={() => onEdit(record)} type="link">Edit</Button>
                         <Button onClick={() => confirmDelete(record)} type="link">Delete</Button>
+                        <Button onClick={() => confirmDuplicate(record)} type="link">Duplicate</Button>
                     </>);
                 }}
             />
@@ -270,6 +279,30 @@ export const RatePlans = () => {
             });
     };
 
+    const duplicateRatePlan = ratePlan => {
+        RatePlanService.saveDuplicate(ratePlan)
+            .then(data => {
+                setLastQuery({ ...lastQuery, page: 1 });
+                notification.success({
+                    key: `rRatePlan_${Date.now()}`,
+                    message: "Task Finished",
+                    description: `Rate-plan deleted: ${ratePlan.ratePlanId}`,
+                    duration: 15
+                });
+            })
+            .catch(error => {
+                notification.error({
+                    key: `rRatePlan_${Date.now()}`,
+                    message: "Task Failed",
+                    description: `Error Deleting dial-plan: ${ratePlan.ratePlanId}`,
+                    duration: 15
+                });
+            });
+    };
+
+
+
+
     useEffect(() => {
         RatePlanService.fetchRecords({...lastQuery})
             .then((data) => {
@@ -313,7 +346,7 @@ export const RatePlans = () => {
                 </Card>
             </Col>
         </Row>
-        <DataView ratePlans={ratePlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeRatePlan}    />
+        <DataView ratePlans={ratePlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeRatePlan}  onDuplicate={duplicateRatePlan}  />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false} footer={null} bodyStyle={{height:"17rem"}}>
