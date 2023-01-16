@@ -170,21 +170,86 @@ const WriteForm = ({currency, recordArg, onRecordSaved,close }) => {
     </>);
 };
 
-const DataView = ({ ratePlans, viewPage, viewLimit, onEdit, onDelete,onDuplicate }) => {
+const DuplicateRatePlanForm = ({currency, recordArg, onRecordSaved,close }) => {
+
+    const { Option } = Select;
+
+    const [DuplicateRatePlanForm] = Form.useForm();
+    const [lastWrite, setLastWrite] = useState(recordArg);
+
+    useEffect(() => {
+        DuplicateRatePlanForm.setFieldsValue(recordArg);
+    }, [recordArg]);
+
+    useEffect( () => {
+        if (lastWrite === recordArg) return;
+        DuplicateRatePlanForm.setFieldsValue(lastWrite);
+    },[lastWrite]);
+
+    return (<>
+        <Form
+            form={DuplicateRatePlanForm}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 20 }}
+            labelAlign={"left"}
+            style={{
+                padding: '15px'
+            }}
+        >
+            <Form.Item name="ratePlanId" label="Rate Plan ID" hidden rules={[{ required: false }]} children={<Input />} />
+            <Form.Item name="name" label="Name" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="description" label="Description" rules={[{ required: true }]} children={<Input />} />
+            <Form.Item name="currencyCode" label="Currency" rules={[{ required: true }]} children={
+                <Select
+                    showSearch
+                    placeholder="Select a person"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                    }
+                    options={currency.map(data=>{return {value:data.code,label:data.code + " - " + data.name}})}
+                />
+            } />
+            <Form.Item wrapperCol={{ offset: 16}} >
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={() => DuplicateRatePlanForm
+                        .validateFields()
+                        .then(_ => RatePlanService.saveDuplicate(DuplicateRatePlanForm.getFieldsValue()))
+                        .then(data => {
+                            console.log(data);
+                            setLastWrite(data);
+                            onRecordSaved(data);
+                            notification.success({
+                                key: `dcrateplan_${Date.now()}`,
+                                message: "Task Complete",
+                                description: <>duplicated Rate-Plan: {data.ratePlanId}</>,
+                                duration: 5
+                            });
+                        })
+                        .catch(error => console.log(error) || notification.error({
+                            key: `dcrateplan_${Date.now()}`,
+                            message: "Task Failed",
+                            description: <>Error duplicating .<br />{error.message}</>,
+                            duration: 5
+                        }))
+                    }
+                    children={"Submit"}
+                />
+                <Button style={{backgroundColor: '#FF0000', color: 'white', border: 'none',marginLeft:4}} onClick={close}>Close</Button>
+            </Form.Item>
+        </Form>
+    </>);
+};
+
+const DataView = ({ ratePlans, viewPage, viewLimit, onEdit, onDelete, onDuplicate }) => {
     const confirmDelete = ratePlan => Modal.confirm({
         title: 'Confirm delete rate-plan?',
         icon: <ExclamationCircleOutlined />,
         content: <>Deleting rate-plan: <strong>{ratePlan.ratePlanId}</strong></>,
         onOk() {
             onDelete(ratePlan);
-        }
-    });
-    const confirmDuplicate = ratePlan => Modal.confirm({
-        title: 'Confirm delete rate-plan?',
-        icon: <ExclamationCircleOutlined />,
-        content: <>Deleting rate-plan: <strong>{ratePlan.ratePlanId}</strong></>,
-        onOk() {
-            onDuplicate(ratePlan);
         }
     });
     return (<>
@@ -219,8 +284,8 @@ const DataView = ({ ratePlans, viewPage, viewLimit, onEdit, onDelete,onDuplicate
                 render={(value, record, index) => {
                     return (<>
                         <Button onClick={() => onEdit(record)} type="link">Edit</Button>
-                        <Button onClick={() => confirmDelete(record)} type="link">Delete</Button>
-                        <Button onClick={() => confirmDuplicate(record)} type="link">Duplicate</Button>
+                        <Button onClick={() => confirmDelete(record)} type="danger">Delete</Button>
+                        <Button onClick={() => onDuplicate(record)} type="link">Duplicate</Button>
                     </>);
                 }}
             />
@@ -279,30 +344,6 @@ export const RatePlans = () => {
             });
     };
 
-    const duplicateRatePlan = ratePlan => {
-        RatePlanService.saveDuplicate(ratePlan)
-            .then(data => {
-                setLastQuery({ ...lastQuery, page: 1 });
-                notification.success({
-                    key: `rRatePlan_${Date.now()}`,
-                    message: "Task Finished",
-                    description: `Rate-plan deleted: ${ratePlan.ratePlanId}`,
-                    duration: 15
-                });
-            })
-            .catch(error => {
-                notification.error({
-                    key: `rRatePlan_${Date.now()}`,
-                    message: "Task Failed",
-                    description: `Error Deleting dial-plan: ${ratePlan.ratePlanId}`,
-                    duration: 15
-                });
-            });
-    };
-
-
-
-
     useEffect(() => {
         RatePlanService.fetchRecords({...lastQuery})
             .then((data) => {
@@ -346,11 +387,14 @@ export const RatePlans = () => {
                 </Card>
             </Col>
         </Row>
-        <DataView ratePlans={ratePlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeRatePlan}  onDuplicate={duplicateRatePlan}  />
+        <DataView ratePlans={ratePlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeRatePlan}  onDuplicate={showModal}  />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false} footer={null} bodyStyle={{height:"17rem"}}>
             <WriteForm recordArg={modalData} currency={currency} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "ratePlanId ASC", page: 1 })} close={handleCancel}/>
+        </Modal>
+        <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false} footer={null} bodyStyle={{height:"17rem"}}>
+            <DuplicateRatePlanForm recordArg={modalData} currency={currency} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "ratePlanId ASC", page: 1 })} close={handleCancel}/>
         </Modal>
     </>);
 };

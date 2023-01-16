@@ -19,14 +19,11 @@ export const RatePlanAssignService = {
             const { data } = response;
             console.log(data)
 
-            // if (data.ratePlanAssignments === null) {
-            //     data.ratePlanAssignments = [];
-            // }
-            // if (data.ratePlanAssignments) {
-            //     return Promise.resolve(data);
-            // } else {
-            //     return Promise.reject({ message: data.errorMessage });
-            // }
+            if (data) {
+                return Promise.resolve(data);
+            } else {
+                return Promise.reject({ message: data.errorMessage });
+            }
             return data;
         })
         .catch(error => {
