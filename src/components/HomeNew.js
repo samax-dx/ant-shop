@@ -65,19 +65,19 @@ const CompleteTaskView = ({ taskReports, viewPage, viewLimit, onView}) => {
             />
 
             <Table.Column title="PhoneNumber" dataIndex={"phoneNumber"} />
-            <Table.Column title="Message" dataIndex={"message"} width={"25vw"}
-                          render={(v, i) =><>
+            <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
+                          render={(v, i) =>v.length>6?<>
                               <span
                                   style={{textOverflow:"ellipsis",
                                       whiteSpace:"nowrap",
-                                      maxWidth: "220px",
+                                      maxWidth: "50pt",
                                       display: "inline-block",
                                       overflow:"hidden",
                                       verticalAlign:"middle"
                                   }}
                               >{v.replace(/\s*,\s*/g, " ")}</span>
                               <Button type="link" onClick={() => showModalMsg(v.replace(/\s*,\s*/g, " "))}>Show all</Button>
-                          </>}/>
+                          </>:v}/>
             <Table.Column title="Date" dataIndex={"updatedOn"} render={date => dayjs(date).format("MMM D, YYYY - hh:mm A")} />
             <Table.Column title="Campaign" dataIndex={"campaignName"} />
             <Table.Column title="Package" dataIndex={"packageId"} />
