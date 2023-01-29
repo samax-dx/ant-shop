@@ -204,6 +204,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"} />
             <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
             <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
+            <Table.Column title="Route" dataIndex={"routeId"} width={"90pt"}/>
             <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} width={"245pt"} />
             <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"150pt"} render={(unixToMomentTime)} />
             <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"150pt"} render= {(unixToMomentTime)}/>
