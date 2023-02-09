@@ -38,7 +38,7 @@ const SearchForm = ({ onSearch }) => {
               }
           });*/
 
-        const queryData = ["name", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
+        const queryData = ["name", "ratePlanId", "createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -66,6 +66,8 @@ const SearchForm = ({ onSearch }) => {
         >
             <Form.Item name="name" label="Rate-Plan Name" children={<Input />} style={{ display: "inline-block", marginBottom: '0px' }} />
             <Form.Item name="name_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item name="ratePlanId" label="Rate-Plan ID" children={<Input />} style={{ display: "inline-block", marginBottom: '0px' }} />
+            <Form.Item name="ratePlanId_op" initialValue={"contains"} hidden children={<Input />} />
 
             {/*<Form.Item name="createdOn_fld0_value" label="From Date" style={{display: 'inline-block', marginBottom: '0px'}} children={<DatePicker format={"MMM D, YYYY"}/>}/>
             <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input/>}/>

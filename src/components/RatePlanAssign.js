@@ -229,7 +229,7 @@ export const RatePlanAssignment  = () => {
     const [lastQuery, setLastQuery] = useState({});
     const [ratePlanAssignments, setRatePlanAssignments] = useState([]);
     const [parties, setParties] = useState([]);
-    const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
+    const [ratePlanResultCount, setRatePlanAssignResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
 
     const {Title} = Typography;
@@ -263,14 +263,13 @@ export const RatePlanAssignment  = () => {
     useEffect(() => {
         RatePlanAssignService.fetchRecords(lastQuery)
             .then((data) => {
-                console.log(data);
                 setRatePlanAssignments(data);
-                setPartyFetchResultCount(data);
+                setRatePlanAssignResultCount(data.length);
                 setPartyFetchError(null);
             })
             .catch(error => {
                 setRatePlanAssignments([]);
-                setPartyFetchResultCount(0);
+                setRatePlanAssignResultCount(0);
                 setPartyFetchError(error);
             });
     }, [lastQuery]);
@@ -303,7 +302,7 @@ export const RatePlanAssignment  = () => {
             </Col>
         </Row>
         <DataView ratePlanAssignments={ratePlanAssignments} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeRatePlanAssign}/>
-        <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
+        <DataPager totalPagingItems={ratePlanResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false} footer={null} bodyStyle={{height:"17rem"}}>
             <WriteForm recordArg={modalData} parties={parties} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "ratePlanAssignmentId ASC", page: 1 })} close={handleCancel}/>

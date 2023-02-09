@@ -238,7 +238,7 @@ const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
 export const DialPlanNew = () => {
     const [lastQuery, setLastQuery] = useState({});
     const [dialPlans, setDialPlans] = useState([]);
-    const [partyFetchResultCount, setPartyFetchResultCount] = useState(0);
+    const [dialPlanFetchResultCount, setDialPlanFetchResultCount] = useState(0);
     const [partyFetchError, setPartyFetchError] = useState(null);
 
     const { Title } = Typography;
@@ -273,12 +273,12 @@ export const DialPlanNew = () => {
         DialPlanService.fetchRecords(lastQuery)
             .then((data) => {
                 setDialPlans(data.dialPlans);
-                setPartyFetchResultCount(data.count);
+                setDialPlanFetchResultCount(data.count);
                 setPartyFetchError(null);
             })
             .catch(error => {
                 setDialPlans([]);
-                setPartyFetchResultCount(0);
+                setDialPlanFetchResultCount(0);
                 setPartyFetchError(error);
             });
     }, [lastQuery]);
@@ -307,7 +307,7 @@ export const DialPlanNew = () => {
             </Modal>
         </Row>
         <DataView dialPlans={dialPlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeDialPlan} />
-        <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
-            onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+        <DataPager totalPagingItems={dialPlanFetchResultCount} currentPage={lastQuery.page}
+                   onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);
 };
