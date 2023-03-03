@@ -1,0 +1,6 @@
+export const APP_NAME = "SMS Portal [Admin]";
+export const SERVER_URL = "https://localhost:8443/ofbiz-spring/api";
+export const CONTACT_BOOK_EP = "https://localhost:8443/ofbiz-spring/api";
+export const GP1_SIGTRAN_STATUS = "https://localhost:8443/ofbiz-spring/api";
+export const GP2_SIGTRAN_STATUS = "https://localhost:8443/ofbiz-spring/api";
+export const BL1_SIGTRAN_STATUS = "https://localhost:8443/ofbiz-spring/api";
