@@ -325,6 +325,9 @@ export const RatePlans = () => {
     const handleOk = () => setModalData(null);
     const handleCancel = () => setModalData(null);
 
+    const [duplicateModalData, setDuplicateModalData] = useState(null);
+    const showDuplicateModal = data => setDuplicateModalData(data);
+
     const removeRatePlan = ratePlan => {
         RatePlanService.removeRecord(ratePlan)
             .then(data => {
@@ -389,14 +392,14 @@ export const RatePlans = () => {
                 </Card>
             </Col>
         </Row>
-        <DataView ratePlans={ratePlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeRatePlan}  onDuplicate={showModal}  />
+        <DataView ratePlans={ratePlans} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeRatePlan}  onDuplicate={showDuplicateModal}  />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false} footer={null} bodyStyle={{height:"17rem"}}>
             <WriteForm recordArg={modalData} currency={currency} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "ratePlanId ASC", page: 1 })} close={handleCancel}/>
         </Modal>
-        <Modal key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false} footer={null} bodyStyle={{height:"17rem"}}>
-            <DuplicateRatePlanForm recordArg={modalData} currency={currency} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "ratePlanId ASC", page: 1 })} close={handleCancel}/>
+        <Modal key="recordDuplicator" visible={duplicateModalData} maskClosable={false} onCancel={handleCancel} closable={false} footer={null} bodyStyle={{height:"17rem"}}>
+            <DuplicateRatePlanForm recordArg={duplicateModalData} currency={currency} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "ratePlanId ASC", page: 1 })} close={handleCancel}/>
         </Modal>
     </>);
 };
