@@ -327,6 +327,7 @@ export const RatePlans = () => {
 
     const [duplicateModalData, setDuplicateModalData] = useState(null);
     const showDuplicateModal = data => setDuplicateModalData(data);
+    const handleDuplicateCancel = () => setDuplicateModalData(null);
 
     const removeRatePlan = ratePlan => {
         RatePlanService.removeRecord(ratePlan)
@@ -399,7 +400,7 @@ export const RatePlans = () => {
             <WriteForm recordArg={modalData} currency={currency} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "ratePlanId ASC", page: 1 })} close={handleCancel}/>
         </Modal>
         <Modal key="recordDuplicator" visible={duplicateModalData} maskClosable={false} onCancel={handleCancel} closable={false} footer={null} bodyStyle={{height:"17rem"}}>
-            <DuplicateRatePlanForm recordArg={duplicateModalData} currency={currency} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "ratePlanId ASC", page: 1 })} close={handleCancel}/>
+            <DuplicateRatePlanForm recordArg={duplicateModalData} currency={currency} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "ratePlanId ASC", page: 1 })} close={handleDuplicateCancel}/>
         </Modal>
     </>);
 };
