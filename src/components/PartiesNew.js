@@ -172,7 +172,19 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
             {recordArg.partyId? null : <Form.Item
                 name="password"
                 label={recordArg.partyId ? "New password" : "Password"}
-                rules={[{required: true}]}
+                rules={[{required: true},
+                    {
+                        message: 'Password should contain at least a upper case,Lower case, symbol like (@$!%*#?&) & min length 8.',
+                        validator: (_, value) => {
+                            if (/^^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/.test(value)) {
+                                return Promise.resolve();
+                            } else {
+                                return Promise.reject('Password should contain at least a upper case,Lower case, symbol like (@$!%*#?&) & min length 8.');
+                            }
+                        }
+                    }
+
+                ]}
                 hasFeedback
             >
                 <Input.Password/>

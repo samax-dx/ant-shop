@@ -225,9 +225,9 @@ export const HomeNew = () => {
     const [partyActiveCount, setPartyActiveCount] = useState('');
     const [todayPartyActiveCount, setTodayPartyActiveCount] = useState(0);
     const [routeStatistics, setRouteStatistics] = useState([0]);
-    const [gp1Status, setGp1Status] = useState({"status":"Down"});
-    const [gp2Status, setGp2Status] = useState({"status":"Down"});
-    const [bl1Status, setBl1Status] = useState({"status":"Down"});
+    const [gp1Status, setGp1Status] = useState({"status":"down"});
+    const [gp2Status, setGp2Status] = useState({"status":"down"});
+    const [bl1Status, setBl1Status] = useState({"status":"down"});
 
 
     useEffect(() => {
@@ -454,6 +454,7 @@ export const HomeNew = () => {
             })
             .catch(error=>{
                 console.log(error);
+                setGp1Status({"status": "down"});
             })
         SigtranStatusService.getGp2Status()
             .then(data=>{
@@ -462,6 +463,7 @@ export const HomeNew = () => {
             })
             .catch(error=>{
                 console.log(error);
+                setGp2Status({"status": "down"});
             })
         SigtranStatusService.getBL1Status()
             .then(data=>{
@@ -470,6 +472,7 @@ export const HomeNew = () => {
             })
             .catch(error=>{
                 console.log(error);
+                setBl1Status({"status": "down"});
             })
         CampaignCountService.getTodayCampaignCount()
             .then(data=>{
