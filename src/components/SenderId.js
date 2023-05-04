@@ -141,7 +141,7 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
                     <Option key={"non-masking"} value="non-masking">Non-Masking</Option>
                 </Select>
             </Form.Item>
-            <Form.Item name="parties" label="Parties" children={<DebounceSelect />} />
+            <Form.Item name="parties" label="Parties" children={<DebounceSelect />} rules={[{ required: true }]}/>
             <Form.Item name="routes" label="Routes" rules={[{ required: true }]}>
                 <Select
                     ref={multiSelectRef}
