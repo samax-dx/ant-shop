@@ -279,7 +279,7 @@ export const SenderId = () => {
     }, []);
 
     const removeSenderId = senderId => {
-        SenderIdService.removeRecord(senderId)
+        SenderIdService.removeRecord({senderId})
             .then(data => {
                 setLastQuery({ ...lastQuery, page: 1 });
                 notification.success({

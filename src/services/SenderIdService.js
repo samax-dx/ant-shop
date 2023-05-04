@@ -81,7 +81,7 @@ export const SenderIdService = {
             const { data } = response;
             console.log(data)
 
-            if (+data.deleteCount) {
+            if (data.status.toString() === "Success") {
                 return Promise.resolve(data);
             } else {
                 return Promise.reject({ message: data.errorMessage });
