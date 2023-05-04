@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { PartyService } from "../services/PartyService";
 import { countries } from "countries-list";
-import { PlusCircleFilled } from "@ant-design/icons";
+import {ExclamationCircleOutlined, PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 import { SenderIdService } from "../services/SenderIdService";
 import { Route } from "../services/Route";
@@ -189,7 +189,16 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
     </>);
 };
 
-const DataView = ({ senderId, viewPage, viewLimit, onEdit }) => {
+const DataView = ({ senderId, viewPage, viewLimit, onEdit, onDelete }) => {
+    const confirmDelete = senderId => Modal.confirm({
+        title: 'Confirm delete rate?',
+        icon: <ExclamationCircleOutlined />,
+        content: <>Deleting rate: <strong>{senderId}</strong></>,
+        onOk() {
+            onDelete(senderId);
+            console.log("Clicked");
+        }
+    });
     return (<>
         <Table
             style={{ marginLeft: 6 }}
@@ -212,8 +221,10 @@ const DataView = ({ senderId, viewPage, viewLimit, onEdit }) => {
                 title="Actions"
                 dataIndex={undefined}
                 render={(value, record, index) => {
-                    return (
+                    return (<>
                         <Button onClick={() => onEdit(record)} type="link">Edit</Button>
+                        <Button onClick={() => confirmDelete(record.senderId)} type="link">Delete</Button>
+                        </>
                     );
                 }}
             />
@@ -267,6 +278,27 @@ export const SenderId = () => {
         setLastQuery({ page: 1, limit: 10 })
     }, []);
 
+    const removeSenderId = senderId => {
+        SenderIdService.removeRecord(senderId)
+            .then(data => {
+                setLastQuery({ ...lastQuery, page: 1 });
+                notification.success({
+                    key: `senderId_${Date.now()}`,
+                    message: "Task Finished",
+                    description: `SenderId deleted: ${senderId}`,
+                    duration: 15
+                });
+            })
+            .catch(error => {
+                notification.error({
+                    key: `senderId_${Date.now()}`,
+                    message: "Task Failed",
+                    description: `Error Deleting senderId: ${senderId}`,
+                    duration: 15
+                });
+            });
+    };
+
     return (<>
         <Row style={{ marginLeft: 5 }}>
             <Col md={24}>
@@ -282,7 +314,7 @@ export const SenderId = () => {
                 </Card>
             </Col>
         </Row>
-        <DataView senderId={senderIds} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} />
+        <DataView senderId={senderIds} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeSenderId} />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
             onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
         <Modal width={800} key="recordEditor" visible={modalData} maskClosable={false} onCancel={handleCancel} closable={false}  footer={null} bodyStyle={{height:"21rem"}}>
