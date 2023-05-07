@@ -102,7 +102,73 @@ const SearchForm = ({ onSearch, parties }) => {
     </>);
 };
 
+
+function deepClone(obj) {
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+
+    var clone = Array.isArray(obj) ? [] : {};
+
+    for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            clone[key] = deepClone(obj[key]);
+        }
+    }
+
+    return clone;
+}
+function addKeyValueToArrayObjects(arr, key, value) {
+    arr.forEach(obj => obj[key] = value);
+    return arr;
+}
+const processDataForTableView = ({taskReports}) => {
+
+    let index = 0;
+    return Object.values(taskReports || {}).map((taskGroup, i) => {
+
+
+        const parentTask = taskGroup[0];
+        parentTask.children = taskGroup.slice(1);
+
+
+
+        if (parentTask.children.length && (parentTask.statusExternal == "delivered" || parentTask.statusExternal == "processing" || parentTask.statusExternal == "pending"))
+        {
+            const firstNotDelivered = parentTask.children.find(child => child.statusExternal != "delivered");
+            if (firstNotDelivered)
+            {
+                parentTask.errorCodeExternal = parentTask.statusExternal != "delivered" ? parentTask.errorCodeExternal:firstNotDelivered.errorCodeExternal
+                parentTask.statusExternal = "pending";
+            }
+            else
+            {
+
+                parentTask.statusExternal = 'delivered';
+            }
+        }
+        else
+        {
+            parentTask.statusExternal = parentTask.statusExternal == "processing" ? "processing" : (parentTask.errorCodeExternal ? "pending" : "delivered");
+        }
+
+
+        if(parentTask.status == "failed")
+            parentTask.statusExternal = "failed";
+        // console.log(parentTask);
+
+
+
+        return parentTask;
+    })
+
+}
+
+
 const DataView = ({ taskReports, viewPage, viewLimit}) => {
+
+    const tableData = processDataForTableView({taskReports});
+
 
     const unixToMomentTime=(value)=>{
         if(value==null) return "";
@@ -135,24 +201,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             size="small"
             // dataSource={taskReports}
             rowKey={parentTask=>parentTask.campaignTaskId}
-            dataSource={Object.values(taskReports || {}).map((taskGroup, i) => {
-                const parentTask = taskGroup[0];
-                parentTask.children = taskGroup.slice(1);
-                const firstNotDelivered = parentTask.children.find(item => item.statusExternal !== "delivered");
-                // const mainStatus = parentTask.children.map(item => item.statusExternal).every(status => status === 'delivered') ? 'delivered' : 'pending';
-
-                if (firstNotDelivered) {
-                    console.log(`First item not delivered: id = ${firstNotDelivered.errorCodeExternal}, status = ${firstNotDelivered.statusExternal}`);
-                    parentTask.statusExternal = 'pending';
-
-                    parentTask.errorCodeExternal = firstNotDelivered.errorCodeExternal;
-                } else {
-                    parentTask.statusExternal = 'delivered';
-                    console.log("All items delivered");
-                }
-
-                return parentTask;
-            })}
+            dataSource={tableData}
             locale={{ emptyText: taskReports ===null? "E": "NO DATA" }}
             pagination={false}
             scroll={{
@@ -178,11 +227,12 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
 
             <Table.Column title="Status External" dataIndex={"statusExternal"} width={"90pt"} render={(v,row) => [
                 <Tag color={"processing"}>pending</Tag>,
+                <Tag color={"gold"}>Waiting for status</Tag>,
                 <Tag color={"success"}>delivered</Tag>,
                 <Tag color={"warning"}>undetermined</Tag>,
                 <Tag color={"error"}>failed</Tag>,
                 <span></span>,
-            ][[v === "pending", v ==="delivered", v === "undetermined", v === "failed",v==="success" , !v].indexOf(!0)]} />
+            ][[v === "pending",v ==="processing", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
 
             <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
                           render={(v, r, i) =>{
@@ -214,7 +264,7 @@ const DataView = ({ taskReports, viewPage, viewLimit}) => {
             <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
             <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
             <Table.Column title="Route" dataIndex={"routeId"} width={"90pt"}/>
-            <Table.Column title="External Task Id" dataIndex={"taskIdExternal"} width={"245pt"} />
+            <Table.Column title="Campaign Task Id" dataIndex={"campaignTaskId"} width={"245pt"} />
             <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"150pt"} render={(unixToMomentTime)} />
             <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"150pt"} render= {(unixToMomentTime)}/>
 
