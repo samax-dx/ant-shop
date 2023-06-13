@@ -29,6 +29,7 @@ import {RatePlanAssignment} from "./components/RatePlanAssign";
 import {SmsHistory} from "./components/SmsHistory";
 import {HomeNew} from "./components/HomeNew";
 import getAllConfig from "../src/config/main";
+import {ForbiddenWords} from "./components/ForbiddenWords";
 
 function setFavicon (){
     return document.getElementById("favicon");
@@ -66,6 +67,7 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/Settings/route" element={createRouteComponent(<RouteNew />)} />
                 <ReactRoute path="/Settings/dialplan" element={createRouteComponent(<DialPlanNew />)} />
                 <ReactRoute path="/Settings/senderId" element={createRouteComponent(<SenderId />)} />
+                <ReactRoute path="/Settings/forbiddenWords" element={createRouteComponent(< ForbiddenWords/>)} />
                 <ReactRoute path="/SmsTask/SmsHistory" element={createRouteComponent(<SmsHistory />)} />
             </Routes>
         </BrowserRouter>
