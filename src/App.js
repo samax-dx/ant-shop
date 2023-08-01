@@ -30,6 +30,8 @@ import {SmsHistory} from "./components/SmsHistory";
 import {HomeNew} from "./components/HomeNew";
 import getAllConfig from "../src/config/main";
 import {ForbiddenWords} from "./components/ForbiddenWords";
+import {SmsRouteDetails} from "./components/SmsRouteDetails";
+import {Reports} from "./components/Reports";
 
 function setFavicon (){
     return document.getElementById("favicon");
@@ -69,6 +71,7 @@ export const App = ({ actor }) => {
                 <ReactRoute path="/Settings/senderId" element={createRouteComponent(<SenderId />)} />
                 <ReactRoute path="/Settings/forbiddenWords" element={createRouteComponent(< ForbiddenWords/>)} />
                 <ReactRoute path="/SmsTask/SmsHistory" element={createRouteComponent(<SmsHistory />)} />
+                <ReactRoute path="/SmsTask/Reports" element={createRouteComponent(<Reports />)} />
             </Routes>
         </BrowserRouter>
     </>);
