@@ -28,7 +28,7 @@ export const DebounceSelectForRoute = ({ query, debounceTimeout = 500, ...props 
     const fetchOptions = () => ReportsService.findAllRouteForDropdown({})
         .then(data =>
                 [
-                    { label: "Default", value: '' }, // New option
+                    { label: "All", value: '' }, // New option
                     ...data.map((r) => ({
                         label: `${r.ROUTE_ID}`,
                         value: r.ROUTE_ID,

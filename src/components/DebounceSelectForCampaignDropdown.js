@@ -28,7 +28,7 @@ export const DebounceSelectForCampaign = ({ query, debounceTimeout = 500, ...pro
     const fetchOptions = () => ReportsService.findAllCampaignForDropdown({})
         .then(data =>
             [
-                { label: "Default", value: '' }, // New option
+                { label: "All", value: '' }, // New option
                 ...data.map((c) => ({
                     label: `${c.campaignId}`,
                     value: c.campaignId,

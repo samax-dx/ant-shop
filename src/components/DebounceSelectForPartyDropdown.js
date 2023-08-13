@@ -28,9 +28,9 @@ export const DebounceSelectForParty = ({ query, debounceTimeout = 500, ...props 
     const fetchOptions = () => ReportsService.findAllPartyForDropdown({})
         .then(data => {
             return [
-                { label: "Default", value: '' },
+                { label: "All", value: '' }, // New option
                 ...data.map((p) => ({
-                    label: `${p.PARTY_ID}`,
+                    label: `${p.PARTY_ID} - ${p.GROUP_NAME}`,
                     value: p.PARTY_ID,
                 })),
             ];

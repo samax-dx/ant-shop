@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, Tooltip, Upload, message, Checkbox, TimePicker, Descriptions, Tag
+    Modal, Typography, DatePicker, notification, Tooltip, Upload, message, Checkbox, TimePicker, Descriptions, Tag, Spin
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -47,7 +47,7 @@ const SearchForm = ({ onSearch }) => {
             }
         });
 
-        const queryData = ["campaignId","routeId","createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
+        const queryData = ["campaignId","routeId","partyId","createdOn_fld0_value", "createdOn_fld1_value"].reduce((acc, v) => {
             const field = v;
             const fieldOp = `${field.replace("_value", "")}_op`;
             const fieldValue = (acc[field] || "").trim();
@@ -79,9 +79,9 @@ const SearchForm = ({ onSearch }) => {
             <Form.Item name="routeId_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item style={{display:'inline-block', margin:'0px'}} name="partyId" label="Party ID" children={<DebounceSelectForParty />} />
             <Form.Item name="partyId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="createdOn_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
+            <Form.Item required style={{display:'inline-block', margin:'0px'}} name="createdOn_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
             <Form.Item name="createdOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item style={{display:'inline-block', margin:'0px'}} name="createdOn_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
+            <Form.Item required style={{display:'inline-block', margin:'0px'}} name="createdOn_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />} />
             <Form.Item name="createdOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
             <Form.Item wrapperCol={{ offset: 5 }} style={{display:'inline-block', margin:'0px'}} colon={false} label=' '>
                 <Button
@@ -96,32 +96,135 @@ const SearchForm = ({ onSearch }) => {
 };
 
 
-const DataView = ({ report, viewPage, viewLimit}) => {
+const DataView = ({ report,spin, viewPage, viewLimit}) => {
 
-    return (<>
-        <Table
-            style={{marginLeft:6}}
-            size="small"
-            dataSource={report}
-            rowKey={"prefixId"}
-            locale={{ emptyText: report === null ? "E" : "No Data" }}
-            pagination={false}
-        >
-            <Table.Column
-                dataIndex={undefined}
-                title={"#"}
-                render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
-            />
-            <Table.Column title="Party Id" dataIndex={"partyId"} />
-            <Table.Column title="Campaign Id" dataIndex={"campaignId"} />
-            <Table.Column title="Route Id" dataIndex={"routeId"} />
-            <Table.Column title="Total" dataIndex={"total"} />
-            <Table.Column title="Delivered" dataIndex={"delivered"} />
-            <Table.Column title="In Process" dataIndex={"inProcess"} />
-            <Table.Column title="Suspended" dataIndex={"suspended"} />
-            <Table.Column title="Failed" dataIndex={"failed"} />
-        </Table>
-    </>);
+    // return (<>
+    //     <Table
+    //         style={{marginLeft:6}}
+    //         size="small"
+    //         dataSource={report}
+    //         rowKey={Math.random}
+    //         locale={{ emptyText: report === null ? "E" : "No Data" }}
+    //         pagination={false}
+    //     >
+    //         <Table.Column
+    //             dataIndex={undefined}
+    //             title={"#"}
+    //             render={(_, __, i) => (viewPage - 1) * viewLimit + (++i)}
+    //         />
+    //         <Table.Column title="Party Id" dataIndex={"partyId"}/>
+    //         <Table.Column title="Campaign Id" dataIndex={"campaignId"} />
+    //         <Table.Column title="Route Id" dataIndex={"routeId"} />
+    //         <Table.Column title="Total" dataIndex={"total"} />
+    //         <Table.Column title="Delivered" dataIndex={"delivered"} />
+    //         <Table.Column title="In Process" dataIndex={"inProcess"} />
+    //         <Table.Column title="Suspended" dataIndex={"suspended"} />
+    //         <Table.Column title="Failed" dataIndex={"failed"}/>
+    //     </Table>
+    // </>);
+        const columns = [
+            {
+                dataIndex: undefined,
+                title: '#',
+                render: (_, __, i) => (viewPage - 1) * viewLimit + (++i),
+            },
+            {
+                title: <strong>Party Id</strong>,
+                dataIndex: 'partyId',
+            },
+            {
+                title: <strong>Campaign Id</strong>,
+                dataIndex: 'campaignId',
+            },
+            {
+                title: <strong>Route Id</strong>,
+                dataIndex: 'routeId',
+            },
+            {
+                title: <strong>Total</strong>,
+                dataIndex: 'total',
+                render: (value) => <span>{value.toLocaleString()}</span>,
+            },
+            {
+                title: <strong>Total Sent</strong>,
+                dataIndex: 'sent',
+                render: (value) => <span>{value.toLocaleString()}</span>,
+            },
+            {
+                title: <strong>Delivered</strong>,
+                dataIndex: 'delivered',
+                render: (value) => <span>{value.toLocaleString()}</span>,
+            },
+            {
+                title: <strong>Success Rate</strong>,
+                render: (_, record) => {
+                    const totalSent = record.sent || 0;
+                    const delivered = record.delivered || 0;
+                    const successRate = totalSent !== 0 ? ((delivered / totalSent) * 100).toFixed(2) : 0;
+                    return `${successRate}%`;
+                },
+            },
+            {
+                title: <strong>In Process</strong>,
+                dataIndex: 'inProcess',
+                render: (value) => <span>{value.toLocaleString()}</span>,
+            },
+            {
+                title: <strong>Switched Off</strong>,
+                dataIndex: 'absentSubscriberSM',
+                render: (value) => <span>{value.toLocaleString()}</span>,
+            },
+            {
+                title: <strong>Unidentified Number</strong>,
+                dataIndex: 'unidentifiedSubscriber',
+                render: (value) => <span>{value.toLocaleString()}</span>,
+            },
+            {
+                title: <strong>Failed</strong>,
+                dataIndex: 'failed',
+                render: (value) => <span>{value.toLocaleString()}</span>,
+            },
+        ];
+
+        // Filter out columns with no data in the report
+        const filteredColumns = columns.filter((col) => {
+            if (!col.dataIndex) {
+                return true; // Keep columns without a dataIndex
+            }
+            return report && report.some((item) => item[col.dataIndex] !== undefined);
+        });
+        return (
+            <>
+                {spin?<Spin tip="Reports Loading..." size="large">{
+                    filteredColumns.length === 0 ? (
+                        <p>No Data</p>
+                    ) : (
+                        <Table
+                            style={{marginLeft: 6}}
+                            size="small"
+                            dataSource={report}
+                            rowKey={(record) => record.campaignId} // Assuming campaignId is unique
+                            locale={{emptyText: report === null ? 'E' : 'No Data'}}
+                            pagination={false}
+                            columns={filteredColumns}
+                        />
+                    )
+                }</Spin>: filteredColumns.length === 0 ? (
+                    <p>No Data</p>
+                    ) : (
+                    <Table
+                    style={{marginLeft: 6}}
+                    size="small"
+                    dataSource={report}
+                    rowKey={(record) => record.campaignId} // Assuming campaignId is unique
+                    locale={{emptyText: report === null ? 'E' : 'No Data'}}
+                    pagination={false}
+                    columns={filteredColumns}
+                    />
+                    )
+                }
+            </>
+        );
 };
 const DataPager = ({ totalPagingItems, currentPage, onPagingChange }) => {
     return (<>
@@ -144,8 +247,9 @@ export const Reports = () => {
     const [lastQuery, setLastQuery] = useState({});
     const [campaigns, setCampaigns] = useState([]);
     const [reports, setReports] = useState([]);
-    const [CampaignsFetchCount, setCampaignsFetchCount] = useState(0);
+    const [reportFetchCount, setReportFetchCount] = useState(0);
     const [CampaignsFetchError, setCampaignsFetchError] = useState(null);
+    const [spin, setSpin] = useState(false);
 
     const [modalData, setModalData] = useState(null);
     const showModal = data => setModalData(data);
@@ -153,16 +257,19 @@ export const Reports = () => {
     const handleCancel = () => setModalData(null);
 
     useEffect(() => {
+        setSpin(true);
         ReportsService.fetchRecords(lastQuery)
             .then((data) => {
-                console.log(data)
-                setReports(data);
-                setCampaignsFetchCount(data.count);
+                setSpin(false);
+                console.log(data);
+                setReports(data.reports);
+                setReportFetchCount(data.count);
                 setCampaignsFetchError(null);
             })
             .catch(error => {
+                setSpin(false);
                 setCampaigns([]);
-                setCampaignsFetchCount(0);
+                setReportFetchCount(0);
                 setCampaignsFetchError(error);
             });
     }, [lastQuery]);
@@ -190,9 +297,9 @@ export const Reports = () => {
             {/*    <WriteForm close={handleCancel} recordArg={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "updatedOn DESC", page: 1 })} />*/}
             {/*</Modal>*/}
         </Row>
-        <DataView report={reports} viewPage={lastQuery.page} viewLimit={lastQuery.limit} onEdit={showModal}/>
+        <DataView report={reports} spin={spin} viewPage={lastQuery.page} viewLimit={lastQuery.limit} onEdit={showModal}/>
         <Br />
-        <DataPager totalPagingItems={CampaignsFetchCount} currentPage={lastQuery.page}
+        <DataPager totalPagingItems={reportFetchCount} currentPage={lastQuery.page}
                               onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);
 };
