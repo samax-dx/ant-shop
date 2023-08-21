@@ -70,7 +70,6 @@ export const MainMenu = ({ actor }) => {
                 <Menu.Item key="route" icon={<InteractionTwoTone />}><Link to="/Settings/route">Route</Link></Menu.Item>
                 <Menu.Item key="dialplan" icon={<InteractionTwoTone />} ><Link to="/Settings/dialplan">Dial Plan</Link></Menu.Item>
                 <Menu.Item key="senderId" icon={<IdcardTwoTone />}><Link to="/Settings/senderId">Sender-ID</Link></Menu.Item>
-                <Menu.Item key="forbiddenWords" icon={<IdcardTwoTone />}><Link to="/Settings/forbiddenWords">Forbidden Words</Link></Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu key="sub5" icon={<UserOutlined />} title="..." disabled>
                 <Menu.Item ><Link to="partners">Partners</Link></Menu.Item>
