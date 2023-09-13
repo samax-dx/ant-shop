@@ -1,0 +1,8 @@
+export const APP_NAME = "SMS Portal [Admin]";
+export const SERVER_URL = "https://localhost:8443/ofbiz-spring/api";
+export const CONTACT_BOOK_EP = "http://localhost:8083";
+export const GP1_SIGTRAN_STATUS = "http://123.136.28.211:8080"; //this is not valid
+export const GP2_SIGTRAN_STATUS = "http://123.136.28.211:8080";
+export const BL1_SIGTRAN_STATUS = "http://123.136.28.211:8080";
+
+// 123.136.28.211:8080
