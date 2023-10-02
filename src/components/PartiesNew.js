@@ -18,6 +18,7 @@ import {ExclamationCircleOutlined, PlusCircleFilled} from "@ant-design/icons";
 import dayjs from "dayjs";
 import {RateService} from "../services/RateService";
 import moment from "moment";
+import {ForbiddenWordsService} from "../services/ForbiddenWordsService";
 
 
 const SearchForm = ({ onSearch }) => {
@@ -247,13 +248,31 @@ const WriteForm = ({ recordArg, onRecordSaved,close }) => {
     </>);
 };
 
-const DataView = ({ parties, viewPage, viewLimit, onEdit, onDelete }) => {
+const DataView = ({ parties, viewPage, viewLimit, onEdit, onDelete, onEnable, onDisable }) => {
     const confirmDelete = party => Modal.confirm({
         title: 'Confirm delete party?',
         icon: <ExclamationCircleOutlined />,
         content: <>Deleting party: <strong>{party.partyId} {parties.loginId}</strong></>,
         onOk() {
             onDelete(party );
+        }
+    });
+    const enableWords = record => Modal.confirm({
+        title:'Confirm Enabling Words?',
+        icon:<ExclamationCircleOutlined/>,
+        content: <>Enabling Words: <strong>{record.forbiddenWordsId}</strong></>,
+        onOk() {
+            onEnable(record);
+            console.log("Clicked");
+        }
+    });
+    const disableWords = record => Modal.confirm({
+        title:'Confirm Enabling Words?',
+        icon:<ExclamationCircleOutlined/>,
+        content: <>Disabling Words: <strong>{record.forbiddenWordsId}</strong></>,
+        onOk() {
+            onDisable(record);
+            console.log("Clicked");
         }
     });
     return (<>
@@ -282,6 +301,8 @@ const DataView = ({ parties, viewPage, viewLimit, onEdit, onDelete }) => {
                 dataIndex={undefined}
                 render={(value, record, index) => {
                     return (<>
+                        <Button onClick={() =>enableWords(record)} type="link">Enable</Button>
+                        <Button onClick={() => disableWords(record)} type="link">Disable</Button>
                         <Button onClick={() => onEdit(record)} type="link">Edit</Button>
                         <Button onClick={() => confirmDelete(record)} type="link">Delete</Button>
                     </>);
@@ -357,6 +378,47 @@ export const PartiesNew = () => {
     useEffect(() => {
         setLastQuery({ page: 1, limit: 10 })
     }, []);
+    const enableParty = record => {
+        ForbiddenWordsService.enableOrDisableWords({forbiddenWordsId:record.forbiddenWordsId, status:"enabled"})
+            .then(data => {
+                console.log(data);
+                setLastQuery({ ...lastQuery, page: 1 });
+                notification.success({
+                    key: `forbiddenWordsId_${Date.now()}`,
+                    message: "Task Finished",
+                    description: `Words Enabled: ${record.forbiddenWordsId}`,
+                    duration: 15
+                });
+            })
+            .catch(error => {
+                notification.error({
+                    key: `forbiddenWordsId_${Date.now()}`,
+                    message: "Task Failed",
+                    description: `Error Enabling: ${record.forbiddenWordsId}`,
+                    duration: 15
+                });
+            });
+    };
+    const disableParty = record => {
+        ForbiddenWordsService.enableOrDisableWords({forbiddenWordsId:record.forbiddenWordsId, status:"disabled"})
+            .then(data => {
+                setLastQuery({ ...lastQuery, page: 1 });
+                notification.success({
+                    key: `forbiddenWordsId_${Date.now()}`,
+                    message: "Task Finished",
+                    description: `Words Disabled: ${record.forbiddenWordsId}`,
+                    duration: 15
+                });
+            })
+            .catch(error => {
+                notification.error({
+                    key: `forbiddenWordsId_${Date.now()}`,
+                    message: "Task Failed",
+                    description: `Error Disabling: ${record.forbiddenWordsId}`,
+                    duration: 15
+                });
+            });
+    };
 
     return (<>
         <Row style={{marginLeft: 5}}>
@@ -377,7 +439,7 @@ export const PartiesNew = () => {
                 <WriteForm recordArg={modalData} record={modalData} onRecordSaved={_ => setLastQuery({ ...lastQuery, orderBy: "partyId DESC", page: 1 })} close={handleCancel}/>
             </Modal>
         </Row>
-        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeParty}/>
+        <DataView parties={parties} viewLimit={lastQuery.limit} viewPage={lastQuery.page} onEdit={showModal} onDelete={removeParty} onEnable={enableParty} onDisable={disableParty} />
         <DataPager totalPagingItems={partyFetchResultCount} currentPage={lastQuery.page}
                    onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
     </>);
