@@ -22,6 +22,7 @@ import {DebounceSelect} from "./DebounceSelect";
 import {PlusCircleFilled} from "@ant-design/icons";
 import {PartyService} from "../services/PartyService";
 import {Option} from "antd/es/mentions";
+import {DebounceSelectForParty} from "./DebounceSelectForPartyDropdown";
 
 
 
@@ -65,30 +66,17 @@ const SearchForm = ({ onSearch, parties }) => {
             labelAlign="left"
             initialValues={{ updatedOn_fld0_value: moment().subtract(1, 'days'),updatedOn_fld1_value:moment(new Date()) }}
         >
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="partyId" label="Select Party" children={  <Select
-                showSearch
-                placeholder="Select a party"
-                optionFilterProp="children"
-                onSearch={onSearch}
-                filterOption={(input, option) =>
-                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                }
-                style={{width:"190px",marginRight:7}}
-            >
-                <Option key={0}>{"All"}</Option>
-                {parties.map(party => <Option key={party.partyId}>{party.name}</Option>)}
-            </Select>
-            } />
+            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="partyId" label="Party Id" children={<DebounceSelectForParty />} />
             <Form.Item name="partyId_op" initialValue={"contains"} hidden  children={  <Select></Select>} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="terminatingCalledNumber" label="Phone Number" children={<Input />} />
-            <Form.Item name="terminatingCalledNumber_op" initialValue={"contains"} hidden children={<Input />} />
+            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="phoneNumber" label="Phone Number" children={<Input />} />
+            <Form.Item name="phoneNumber_op" initialValue={"contains"} hidden children={<Input />} />
             <Form.Item style={{ display:'inline-block', margin:'0px'}} name="campaignName" label="Campaign" children={<Input />} />
             <Form.Item name="campaignName_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="packageId" label="Package" children={<Input />} />
-            <Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />
-            <Form.Item required name="updatedOn_fld0_value" label="From Date" style={{ display:'inline-block', margin:'0px'}} children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>
+            {/*<Form.Item style={{ display:'inline-block', margin:'0px'}} name="packageId" label="Package" children={<Input />} />*/}
+            {/*<Form.Item name="packageId_op" initialValue={"contains"} hidden children={<Input />} />*/}
+            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld0_value" label="From Date" children={<DatePicker showTime use12Hours={true} format="YYYY-MM-DD HH:mm:ss" />}/>
             <Form.Item name="updatedOn_fld0_op" initialValue={"greaterThanEqualTo"} hidden children={<Input />} />
-            <Form.Item required name="updatedOn_fld1_value" label="To Date" style={{ display:'inline-block', margin:'0px'}} children={<DatePicker showTime use12Hours={true} format={"YYYY-MM-DD HH:mm:ss"} />} />
+            <Form.Item style={{ display:'inline-block', margin:'0px'}} name="updatedOn_fld1_value" label="To Date" children={<DatePicker showTime use12Hours={true} format={"YYYY-MM-DD HH:mm:ss"} />} />
             <Form.Item name="updatedOn_fld1_op" initialValue={"lessThanEqualTo"} hidden children={<Input />} />
             <Form.Item style={{display:'inline-block', margin:'0px'}} wrapperCol={{ offset: 1 }} colon={false} label=' '>
                 <Button
@@ -173,9 +161,9 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
 
     const unixToMomentTime=(value)=>{
         if(value==null) return "";
-        const parseValue = parseInt(value)
+        const parseValue = parseInt(value)*1000;
         // var dateString = moment.unix(+value).format("MM/DD/YYYY");
-        const finalTime=  moment(parseValue).subtract(6, 'hours').format('YYYY-MM-DD hh:mm:ss A');
+        const finalTime=  moment(parseValue).format('lll');
         //return dayjs(parseValue).format("MMM D, YYYY - hh:mm A")
         return finalTime;
     }
@@ -219,7 +207,7 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
             />
             <Table.Column title="Campaign Name" dataIndex={"campaignName"} render={v => v || "N/A"} width={"100pt"}/>
             <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"} width={"90pt"}/>
-            <Table.Column title="Sender Id" dataIndex={"originatingCallingNumber"} width={"110pt"}/>0
+            <Table.Column title="Sender Id" dataIndex={"senderId"} width={"110pt"}/>0
             <Table.Column title="Status" dataIndex={"status"} width={"90pt"} render={v => [
                 <Tag color={"processing"}>pending</Tag>,
                 <Tag color={"success"}>sent</Tag>,
@@ -261,12 +249,13 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
 
                               <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.children.map((t,i) => t.message.toString()) || v})}>Show all</Button>
                           </>:v}}/>
-            <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
+            <Table.Column title="Sent On" dataIndex={"sentOn"} width={"170pt"} render={unixToMomentTime} />
             <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"} />
             <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
             <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
             <Table.Column title="Route" dataIndex={"routeId"} width={"90pt"}/>
             <Table.Column title="Campaign Task Id" dataIndex={"campaignTaskId"} width={"245pt"} />
+                <Table.Column title="Retry Count" dataIndex={"retryCount"} width={"170pt"}/>
             <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"150pt"} render={(unixToMomentTime)} />
             <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"150pt"} render= {(unixToMomentTime)}/>
 
@@ -301,7 +290,7 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                 />
                 <Table.Column title="Campaign Name" dataIndex={"campaignName"} render={v => v || "N/A"} width={"100pt"}/>
                 <Table.Column title="Called Number" dataIndex={"terminatingCalledNumber"} width={"90pt"}/>
-                <Table.Column title="Sender Id" dataIndex={"originatingCallingNumber"} width={"110pt"}/>0
+                <Table.Column title="Sender Id" dataIndex={"senderId"} width={"110pt"}/>0
                 <Table.Column title="Status" dataIndex={"status"} width={"90pt"} render={v => [
                     <Tag color={"processing"}>pending</Tag>,
                     <Tag color={"success"}>sent</Tag>,
@@ -343,12 +332,13 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
 
                                       <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.children.map((t,i) => t.message.toString()) || v})}>Show all</Button>
                                   </>:v}}/>
-                <Table.Column title="Sent On" dataIndex={"sentOn"} width={"150pt"}/>
+                <Table.Column title="Sent On" dataIndex={"sentOn"} width={"170pt"} render={unixToMomentTime} />
                 <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"} />
                 <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
                 <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
                 <Table.Column title="Route" dataIndex={"routeId"} width={"90pt"}/>
                 <Table.Column title="Campaign Task Id" dataIndex={"campaignTaskId"} width={"245pt"} />
+                <Table.Column title="Retry Count" dataIndex={"retryCount"} width={"170pt"}/>
                 <Table.Column title="Next Retry Time" dataIndex={"nextRetryTime"} width={"150pt"} render={(unixToMomentTime)} />
                 <Table.Column title="Last Retry Time" dataIndex={"lastRetryTime"} width={"150pt"} render= {(unixToMomentTime)}/>
 
@@ -434,6 +424,7 @@ export const SmsHistory = () => {
             .catch(error=> console.log(error))
     },[])
     useEffect(() => {
+        setSpin(true);
         CampaignService.fetchCampaignTaskReports(lastQuery)
             .then(data => {
                 setSpin(false);
@@ -468,7 +459,11 @@ export const SmsHistory = () => {
         </Row>
         <DataView taskReports={taskReports} spin={spin} viewPage={lastQuery.page} viewLimit={lastQuery.limit}/>
         <Br />
-        <DataPager totalPagingItems={TaskReportsFetchCount} currentPage={lastQuery.page}
-                   onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />
+        <Space direction='horizontal' style={{ justifyContent: 'flex-end' }}>
+            <Button type="primary" onClick={(page, limit) => setLastQuery({...lastQuery, page: lastQuery.page - 1})}>Previous</Button>
+            <Button type="primary" onClick={(page, limit) => setLastQuery({...lastQuery, page: lastQuery.page + 1})}>Next</Button>
+        </Space>
+        {/*<DataPager totalPagingItems={TaskReportsFetchCount} currentPage={lastQuery.page}*/}
+        {/*           onPagingChange={(page, limit) => setLastQuery({ ...lastQuery, page, limit })} />*/}
     </>);
 };
