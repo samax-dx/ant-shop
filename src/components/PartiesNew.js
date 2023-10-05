@@ -257,22 +257,20 @@ const DataView = ({ parties, viewPage, viewLimit, onEdit, onDelete, onEnable, on
             onDelete(party );
         }
     });
-    const enableWords = record => Modal.confirm({
-        title:'Confirm Enabling Words?',
+    const enableParty = record => Modal.confirm({
+        title:'Confirm Enabling Party?',
         icon:<ExclamationCircleOutlined/>,
-        content: <>Enabling Words: <strong>{record.forbiddenWordsId}</strong></>,
+        content: <>Enabling Party: <strong>{record.partyId}</strong></>,
         onOk() {
             onEnable(record);
-            console.log("Clicked");
         }
     });
-    const disableWords = record => Modal.confirm({
-        title:'Confirm Enabling Words?',
+    const disableParty = record => Modal.confirm({
+        title:'Confirm Disabling Party?',
         icon:<ExclamationCircleOutlined/>,
-        content: <>Disabling Words: <strong>{record.forbiddenWordsId}</strong></>,
+        content: <>Disabling Party: <strong>{record.partyId}</strong></>,
         onOk() {
             onDisable(record);
-            console.log("Clicked");
         }
     });
     return (<>
@@ -294,6 +292,7 @@ const DataView = ({ parties, viewPage, viewLimit, onEdit, onDelete, onEnable, on
             <Table.Column title="Name" dataIndex={"name"} />
             <Table.Column title="Contact Number" dataIndex={"contactNumber"} />
             <Table.Column title="Email" dataIndex={"emailAddress"} />
+            <Table.Column title="Status" dataIndex={"loginAllowed"} render={value => value ==="N"?"Disabled":"Enabled"}/>
             <Table.Column title="Created On" dataIndex={"createdOn"} render={value => dayjs(value).format("MMM D, YYYY - hh:mm A")} />
 
             <Table.Column
@@ -301,10 +300,10 @@ const DataView = ({ parties, viewPage, viewLimit, onEdit, onDelete, onEnable, on
                 dataIndex={undefined}
                 render={(value, record, index) => {
                     return (<>
-                        <Button onClick={() =>enableWords(record)} type="link">Enable</Button>
-                        <Button onClick={() => disableWords(record)} type="link">Disable</Button>
+                        <Button onClick={() =>enableParty(record)} type="link">Enable</Button>
+                        <Button onClick={() => disableParty(record)} type="link">Disable</Button>
                         <Button onClick={() => onEdit(record)} type="link">Edit</Button>
-                        <Button onClick={() => confirmDelete(record)} type="link">Delete</Button>
+                        {/*<Button onClick={() => confirmDelete(record)} type="link">Delete</Button>*/}
                     </>);
                 }}
             />
@@ -379,42 +378,42 @@ export const PartiesNew = () => {
         setLastQuery({ page: 1, limit: 10 })
     }, []);
     const enableParty = record => {
-        ForbiddenWordsService.enableOrDisableWords({forbiddenWordsId:record.forbiddenWordsId, status:"enabled"})
+        PartyService.enableParty({partyId:record.partyId})
             .then(data => {
                 console.log(data);
                 setLastQuery({ ...lastQuery, page: 1 });
                 notification.success({
-                    key: `forbiddenWordsId_${Date.now()}`,
+                    key: `partyId_${Date.now()}`,
                     message: "Task Finished",
-                    description: `Words Enabled: ${record.forbiddenWordsId}`,
+                    description: `Party Enabled: ${record.partyId}`,
                     duration: 15
                 });
             })
             .catch(error => {
                 notification.error({
-                    key: `forbiddenWordsId_${Date.now()}`,
+                    key: `partyId_${Date.now()}`,
                     message: "Task Failed",
-                    description: `Error Enabling: ${record.forbiddenWordsId}`,
+                    description: `Error Enabling: ${record.partyId}`,
                     duration: 15
                 });
             });
     };
     const disableParty = record => {
-        ForbiddenWordsService.enableOrDisableWords({forbiddenWordsId:record.forbiddenWordsId, status:"disabled"})
+        PartyService.disableParty({partyId:record.partyId})
             .then(data => {
                 setLastQuery({ ...lastQuery, page: 1 });
                 notification.success({
-                    key: `forbiddenWordsId_${Date.now()}`,
+                    key: `partyId_${Date.now()}`,
                     message: "Task Finished",
-                    description: `Words Disabled: ${record.forbiddenWordsId}`,
+                    description: `Party Disabled: ${record.partyId}`,
                     duration: 15
                 });
             })
             .catch(error => {
                 notification.error({
-                    key: `forbiddenWordsId_${Date.now()}`,
+                    key: `partyId_${Date.now()}`,
                     message: "Task Failed",
-                    description: `Error Disabling: ${record.forbiddenWordsId}`,
+                    description: `Error Disabling: ${record.partyId}`,
                     duration: 15
                 });
             });
