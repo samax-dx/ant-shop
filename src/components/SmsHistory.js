@@ -34,7 +34,7 @@ const SearchForm = ({ onSearch, parties }) => {
 
         ["updatedOn_fld0_value", "updatedOn_fld1_value"].forEach((n, i) => {
             const date = formData[n];
-            formData[n] = date ? dayjs(date).add(i, "day").format("YYYY-MM-DD HH:mm:ss") : null;
+            formData[n] = date ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : null;
 
             if (formData[n] === null) {
                 delete formData[n];
@@ -111,9 +111,9 @@ function addKeyValueToArrayObjects(arr, key, value) {
     return arr;
 }
 const processDataForTableView = ({taskReports}) => {
-
+    const reversedTaskReports = Object.values(taskReports || {}).reverse();
     let index = 0;
-    return Object.values(taskReports || {}).map((taskGroup, i) => {
+    return reversedTaskReports.map((taskGroup, i) => {
 
 
         const parentTask = taskGroup[0];
