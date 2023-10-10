@@ -316,8 +316,8 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                 <Tag color={"error"}>failed</Tag>,
                 <span></span>,
             ][[v === "pending",v ==="processing", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
-
-            <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
+            <Table.Column title="Sent On" dataIndex={"sentOn"} width={"170pt"} render={unixToMomentTime} />
+            <Table.Column title="Message" width={"150pt"}
                           render={(v, r, i) =>{
                               var msg = r.message;
                               // if (!r.children) { r.children = []; }
@@ -329,7 +329,7 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                               }
 
                               v = msg;
-                              return v.length>6?<>
+                              return  v.length>6?<>
                               <span
                                   style={{textOverflow:"ellipsis",
                                       whiteSpace:"nowrap",
@@ -339,10 +339,9 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                                       verticalAlign:"middle"
                                   }}
                               >{v.replace(/\s*,\s*/g, " ")}</span>
-
-                              <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.children.map((t,i) => t.message.toString()) || v})}>Show all</Button>
-                          </>:v}}/>
-            <Table.Column title="Sent On" dataIndex={"sentOn"} width={"170pt"} render={unixToMomentTime} />
+                                  <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
+                              </>:v}}/>
+            {/*//, index: (r.multipartSegmentNumber) + 1, length: r.length*/}
             <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"} />
             <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
             <Table.Column title="Package" dataIndex={"packageId"} width={"90pt"}/>
@@ -399,8 +398,8 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                     <Tag color={"error"}>failed</Tag>,
                     <span></span>,
                 ][[v === "pending",v ==="processing", v ==="delivered", v === "undetermined", v === "failed" , !v].indexOf(!0)]} />
-
-                <Table.Column title="Message" dataIndex={"message"} width={"150pt"}
+                <Table.Column title="Sent On" dataIndex={"sentOn"} width={"170pt"} render={unixToMomentTime} />
+                <Table.Column title="Message" width={"150pt"}
                               render={(v, r, i) =>{
                                   var msg = r.message;
                                   // if (!r.children) { r.children = []; }
@@ -412,19 +411,19 @@ const DataView = ({ taskReports,spin, viewPage, viewLimit}) => {
                                   }
 
                                   v = msg;
-                                  return v.length>6?<>
-                              <span
-                                  style={{textOverflow:"ellipsis",
-                                      whiteSpace:"nowrap",
-                                      maxWidth: "50pt",
-                                      display: "inline-block",
-                                      overflow:"hidden",
-                                      verticalAlign:"middle"
-                                  }}
-                              >{v.replace(/\s*,\s*/g, " ")}</span>
-
-                                      <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.children.map((t,i) => t.message.toString()) || v})}>Show all</Button>
+                                  return  v.length>6?<>
+                                  <span
+                                      style={{textOverflow:"ellipsis",
+                                          whiteSpace:"nowrap",
+                                          maxWidth: "50pt",
+                                          display: "inline-block",
+                                          overflow:"hidden",
+                                          verticalAlign:"middle"
+                                      }}
+                                  >{v.replace(/\s*,\s*/g, " ")}</span>
+                                      <Button type="link" onClick={() => showModalMsg({short: r.message, full: r.fullMessage || v})}>Show all</Button>
                                   </>:v}}/>
+                {/*//, index: (r.multipartSegmentNumber) + 1, length: r.length*/}
                 <Table.Column title="Sent On" dataIndex={"sentOn"} width={"170pt"} render={unixToMomentTime} />
                 <Table.Column title="Error" dataIndex={"errorCode"} width={"90pt"} />
                 <Table.Column title="Error External" dataIndex={"errorCodeExternal"} width={"90pt"}/>
