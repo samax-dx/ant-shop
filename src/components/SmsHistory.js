@@ -548,7 +548,7 @@ export const SmsHistory = () => {
                 >
                     <SearchForm parties ={parties} onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        {csvData.length > 0 ?<Button type="primary">
+                        {csvData.length > 1 ?<Button type="primary">
                             <CSVLink
                                 filename={"smsHistory.csv"}
                                 data={csvData}
