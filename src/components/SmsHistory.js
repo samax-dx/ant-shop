@@ -10,7 +10,7 @@ import {
     Select,
     Row,
     Col,
-    Modal, Typography, DatePicker, notification, Tag, Spin
+    Modal, Typography, DatePicker, notification, Tag, Spin, message
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {Br} from "./Br";
@@ -23,6 +23,7 @@ import {PlusCircleFilled} from "@ant-design/icons";
 import {PartyService} from "../services/PartyService";
 import {Option} from "antd/es/mentions";
 import {DebounceSelectForParty} from "./DebounceSelectForPartyDropdown";
+import {CSVLink} from "react-csv";
 
 
 
@@ -110,6 +111,98 @@ function addKeyValueToArrayObjects(arr, key, value) {
     arr.forEach(obj => obj[key] = value);
     return arr;
 }
+const formatDataAsCSV = (taskReports) => {
+    const reversedTaskReports = Object.values(taskReports || {}).reverse();
+
+    const csvData = [];
+
+    csvData.push([
+        'title',
+        'campaignTaskId',
+        'phoneNumber',
+        'terminatingCalledNumber',
+        'originatingCallingNumber',
+        'terminatingCallingNumber',
+        'message',
+        'smsCount',
+        'smsEncoding',
+        'campaignId',
+        'packageId',
+        'routeId',
+        'status',
+        'statusExternal',
+        'statusExternalUpdatedAt',
+        'errorCode',
+        'errorCodeExternal',
+        'taskIdExternal',
+        'smsId',
+        'retryCount',
+        'retryHistory',
+        'nextRetryTime',
+        'lastRetryTime',
+        'allRetryTimes',
+        'taskDetailJson',
+        'parentId',
+        'multipartSegmentNumber',
+        'campaignName',
+        'senderId',
+        'instances',
+        'createdStamp',
+        'sentOn',
+        'lastUpdatedStamp',
+    ]);
+
+    function pushTaskRow(task, taskType) {
+        csvData.push([
+            taskType,
+            task.campaignTaskId,
+            task.phoneNumber,
+            task.terminatingCalledNumber,
+            task.originatingCallingNumber,
+            task.terminatingCallingNumber,
+            task.message,
+            task.smsCount,
+            task.smsEncoding,
+            task.campaignId,
+            task.packageId,
+            task.routeId,
+            task.status,
+            task.statusExternal,
+            task.statusExternalUpdatedAt,
+            task.errorCode,
+            task.errorCodeExternal,
+            task.taskIdExternal,
+            task.smsId,
+            task.retryCount,
+            task.retryHistory,
+            task.nextRetryTime,
+            task.lastRetryTime,
+            task.allRetryTimes,
+            task.taskDetailJson,
+            task.parentId,
+            task.multipartSegmentNumber,
+            task.campaignName,
+            task.senderId,
+            task.instances,
+            task.createdStamp,
+            task.sentOn,
+            task.lastUpdatedStamp,
+        ]);
+    }
+
+    reversedTaskReports.forEach(taskGroup => {
+        if (taskGroup.length > 1) {
+            pushTaskRow(taskGroup[0], "head");
+            for (let i = 1; i < taskGroup.length; i++) {
+                pushTaskRow(taskGroup[i], "part " + (i+1));
+            }
+        } else {
+            pushTaskRow(taskGroup[0], "head");
+        }
+    });
+
+    return csvData;
+};
 const processDataForTableView = ({taskReports}) => {
     const reversedTaskReports = Object.values(taskReports || {}).reverse();
     let index = 0;
@@ -414,6 +507,7 @@ export const SmsHistory = () => {
     const [TaskReportsFetchCount, setTaskReportsFetchCount] = useState(0);
     const [taskReportsFetchError, setTaskReportsFetchError] = useState(null);
     const [spin, setSpin] = useState(true);
+    const csvData = formatDataAsCSV(taskReports);
 
     useEffect(()=>{
         PartyService.fetchRecords({})
@@ -454,6 +548,21 @@ export const SmsHistory = () => {
                       size="small"
                 >
                     <SearchForm parties ={parties} onSearch={data => setLastQuery({ ...(data || {}), page: 1, limit: lastQuery.limit, orderBy: lastQuery.orderBy })}/>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        {csvData.length > 0 ?<Button type="primary">
+                            <CSVLink
+                                filename={"smsHistory.csv"}
+                                data={csvData}
+                                className="btn btn-primary"
+                                onClick={()=>{
+                                    message.success("The file is downloading")
+                                }}
+                            >
+                                Export to CSV
+                            </CSVLink>
+                        </Button>:<Button type="primary" disabled>
+                        </Button>}
+                    </div>
                 </Card>
             </Col>
         </Row>
